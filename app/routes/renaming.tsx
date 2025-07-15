@@ -4,21 +4,26 @@ import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
 import { Calendar } from "~/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover"
-import { CalendarIcon, Clock, User, CreditCard } from "lucide-react"
+import { CalendarIcon, Clock, User, CreditCard, RefreshCw, TrendingUp } from "lucide-react"
 import { useToast } from "~/hooks/use-toast"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { cn } from "~/lib/utils"
+import { MultiHanjaSelector } from "~/components/ui/hanja-selector"
+import { HanjaChar } from "~/lib/hanja-data"
 
-// 생년월일시 입력 컴포넌트
-function BirthInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
+// 개명 정보 입력 컴포넌트
+function RenamingInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
   const [formData, setFormData] = useState({
+    currentName: '',
+    currentNameHanja: [] as (HanjaChar | null)[],
     lastName: '',
     gender: '',
     birthDate: undefined as Date | undefined,
     birthTime: '',
-    parentValue: '',
-    calendarType: 'solar' as 'solar' | 'lunar'
+    calendarType: 'solar' as 'solar' | 'lunar',
+    renamingReason: '',
+    desiredMeaning: ''
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -28,6 +33,40 @@ function BirthInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
+      <div>
+        <label className="block text-sm font-medium mb-2">현재 이름</label>
+        <div className="space-y-3">
+          <input
+            type="text"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+            placeholder="철수 (한글)"
+            value={formData.currentName}
+            onChange={(e) => {
+              const syllables = e.target.value.split('')
+              setFormData({
+                ...formData, 
+                currentName: e.target.value,
+                currentNameHanja: syllables.map(() => null)
+              })
+            }}
+            required
+          />
+          {formData.currentName && (
+            <MultiHanjaSelector
+              syllables={formData.currentName.split('')}
+              selectedHanjas={formData.currentNameHanja}
+              onSelectionChange={(index, hanja) => {
+                const newHanjas = [...formData.currentNameHanja]
+                newHanjas[index] = hanja
+                setFormData({...formData, currentNameHanja: newHanjas})
+              }}
+              label="현재 이름 한자"
+              required
+            />
+          )}
+        </div>
+      </div>
+
       <div>
         <label className="block text-sm font-medium mb-2">성씨</label>
         <input
@@ -51,7 +90,7 @@ function BirthInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
               onChange={(e) => setFormData({...formData, gender: e.target.value})}
               required
             />
-            <span className="ml-2">남아</span>
+            <span className="ml-2">남성</span>
           </label>
           <label className="flex items-center">
             <input
@@ -61,7 +100,7 @@ function BirthInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
               onChange={(e) => setFormData({...formData, gender: e.target.value})}
               required
             />
-            <span className="ml-2">여아</span>
+            <span className="ml-2">여성</span>
           </label>
         </div>
       </div>
@@ -135,44 +174,70 @@ function BirthInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2">부모님이 중요하게 생각하는 가치</label>
+        <label className="block text-sm font-medium mb-2">개명 이유</label>
         <select
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
-          value={formData.parentValue}
-          onChange={(e) => setFormData({...formData, parentValue: e.target.value})}
+          value={formData.renamingReason}
+          onChange={(e) => setFormData({...formData, renamingReason: e.target.value})}
           required
         >
           <option value="">선택하세요</option>
-          <option value="지혜">지혜로운 사람</option>
-          <option value="성공">성공하는 사람</option>
-          <option value="건강">건강한 사람</option>
-          <option value="인덕">인덕이 있는 사람</option>
-          <option value="창의">창의적인 사람</option>
+          <option value="운세개선">운세 개선</option>
+          <option value="사회생활">사회생활 개선</option>
+          <option value="건강문제">건강 문제</option>
+          <option value="인간관계">인간관계 개선</option>
+          <option value="사업운">사업운 개선</option>
+          <option value="결혼운">결혼운 개선</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-2">원하는 의미</label>
+        <select
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+          value={formData.desiredMeaning}
+          onChange={(e) => setFormData({...formData, desiredMeaning: e.target.value})}
+          required
+        >
+          <option value="">선택하세요</option>
+          <option value="성공">성공과 출세</option>
+          <option value="건강">건강과 장수</option>
+          <option value="인덕">인덕과 인기</option>
+          <option value="재물">재물과 풍요</option>
+          <option value="평화">평화와 안정</option>
+          <option value="지혜">지혜와 학업</option>
         </select>
       </div>
 
       <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600">
-        사주 분석 시작하기
+        <RefreshCw className="w-4 h-4 mr-2" />
+        개명 분석 시작하기
       </Button>
     </form>
   )
 }
 
-// 사주 분석 결과 컴포넌트
-function SajuAnalysis({ data, onComplete }: { data: any, onComplete: () => void }) {
+// 현재 이름 운세 분석 컴포넌트
+function CurrentNameAnalysis({ data, onComplete }: { data: any, onComplete: () => void }) {
   const [isAnalyzing, setIsAnalyzing] = useState(true)
 
-  // 모의 사주 데이터
-  const sajuData = {
+  const analysisData = {
+    currentScore: 62,
     elements: {
-      목: 2,
-      화: 1,
-      토: 3,
-      금: 1,
+      목: 1,
+      화: 0,
+      토: 4,
+      금: 2,
       수: 1
     },
-    lacking: ['화', '금', '수'],
-    yongsin: '화'
+    problems: ['화 기운 부족', '토 기운 과다', '음양 불균형'],
+    predictions: {
+      career: 45,
+      health: 70,
+      relationships: 55,
+      wealth: 40
+    }
   }
 
   useState(() => {
@@ -191,8 +256,8 @@ function SajuAnalysis({ data, onComplete }: { data: any, onComplete: () => void 
           animate={{ opacity: 1 }}
         >
           <div className="w-20 h-20 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <h3 className="text-xl font-bold">사주팔자 분석 중...</h3>
-          <p className="text-gray-600 mt-2">천간지지와 오행을 계산하고 있습니다</p>
+          <h3 className="text-xl font-bold">현재 이름 운세 분석 중...</h3>
+          <p className="text-gray-600 mt-2">'{data.currentName}'의 오행과 획수를 분석하고 있습니다</p>
         </motion.div>
       ) : (
         <motion.div
@@ -200,15 +265,36 @@ function SajuAnalysis({ data, onComplete }: { data: any, onComplete: () => void 
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
-          <h3 className="text-2xl font-bold text-center">사주 분석 결과</h3>
+          <h3 className="text-2xl font-bold text-center">'{data.currentName}' 운세 분석</h3>
           
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                종합 운세 점수
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center">
+                <div className="text-5xl font-bold text-orange-500 mb-2">{analysisData.currentScore}점</div>
+                <div className="text-sm text-gray-600">100점 만점</div>
+                <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+                  <div 
+                    className="bg-orange-500 h-2 rounded-full transition-all duration-1000"
+                    style={{ width: `${analysisData.currentScore}%` }}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>오행 분포</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-5 gap-4">
-                {Object.entries(sajuData.elements).map(([element, count]) => (
+                {Object.entries(analysisData.elements).map(([element, count]) => (
                   <div key={element} className="text-center">
                     <div className="text-2xl font-bold">{element}</div>
                     <div className="text-3xl">{count}</div>
@@ -220,15 +306,44 @@ function SajuAnalysis({ data, onComplete }: { data: any, onComplete: () => void 
 
           <Card>
             <CardHeader>
-              <CardTitle>분석 결과</CardTitle>
+              <CardTitle>분야별 운세</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[
+                { label: '사업/직장운', value: analysisData.predictions.career },
+                { label: '건강운', value: analysisData.predictions.health },
+                { label: '인간관계운', value: analysisData.predictions.relationships },
+                { label: '재물운', value: analysisData.predictions.wealth }
+              ].map((item) => (
+                <div key={item.label} className="flex justify-between items-center">
+                  <span className="text-sm font-medium">{item.label}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-24 bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-orange-500 h-2 rounded-full transition-all duration-1000"
+                        style={{ width: `${item.value}%` }}
+                      />
+                    </div>
+                    <span className="text-sm font-bold">{item.value}점</span>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader>
+              <CardTitle className="text-red-600">개선 필요 사항</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">
-                부족한 오행: <span className="font-bold text-orange-500">{sajuData.lacking.join(', ')}</span>
-              </p>
-              <p className="text-gray-600 mt-2">
-                용신: <span className="font-bold text-orange-500">{sajuData.yongsin}</span>
-              </p>
+              <ul className="space-y-2">
+                {analysisData.problems.map((problem, index) => (
+                  <li key={index} className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    {problem}
+                  </li>
+                ))}
+              </ul>
             </CardContent>
           </Card>
         </motion.div>
@@ -237,21 +352,21 @@ function SajuAnalysis({ data, onComplete }: { data: any, onComplete: () => void 
   )
 }
 
-// 작명 결과 컴포넌트
-function NamingResults({ onPayment, onSkip }: { onPayment: () => void, onSkip: () => void }) {
+// 개명 제안 결과 컴포넌트
+function RenamingResults({ data, onPayment, onSkip }: { data: any, onPayment: () => void, onSkip: () => void }) {
   const { toast } = useToast()
   
   const names = [
-    { name: "김도윤", hanja: "金道允", meaning: "도를 따르고 허락받은 아이", score: 95 },
-    { name: "김서준", hanja: "金瑞俊", meaning: "상서롭고 준수한 아이", score: 93 },
-    { name: "김민준", hanja: "金敏俊", meaning: "민첩하고 준수한 아이", score: 91 },
-    { name: "김지호", hanja: "金智浩", meaning: "지혜롭고 호탕한 아이", score: 90 },
-    { name: "김현우", hanja: "金賢宇", meaning: "현명하고 우주같은 아이", score: 88 }
+    { name: `${data.lastName}진우`, hanja: `${data.lastName}振宇`, meaning: "진동하는 우주처럼 웅대한 기운", score: 92, improvement: "+30" },
+    { name: `${data.lastName}태영`, hanja: `${data.lastName}泰英`, meaning: "태평하고 영명한 사람", score: 89, improvement: "+27" },
+    { name: `${data.lastName}정호`, hanja: `${data.lastName}正浩`, meaning: "정의롭고 호탕한 기운", score: 87, improvement: "+25" },
+    { name: `${data.lastName}현석`, hanja: `${data.lastName}賢碩`, meaning: "현명하고 큰 인물", score: 85, improvement: "+23" },
+    { name: `${data.lastName}승준`, hanja: `${data.lastName}承俊`, meaning: "이어받은 준수함", score: 83, improvement: "+21" }
   ]
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-8">AI 추천 이름</h2>
+      <h2 className="text-3xl font-bold text-center mb-8">개명 제안 결과</h2>
       
       <div className="grid gap-4 mb-8">
         {names.map((item, index) => (
@@ -264,8 +379,13 @@ function NamingResults({ onPayment, onSkip }: { onPayment: () => void, onSkip: (
             <Card className="hover:shadow-lg transition-all">
               <CardContent className="p-6">
                 <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="text-2xl font-bold">{item.name}</h3>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4 mb-2">
+                      <h3 className="text-2xl font-bold">{item.name}</h3>
+                      <span className="text-sm bg-green-100 text-green-600 px-2 py-1 rounded-full">
+                        {item.improvement}점 개선
+                      </span>
+                    </div>
                     <p className="text-gray-600">{item.hanja}</p>
                     <p className="text-sm text-gray-500 mt-1">{item.meaning}</p>
                   </div>
@@ -283,14 +403,14 @@ function NamingResults({ onPayment, onSkip }: { onPayment: () => void, onSkip: (
       {/* 가격 정보 */}
       <Card className="mb-8 border-orange-500">
         <CardContent className="p-8 text-center">
-          <h3 className="text-2xl font-bold mb-4">상세 분석 보고서</h3>
+          <h3 className="text-2xl font-bold mb-4">상세 개명 분석 보고서</h3>
           <p className="text-gray-600 mb-4">
-            각 이름의 상세한 사주 분석, 획수 풀이, 음양오행 조화도를 확인하세요
+            각 이름의 운세 변화 예측, 법적 개명 절차, 개명 후 주의사항을 확인하세요
           </p>
           <div className="mb-6">
-            <p className="text-sm text-gray-500 line-through">정가 100,000원</p>
-            <p className="text-4xl font-bold text-orange-500">70,000원</p>
-            <p className="text-sm text-red-500">30% 할인 (오늘만!)</p>
+            <p className="text-sm text-gray-500 line-through">정가 150,000원</p>
+            <p className="text-4xl font-bold text-orange-500">120,000원</p>
+            <p className="text-sm text-red-500">20% 할인</p>
           </div>
           <div className="flex gap-4">
             <Button 
@@ -305,7 +425,7 @@ function NamingResults({ onPayment, onSkip }: { onPayment: () => void, onSkip: (
               className="flex-1"
               onClick={onSkip}
             >
-              다음에 하기
+              전문가 상담받기
             </Button>
           </div>
         </CardContent>
@@ -314,8 +434,8 @@ function NamingResults({ onPayment, onSkip }: { onPayment: () => void, onSkip: (
   )
 }
 
-// 전문가 제안 컴포넌트
-function ExpertProposals() {
+// 개명 전문가 제안 컴포넌트
+function RenamingExpertProposals() {
   const experts = [
     {
       id: 1,
@@ -323,9 +443,9 @@ function ExpertProposals() {
       experience: "30년",
       rating: 4.9,
       reviews: 523,
-      price: 150000,
-      speciality: "사주명리학",
-      message: "아이의 사주를 보니 화(火) 기운이 부족합니다. 제가 추천하는 이름으로..."
+      price: 200000,
+      speciality: "개명 전문",
+      message: "현재 이름의 문제점을 정확히 파악했습니다. 법적 절차까지 도와드리겠습니다."
     },
     {
       id: 2,
@@ -333,9 +453,9 @@ function ExpertProposals() {
       experience: "25년",
       rating: 4.8,
       reviews: 412,
-      price: 120000,
-      speciality: "성명학",
-      message: "획수와 음양의 조화를 중시하여 최상의 이름을 지어드리겠습니다."
+      price: 180000,
+      speciality: "운세 개선",
+      message: "개명 후 운세 변화를 단계별로 분석하여 최적의 타이밍을 제안해드립니다."
     },
     {
       id: 3,
@@ -343,38 +463,18 @@ function ExpertProposals() {
       experience: "20년",
       rating: 4.7,
       reviews: 389,
-      price: 100000,
-      speciality: "역학",
-      message: "용신을 보완하는 한자를 선별하여 3개의 이름을 제안드립니다."
-    },
-    {
-      id: 4,
-      name: "최은영 선생님",
-      experience: "15년",
-      rating: 4.6,
-      reviews: 298,
-      price: 80000,
-      speciality: "사주팔자",
-      message: "부모님의 바람과 아이의 사주를 조화롭게 연결하는 이름을..."
-    },
-    {
-      id: 5,
-      name: "정현철 선생님",
-      experience: "18년",
-      rating: 4.8,
-      reviews: 356,
-      price: 90000,
-      speciality: "작명학",
-      message: "현대적 감각과 전통을 조화시킨 이름을 지어드립니다."
+      price: 150000,
+      speciality: "사주명리",
+      message: "개명 이유에 맞는 맞춤형 이름으로 인생의 전환점을 만들어드립니다."
     }
   ]
 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold mb-4">전문가 맞춤 제안</h2>
+        <h2 className="text-3xl font-bold mb-4">개명 전문가 제안</h2>
         <p className="text-gray-600">
-          전문 작명가들이 아이의 사주를 분석하고 개별 견적을 제안했습니다
+          개명 전문가들이 맞춤 분석과 개별 견적을 제안했습니다
         </p>
       </div>
 
@@ -422,18 +522,11 @@ function ExpertProposals() {
           </motion.div>
         ))}
       </div>
-
-      <div className="mt-8 text-center">
-        <p className="text-gray-600 mb-4">
-          마음에 드는 전문가를 선택하여 1:1 맞춤 상담을 받아보세요
-        </p>
-        <Button variant="outline">더 많은 전문가 보기</Button>
-      </div>
     </div>
   )
 }
 
-export default function QuickNaming() {
+export default function Renaming() {
   const [step, setStep] = useState<'input' | 'analysis' | 'result' | 'experts'>('input')
   const [formData, setFormData] = useState(null)
 
@@ -447,7 +540,6 @@ export default function QuickNaming() {
   }
 
   const handlePayment = () => {
-    // 결제 프로세스
     console.log('결제 진행')
   }
 
@@ -461,7 +553,7 @@ export default function QuickNaming() {
         {/* 진행 상태 표시 */}
         <div className="max-w-4xl mx-auto mb-8">
           <div className="flex items-center justify-between">
-            {['정보입력', '사주분석', '이름추천', '전문가제안'].map((label, index) => (
+            {['정보입력', '현재분석', '개명제안', '전문가제안'].map((label, index) => (
               <div key={label} className="flex items-center">
                 <div className={`
                   w-10 h-10 rounded-full flex items-center justify-center
@@ -485,22 +577,22 @@ export default function QuickNaming() {
             animate={{ opacity: 1, y: 0 }}
           >
             <h1 className="text-3xl font-bold text-center mb-8">
-              AI 사주 작명 서비스
+              개명 서비스
             </h1>
-            <BirthInfoForm onSubmit={handleFormSubmit} />
+            <RenamingInfoForm onSubmit={handleFormSubmit} />
           </motion.div>
         )}
 
         {step === 'analysis' && (
-          <SajuAnalysis data={formData} onComplete={handleAnalysisComplete} />
+          <CurrentNameAnalysis data={formData} onComplete={handleAnalysisComplete} />
         )}
 
         {step === 'result' && (
-          <NamingResults onPayment={handlePayment} onSkip={handleSkip} />
+          <RenamingResults data={formData} onPayment={handlePayment} onSkip={handleSkip} />
         )}
 
         {step === 'experts' && (
-          <ExpertProposals />
+          <RenamingExpertProposals />
         )}
       </div>
     </div>

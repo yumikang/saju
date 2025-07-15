@@ -11,7 +11,9 @@ export function Header() {
 
   const navItems = [
     { label: "홈", href: "/" },
-    { label: "AI 작명", href: "/quick" },
+    { label: "신생아 작명", href: "/naming" },
+    { label: "개명 서비스", href: "/renaming" },
+    { label: "사주 궁합", href: "/saju" },
   ]
 
   return (
@@ -39,9 +41,9 @@ export function Header() {
 
           {/* CTA 버튼 */}
           <div className="hidden md:block">
-            <Link to="/quick">
+            <Link to="/naming">
               <Button className="bg-orange-500 hover:bg-orange-600">
-                작명 시작하기
+                서비스 선택
               </Button>
             </Link>
           </div>
@@ -76,9 +78,9 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
-            <Link to="/quick" onClick={() => setIsMenuOpen(false)}>
+            <Link to="/naming" onClick={() => setIsMenuOpen(false)}>
               <Button className="w-full mt-4 bg-orange-500 hover:bg-orange-600">
-                작명 시작하기
+                서비스 선택
               </Button>
             </Link>
           </motion.nav>

@@ -6,7 +6,6 @@ export function Footer() {
     서비스: [
       { label: "AI 퀵생성", href: "/quick" },
       { label: "전문가 1:1 상담", href: "/expert" },
-      { label: "그룹 상담", href: "/group" },
     ],
     고객지원: [
       { label: "이용안내", href: "#" },

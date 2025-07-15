@@ -7,40 +7,40 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 export default function Index() {
   const services = [
     {
-      id: 'quick',
-      title: 'AI 퀵생성',
-      description: '3초 만에 완성되는 AI 작명',
-      price: '700,000',
-      originalPrice: '1,000,000',
+      id: 'naming',
+      title: '신생아 작명',
+      description: '출산 예정 또는 신생아 부모를 위한 전문 작명',
+      price: '70,000',
+      originalPrice: '100,000',
       discount: '30%',
       icon: Sparkles,
       color: 'from-blue-500 to-purple-500',
-      features: ['즉시 생성', 'AI 빅데이터 분석', '5개 이름 추천'],
-      href: '/quick'
+      features: ['AI 빅데이터 분석', '5개 이름 추천', '전문가 검토'],
+      href: '/naming'
     },
     {
-      id: 'expert',
-      title: '전문가 1:1',
-      description: '30년 경력 전문가 맞춤 상담',
-      price: '800,000',
-      originalPrice: '1,000,000',
+      id: 'renaming',
+      title: '개명 서비스',
+      description: '운세 개선을 위한 개명 상담',
+      price: '120,000',
+      originalPrice: '150,000',
       discount: '20%',
       icon: Crown,
       color: 'from-yellow-500 to-orange-500',
-      features: ['1:1 맞춤 상담', '무제한 수정', '작명 보증서'],
-      href: '/expert'
+      features: ['현재 운세 분석', '개명 효과 예측', '법적 절차 안내'],
+      href: '/renaming'
     },
     {
-      id: 'group',
-      title: '그룹 상담',
-      description: '합리적인 가격의 그룹 서비스',
-      price: '100,000',
-      originalPrice: '150,000',
-      discount: '최대 33%',
+      id: 'saju',
+      title: '사주 궁합',
+      description: '예비 부부, 커플 사주 궁합 분석',
+      price: '80,000',
+      originalPrice: '100,000',
+      discount: '20%',
       icon: Users,
-      color: 'from-green-500 to-teal-500',
-      features: ['10-30만원 선택', '소규모 그룹', '전문가 상담'],
-      href: '/group'
+      color: 'from-pink-500 to-rose-500',
+      features: ['궁합 분석', '결혼 운세', '개명 제안'],
+      href: '/saju'
     }
   ]
 
@@ -57,13 +57,13 @@ export default function Index() {
             사주로 찾는 완벽한 이름
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
-            아이의 사주팔자를 분석하여 부족한 오행을 보완하는<br />
-            최적의 이름을 추천해드립니다
+            신생아 작명부터 개명, 사주 궁합까지<br />
+            전문가의 사주 분석으로 최적의 이름을 찾아보세요
           </p>
           
-          <Link to="/quick">
+          <Link to="/naming">
             <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600">
-              작명 시작하기
+              서비스 선택하기
             </Button>
           </Link>
         </motion.div>
@@ -136,7 +136,7 @@ export default function Index() {
       {/* 서비스 카드 섹션 */}
       <section className="container mx-auto px-4 py-16">
         <h2 className="text-3xl font-bold text-center mb-12">서비스 선택</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {services.map((service, index) => (
             <motion.div
               key={service.id}
