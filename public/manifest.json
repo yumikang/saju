@@ -1,0 +1,17 @@
+{
+  "name": "사주작명 - AI 기반 작명/개명 서비스",
+  "short_name": "사주작명",
+  "description": "사주명리학 기반 신생아 작명 및 개명 서비스",
+  "theme_color": "#f97316",
+  "background_color": "#fff7ed",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
