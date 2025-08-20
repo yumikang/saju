@@ -1,0 +1,12 @@
+{"timestamp":"2025-08-20T06:30:04.727Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/validated","outputDir":"scripts/etl/data/loaded","logLevel":"info","batchSize":50,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:30:04.727Z","level":"INFO","step":"60_load","message":"=== Starting ETL Step: 60_load ===","meta":{"step":"60_load","startTime":"2025-08-20T06:30:04.727Z"}}
+{"timestamp":"2025-08-20T06:30:04.727Z","level":"INFO","step":"60_load","message":"Loading validated data from: scripts/etl/data/validated/validated_data.json"}
+{"timestamp":"2025-08-20T06:30:04.732Z","level":"INFO","step":"60_load","message":"Loaded 185 validated records"}
+{"timestamp":"2025-08-20T06:30:04.732Z","level":"INFO","step":"60_load","message":"Testing database connection..."}
+{"timestamp":"2025-08-20T06:30:04.735Z","level":"INFO","step":"60_load","message":"Database connection successful"}
+{"timestamp":"2025-08-20T06:30:04.735Z","level":"WARN","step":"60_load","message":"Failed to collect database statistics","meta":{"error":{}}}
+{"timestamp":"2025-08-20T06:30:04.735Z","level":"INFO","step":"60_load","message":"Database stats before load: {\"totalRecords\":0,\"statusDistribution\":{},\"elementDistribution\":{},\"yinYangDistribution\":{}}"}
+{"timestamp":"2025-08-20T06:30:04.735Z","level":"INFO","step":"60_load","message":"Processing database load in batches of 50"}
+{"timestamp":"2025-08-20T06:30:04.738Z","level":"INFO","step":"60_load","message":"=== Completed ETL Step: 60_load ===","meta":{"step":"60_load","duration":11,"result":{"success":false,"processedCount":1,"successCount":0,"errorCount":1,"processingTimeMs":11}}}
+{"timestamp":"2025-08-20T06:30:04.739Z","level":"WARN","step":"60_load","message":"Step 60_load completed with 1 errors","meta":{"errors":[{"type":"system","message":"Database load failed: Spread syntax requires ...iterable[Symbol.iterator] to be a function","details":{"error":{}},"timestamp":"2025-08-20T06:30:04.738Z"}]}}
+{"timestamp":"2025-08-20T06:30:04.739Z","level":"ERROR","message":"Database load failed","meta":{"error":{}}}

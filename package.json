@@ -24,7 +24,8 @@
     "tailwindcss": "^3.4.17",
     "vite": "^5.4.19",
     "vite-plugin-compression2": "^2.2.0",
-    "vite-tsconfig-paths": "^4.3.2"
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
@@ -73,6 +74,16 @@
     "test:coverage": "vitest run --coverage",
     "test:socket": "vitest run app/socket/__tests__",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "etl": "npx tsx scripts/etl/run-pipeline.ts",
+    "etl:ingest": "npx tsx scripts/etl/10_ingest.ts",
+    "etl:normalize": "npx tsx scripts/etl/20_normalize.ts",
+    "etl:dedup": "npx tsx scripts/etl/30_dedup.ts",
+    "etl:resolve": "npx tsx scripts/etl/40_resolve.ts",
+    "etl:validate": "npx tsx scripts/etl/50_validate.ts",
+    "etl:load": "npx tsx scripts/etl/60_load.ts",
+    "etl:report": "npx tsx scripts/etl/70_report.ts",
+    "etl:continue": "npx tsx scripts/etl/run-pipeline.ts --continue-on-error",
+    "etl:skip": "npx tsx scripts/etl/run-pipeline.ts --skip="
   }
 }

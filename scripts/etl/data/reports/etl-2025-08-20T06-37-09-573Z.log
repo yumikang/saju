@@ -1,0 +1,50 @@
+{"timestamp":"2025-08-20T06:37:09.574Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data","outputDir":"scripts/etl/data/reports","logLevel":"info","batchSize":1000,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:37:09.589Z","level":"INFO","message":"🎯 Starting ETL Pipeline Execution"}
+{"timestamp":"2025-08-20T06:37:09.589Z","level":"INFO","message":"📅 Start Time: 2025-08-20T06:37:09.588Z"}
+{"timestamp":"2025-08-20T06:37:09.589Z","level":"INFO","message":"⚙️  Configuration:","meta":{"skipSteps":[],"continueOnError":false,"generateReportOnFailure":true}}
+{"timestamp":"2025-08-20T06:37:09.589Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-08-20T06:37:09.589Z","level":"INFO","message":"🚀 Starting ETL Step: 10_ingest (데이터 수집)"}
+{"timestamp":"2025-08-20T06:37:09.589Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-08-20T06:37:10.015Z","level":"INFO","message":"✅ Step 10_ingest (데이터 수집) completed successfully"}
+{"timestamp":"2025-08-20T06:37:10.015Z","level":"INFO","message":"   Duration: 426ms"}
+{"timestamp":"2025-08-20T06:37:10.015Z","level":"INFO","message":"   Records: 187/187"}
+{"timestamp":"2025-08-20T06:37:10.015Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-08-20T06:37:10.015Z","level":"INFO","message":"🚀 Starting ETL Step: 20_normalize (데이터 정규화)"}
+{"timestamp":"2025-08-20T06:37:10.015Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-08-20T06:37:10.021Z","level":"INFO","message":"✅ Step 20_normalize (데이터 정규화) completed successfully"}
+{"timestamp":"2025-08-20T06:37:10.021Z","level":"INFO","message":"   Duration: 6ms"}
+{"timestamp":"2025-08-20T06:37:10.021Z","level":"INFO","message":"   Records: 187/187"}
+{"timestamp":"2025-08-20T06:37:10.021Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-08-20T06:37:10.021Z","level":"INFO","message":"🚀 Starting ETL Step: 30_dedup (중복 제거)"}
+{"timestamp":"2025-08-20T06:37:10.021Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"✅ Step 30_dedup (중복 제거) completed successfully"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"   Duration: 3ms"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"   Records: 185/185"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"🚀 Starting ETL Step: 40_resolve (충돌 해결)"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-08-20T06:37:10.029Z","level":"INFO","message":"✅ Step 40_resolve (충돌 해결) completed successfully"}
+{"timestamp":"2025-08-20T06:37:10.029Z","level":"INFO","message":"   Duration: 5ms"}
+{"timestamp":"2025-08-20T06:37:10.029Z","level":"INFO","message":"   Records: 185/185"}
+{"timestamp":"2025-08-20T06:37:10.029Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-08-20T06:37:10.030Z","level":"INFO","message":"🚀 Starting ETL Step: 50_validate (데이터 검증)"}
+{"timestamp":"2025-08-20T06:37:10.030Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-08-20T06:37:10.039Z","level":"INFO","message":"✅ Step 50_validate (데이터 검증) completed successfully"}
+{"timestamp":"2025-08-20T06:37:10.039Z","level":"INFO","message":"   Duration: 10ms"}
+{"timestamp":"2025-08-20T06:37:10.040Z","level":"INFO","message":"   Records: 185/185"}
+{"timestamp":"2025-08-20T06:37:10.040Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-08-20T06:37:10.040Z","level":"INFO","message":"🚀 Starting ETL Step: 60_load (데이터베이스 적재)"}
+{"timestamp":"2025-08-20T06:37:10.040Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-08-20T06:37:10.328Z","level":"INFO","message":"✅ Step 60_load (데이터베이스 적재) completed successfully"}
+{"timestamp":"2025-08-20T06:37:10.328Z","level":"INFO","message":"   Duration: 288ms"}
+{"timestamp":"2025-08-20T06:37:10.328Z","level":"INFO","message":"   Records: 0/185"}
+{"timestamp":"2025-08-20T06:37:10.328Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-08-20T06:37:10.328Z","level":"INFO","message":"🚀 Starting ETL Step: 70_report (보고서 생성)"}
+{"timestamp":"2025-08-20T06:37:10.328Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-08-20T06:37:10.362Z","level":"INFO","message":"✅ Step 70_report (보고서 생성) completed successfully"}
+{"timestamp":"2025-08-20T06:37:10.363Z","level":"INFO","message":"   Duration: 34ms"}
+{"timestamp":"2025-08-20T06:37:10.363Z","level":"INFO","message":"   Records: 6/6"}
+{"timestamp":"2025-08-20T06:37:10.363Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-08-20T06:37:10.364Z","level":"INFO","message":"🏁 ETL Pipeline Execution Completed"}
+{"timestamp":"2025-08-20T06:37:10.364Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-08-20T06:37:10.364Z","level":"INFO","message":"📊 Overall Status: ✅ SUCCESS\n⏱️  Total Duration: 775ms\n📈 Steps Completed: 7/7\n📋 Records Processed: 1,120\n✅ Records Successful: 935\n📍 Success Rate: 83%\n\n🔍 Step Details:\n   ✅ 10_ingest (데이터 수집): 426ms (187/187)\n   ✅ 20_normalize (데이터 정규화): 6ms (187/187)\n   ✅ 30_dedup (중복 제거): 3ms (185/185)\n   ✅ 40_resolve (충돌 해결): 5ms (185/185)\n   ✅ 50_validate (데이터 검증): 10ms (185/185)\n   ✅ 60_load (데이터베이스 적재): 288ms (0/185)\n   ✅ 70_report (보고서 생성): 34ms (6/6)"}

@@ -1,0 +1,2445 @@
+{
+  "records": [
+    {
+      "character": "金",
+      "meaning": "쇠, 금",
+      "reading": "김",
+      "strokes": 8,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 0,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "李",
+      "meaning": "오얏나무",
+      "reading": "이",
+      "strokes": 7,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 1,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "伊",
+      "meaning": "그, 이",
+      "reading": "이",
+      "strokes": 6,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 2,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "朴",
+      "meaning": "박달나무",
+      "reading": "박",
+      "strokes": 6,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 3,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "崔",
+      "meaning": "높을",
+      "reading": "최",
+      "strokes": 11,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 4,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "鄭",
+      "meaning": "나라이름",
+      "reading": "정",
+      "strokes": 14,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 5,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "正",
+      "meaning": "바를",
+      "reading": "정",
+      "strokes": 5,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 6,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "靜",
+      "meaning": "고요할",
+      "reading": "정",
+      "strokes": 16,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 7,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "情",
+      "meaning": "정",
+      "reading": "정",
+      "strokes": 11,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 8,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "姜",
+      "meaning": "생강",
+      "reading": "강",
+      "strokes": 9,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 9,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "康",
+      "meaning": "편안할",
+      "reading": "강",
+      "strokes": 11,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 10,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "江",
+      "meaning": "강",
+      "reading": "강",
+      "strokes": 6,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 11,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "趙",
+      "meaning": "나라이름",
+      "reading": "조",
+      "strokes": 14,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 12,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "曺",
+      "meaning": "무리",
+      "reading": "조",
+      "strokes": 11,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 13,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "張",
+      "meaning": "활",
+      "reading": "장",
+      "strokes": 11,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 14,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "章",
+      "meaning": "글",
+      "reading": "장",
+      "strokes": 11,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 15,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "林",
+      "meaning": "수풀",
+      "reading": "임",
+      "strokes": 8,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 16,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "任",
+      "meaning": "맡을",
+      "reading": "임",
+      "strokes": 6,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 17,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "韓",
+      "meaning": "나라이름",
+      "reading": "한",
+      "strokes": 17,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 18,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "漢",
+      "meaning": "한수",
+      "reading": "한",
+      "strokes": 13,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 19,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "吳",
+      "meaning": "나라이름",
+      "reading": "오",
+      "strokes": 7,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 20,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "五",
+      "meaning": "다섯",
+      "reading": "오",
+      "strokes": 4,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 21,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "申",
+      "meaning": "신",
+      "reading": "신",
+      "strokes": 5,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 22,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "愼",
+      "meaning": "삼갈",
+      "reading": "신",
+      "strokes": 13,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 23,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "劉",
+      "meaning": "성",
+      "reading": "유",
+      "strokes": 15,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 24,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "柳",
+      "meaning": "버들",
+      "reading": "유",
+      "strokes": 9,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 25,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "安",
+      "meaning": "편안할",
+      "reading": "안",
+      "strokes": 6,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 26,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "宋",
+      "meaning": "나라이름",
+      "reading": "송",
+      "strokes": 7,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 27,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "松",
+      "meaning": "소나무",
+      "reading": "송",
+      "strokes": 8,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 28,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "田",
+      "meaning": "밭",
+      "reading": "전",
+      "strokes": 5,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 29,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "全",
+      "meaning": "온전할",
+      "reading": "전",
+      "strokes": 6,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 30,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "洪",
+      "meaning": "큰물",
+      "reading": "홍",
+      "strokes": 9,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 31,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "高",
+      "meaning": "높을",
+      "reading": "고",
+      "strokes": 10,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 32,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "古",
+      "meaning": "옛",
+      "reading": "고",
+      "strokes": 5,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 33,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "文",
+      "meaning": "글월",
+      "reading": "문",
+      "strokes": 4,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 34,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "門",
+      "meaning": "문",
+      "reading": "문",
+      "strokes": 8,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 35,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "楊",
+      "meaning": "버들",
+      "reading": "양",
+      "strokes": 13,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 36,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "梁",
+      "meaning": "대들보",
+      "reading": "양",
+      "strokes": 11,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 37,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "孫",
+      "meaning": "손자",
+      "reading": "손",
+      "strokes": 10,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 38,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "裵",
+      "meaning": "성",
+      "reading": "배",
+      "strokes": 14,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 39,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "白",
+      "meaning": "흰",
+      "reading": "배",
+      "strokes": 5,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 40,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "民",
+      "meaning": "백성",
+      "reading": "민",
+      "strokes": 5,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 41,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "敏",
+      "meaning": "민첩할",
+      "reading": "민",
+      "strokes": 11,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 42,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "旻",
+      "meaning": "하늘",
+      "reading": "민",
+      "strokes": 8,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 43,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "玟",
+      "meaning": "옥돌",
+      "reading": "민",
+      "strokes": 8,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 44,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "俊",
+      "meaning": "준수할",
+      "reading": "준",
+      "strokes": 9,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 45,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "峻",
+      "meaning": "높을",
+      "reading": "준",
+      "strokes": 10,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 46,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "駿",
+      "meaning": "준마",
+      "reading": "준",
+      "strokes": 17,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 47,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "遵",
+      "meaning": "좇을",
+      "reading": "준",
+      "strokes": 15,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 48,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "瑞",
+      "meaning": "상서로울",
+      "reading": "서",
+      "strokes": 13,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 49,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "徐",
+      "meaning": "천천히",
+      "reading": "서",
+      "strokes": 10,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 50,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "西",
+      "meaning": "서녘",
+      "reading": "서",
+      "strokes": 6,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 51,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "書",
+      "meaning": "글",
+      "reading": "서",
+      "strokes": 10,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 52,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "賢",
+      "meaning": "어질",
+      "reading": "현",
+      "strokes": 16,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 53,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "炫",
+      "meaning": "빛날",
+      "reading": "현",
+      "strokes": 9,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 54,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "弦",
+      "meaning": "활시위",
+      "reading": "현",
+      "strokes": 8,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 55,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "玄",
+      "meaning": "검을",
+      "reading": "현",
+      "strokes": 5,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 56,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "宇",
+      "meaning": "집",
+      "reading": "우",
+      "strokes": 6,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 57,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "雨",
+      "meaning": "비",
+      "reading": "우",
+      "strokes": 8,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 58,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "友",
+      "meaning": "벗",
+      "reading": "우",
+      "strokes": 4,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 59,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "佑",
+      "meaning": "도울",
+      "reading": "우",
+      "strokes": 7,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 60,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "振",
+      "meaning": "떨칠",
+      "reading": "진",
+      "strokes": 10,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 61,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "眞",
+      "meaning": "참",
+      "reading": "진",
+      "strokes": 10,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 62,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "珍",
+      "meaning": "보배",
+      "reading": "진",
+      "strokes": 9,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 63,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "晋",
+      "meaning": "나아갈",
+      "reading": "진",
+      "strokes": 10,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 64,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "浩",
+      "meaning": "넓을",
+      "reading": "호",
+      "strokes": 10,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 65,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "皓",
+      "meaning": "밝을",
+      "reading": "호",
+      "strokes": 12,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 66,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "好",
+      "meaning": "좋을",
+      "reading": "호",
+      "strokes": 6,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 67,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "豪",
+      "meaning": "호걸",
+      "reading": "호",
+      "strokes": 14,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 68,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "智",
+      "meaning": "지혜",
+      "reading": "지",
+      "strokes": 12,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 69,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "志",
+      "meaning": "뜻",
+      "reading": "지",
+      "strokes": 7,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 70,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "知",
+      "meaning": "알",
+      "reading": "지",
+      "strokes": 8,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 71,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "池",
+      "meaning": "못",
+      "reading": "지",
+      "strokes": 6,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 72,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "英",
+      "meaning": "꽃",
+      "reading": "영",
+      "strokes": 8,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 73,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "榮",
+      "meaning": "영화",
+      "reading": "영",
+      "strokes": 14,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 74,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "永",
+      "meaning": "길",
+      "reading": "영",
+      "strokes": 5,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 75,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "映",
+      "meaning": "비칠",
+      "reading": "영",
+      "strokes": 9,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 76,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "水",
+      "meaning": "물",
+      "reading": "수",
+      "strokes": 4,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 77,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "秀",
+      "meaning": "빼어날",
+      "reading": "수",
+      "strokes": 7,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 78,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "壽",
+      "meaning": "목숨",
+      "reading": "수",
+      "strokes": 14,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 79,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "洙",
+      "meaning": "물이름",
+      "reading": "수",
+      "strokes": 9,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 80,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "尹",
+      "meaning": "다스릴",
+      "reading": "윤",
+      "strokes": 4,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 81,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "允",
+      "meaning": "허락할",
+      "reading": "윤",
+      "strokes": 4,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 82,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "潤",
+      "meaning": "윤택할",
+      "reading": "윤",
+      "strokes": 15,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 83,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "玧",
+      "meaning": "옥",
+      "reading": "윤",
+      "strokes": 7,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 84,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "胤",
+      "meaning": "후사",
+      "reading": "윤",
+      "strokes": 9,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 85,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "泰",
+      "meaning": "클",
+      "reading": "태",
+      "strokes": 9,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 86,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "太",
+      "meaning": "클",
+      "reading": "태",
+      "strokes": 4,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 87,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "兌",
+      "meaning": "기쁠",
+      "reading": "태",
+      "strokes": 7,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 88,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "希",
+      "meaning": "바랄",
+      "reading": "희",
+      "strokes": 7,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 89,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "喜",
+      "meaning": "기쁠",
+      "reading": "희",
+      "strokes": 12,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 90,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "姬",
+      "meaning": "여자",
+      "reading": "희",
+      "strokes": 10,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 91,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "熙",
+      "meaning": "빛날",
+      "reading": "희",
+      "strokes": 13,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 92,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "銀",
+      "meaning": "은",
+      "reading": "은",
+      "strokes": 14,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 93,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "恩",
+      "meaning": "은혜",
+      "reading": "은",
+      "strokes": 10,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 94,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "隱",
+      "meaning": "숨을",
+      "reading": "은",
+      "strokes": 17,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 95,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "我",
+      "meaning": "나",
+      "reading": "아",
+      "strokes": 7,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 96,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "雅",
+      "meaning": "아름다울",
+      "reading": "아",
+      "strokes": 12,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 97,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "兒",
+      "meaning": "아이",
+      "reading": "아",
+      "strokes": 8,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 98,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "蓮",
+      "meaning": "연꽃",
+      "reading": "연",
+      "strokes": 13,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 99,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "燕",
+      "meaning": "제비",
+      "reading": "연",
+      "strokes": 16,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 100,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "延",
+      "meaning": "늘일",
+      "reading": "연",
+      "strokes": 7,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 101,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "演",
+      "meaning": "연기할",
+      "reading": "연",
+      "strokes": 14,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 102,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "珠",
+      "meaning": "구슬",
+      "reading": "주",
+      "strokes": 10,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 103,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "州",
+      "meaning": "고을",
+      "reading": "주",
+      "strokes": 6,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 104,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "柱",
+      "meaning": "기둥",
+      "reading": "주",
+      "strokes": 9,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 105,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "宙",
+      "meaning": "집",
+      "reading": "주",
+      "strokes": 8,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 106,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "惠",
+      "meaning": "은혜",
+      "reading": "혜",
+      "strokes": 12,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 107,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "慧",
+      "meaning": "지혜",
+      "reading": "혜",
+      "strokes": 15,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 108,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "蕙",
+      "meaning": "혜초",
+      "reading": "혜",
+      "strokes": 15,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 109,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "成",
+      "meaning": "이룰",
+      "reading": "성",
+      "strokes": 6,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 110,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "聖",
+      "meaning": "성인",
+      "reading": "성",
+      "strokes": 13,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 111,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "星",
+      "meaning": "별",
+      "reading": "성",
+      "strokes": 9,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 112,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "誠",
+      "meaning": "정성",
+      "reading": "성",
+      "strokes": 13,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 113,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "景",
+      "meaning": "경치",
+      "reading": "경",
+      "strokes": 12,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 114,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "敬",
+      "meaning": "공경할",
+      "reading": "경",
+      "strokes": 12,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 115,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "京",
+      "meaning": "서울",
+      "reading": "경",
+      "strokes": 8,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 116,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "慶",
+      "meaning": "경사",
+      "reading": "경",
+      "strokes": 15,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 117,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "道",
+      "meaning": "길",
+      "reading": "도",
+      "strokes": 12,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 118,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "都",
+      "meaning": "도읍",
+      "reading": "도",
+      "strokes": 11,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 119,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "島",
+      "meaning": "섬",
+      "reading": "도",
+      "strokes": 10,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 120,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "桃",
+      "meaning": "복숭아",
+      "reading": "도",
+      "strokes": 10,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 121,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "石",
+      "meaning": "돌",
+      "reading": "석",
+      "strokes": 5,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 122,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "碩",
+      "meaning": "클",
+      "reading": "석",
+      "strokes": 14,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 123,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "昔",
+      "meaning": "옛날",
+      "reading": "석",
+      "strokes": 8,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 124,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "鐵",
+      "meaning": "쇠",
+      "reading": "철",
+      "strokes": 21,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 125,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "哲",
+      "meaning": "철학",
+      "reading": "철",
+      "strokes": 10,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 126,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "澈",
+      "meaning": "맑을",
+      "reading": "철",
+      "strokes": 15,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 127,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "勳",
+      "meaning": "공",
+      "reading": "훈",
+      "strokes": 16,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 128,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "薰",
+      "meaning": "향기",
+      "reading": "훈",
+      "strokes": 16,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 129,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "燻",
+      "meaning": "그을릴",
+      "reading": "훈",
+      "strokes": 17,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 130,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "龍",
+      "meaning": "용",
+      "reading": "용",
+      "strokes": 16,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 131,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "容",
+      "meaning": "용모",
+      "reading": "용",
+      "strokes": 10,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 132,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "勇",
+      "meaning": "용감할",
+      "reading": "용",
+      "strokes": 9,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 133,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "革",
+      "meaning": "가죽",
+      "reading": "혁",
+      "strokes": 9,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 134,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "赫",
+      "meaning": "빛날",
+      "reading": "혁",
+      "strokes": 14,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 135,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "健",
+      "meaning": "건강할",
+      "reading": "건",
+      "strokes": 11,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 136,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "建",
+      "meaning": "세울",
+      "reading": "건",
+      "strokes": 9,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 137,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "乾",
+      "meaning": "하늘",
+      "reading": "건",
+      "strokes": 11,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 138,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "元",
+      "meaning": "으뜸",
+      "reading": "원",
+      "strokes": 4,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 139,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "源",
+      "meaning": "근원",
+      "reading": "원",
+      "strokes": 13,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 140,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "園",
+      "meaning": "동산",
+      "reading": "원",
+      "strokes": 13,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 141,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "遠",
+      "meaning": "멀",
+      "reading": "원",
+      "strokes": 13,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 142,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "歡",
+      "meaning": "기쁠",
+      "reading": "환",
+      "strokes": 22,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 143,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "煥",
+      "meaning": "빛날",
+      "reading": "환",
+      "strokes": 13,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 144,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "桓",
+      "meaning": "굳셀",
+      "reading": "환",
+      "strokes": 10,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 145,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "完",
+      "meaning": "완전할",
+      "reading": "완",
+      "strokes": 7,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 146,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "琓",
+      "meaning": "옥",
+      "reading": "완",
+      "strokes": 12,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 147,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "椀",
+      "meaning": "그릇",
+      "reading": "완",
+      "strokes": 12,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 148,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "圭",
+      "meaning": "홀",
+      "reading": "규",
+      "strokes": 6,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 149,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "奎",
+      "meaning": "별",
+      "reading": "규",
+      "strokes": 9,
+      "element": "토",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 150,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "葵",
+      "meaning": "해바라기",
+      "reading": "규",
+      "strokes": 12,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 151,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "範",
+      "meaning": "법",
+      "reading": "범",
+      "strokes": 15,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 152,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "凡",
+      "meaning": "무릇",
+      "reading": "범",
+      "strokes": 3,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 153,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "梵",
+      "meaning": "깨끗할",
+      "reading": "범",
+      "strokes": 11,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 154,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "承",
+      "meaning": "받들",
+      "reading": "승",
+      "strokes": 8,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 155,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "昇",
+      "meaning": "오를",
+      "reading": "승",
+      "strokes": 8,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 156,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "勝",
+      "meaning": "이길",
+      "reading": "승",
+      "strokes": 12,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 157,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "燦",
+      "meaning": "빛날",
+      "reading": "찬",
+      "strokes": 17,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 158,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "讚",
+      "meaning": "칭찬할",
+      "reading": "찬",
+      "strokes": 19,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 159,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "粲",
+      "meaning": "빛날",
+      "reading": "찬",
+      "strokes": 13,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 160,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "林",
+      "meaning": "수풀",
+      "reading": "림",
+      "strokes": 8,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 161,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "臨",
+      "meaning": "임할",
+      "reading": "림",
+      "strokes": 17,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 162,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "瑟",
+      "meaning": "거문고",
+      "reading": "슬",
+      "strokes": 13,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 163,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "瑬",
+      "meaning": "옥",
+      "reading": "슬",
+      "strokes": 14,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 164,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "那",
+      "meaning": "어찌",
+      "reading": "나",
+      "strokes": 7,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 165,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "娜",
+      "meaning": "아름다울",
+      "reading": "나",
+      "strokes": 9,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 166,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "羅",
+      "meaning": "벌일",
+      "reading": "나",
+      "strokes": 19,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 167,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "律",
+      "meaning": "법",
+      "reading": "율",
+      "strokes": 9,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 168,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "栗",
+      "meaning": "밤",
+      "reading": "율",
+      "strokes": 10,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 169,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "彬",
+      "meaning": "빛날",
+      "reading": "빈",
+      "strokes": 11,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 170,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "濱",
+      "meaning": "물가",
+      "reading": "빈",
+      "strokes": 17,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 171,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "賓",
+      "meaning": "손님",
+      "reading": "빈",
+      "strokes": 14,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 172,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "率",
+      "meaning": "거느릴",
+      "reading": "솔",
+      "strokes": 11,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 173,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "星",
+      "meaning": "별",
+      "reading": "별",
+      "strokes": 9,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 174,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "別",
+      "meaning": "다를",
+      "reading": "별",
+      "strokes": 7,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 175,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "結",
+      "meaning": "맺을",
+      "reading": "결",
+      "strokes": 12,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 176,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "潔",
+      "meaning": "깨끗할",
+      "reading": "결",
+      "strokes": 15,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 177,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "潭",
+      "meaning": "못",
+      "reading": "담",
+      "strokes": 15,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 178,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "淡",
+      "meaning": "담담할",
+      "reading": "담",
+      "strokes": 11,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 179,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "膽",
+      "meaning": "쓸개",
+      "reading": "담",
+      "strokes": 17,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 180,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "泉",
+      "meaning": "샘",
+      "reading": "샘",
+      "strokes": 9,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 181,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "野",
+      "meaning": "들",
+      "reading": "들",
+      "strokes": 11,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 182,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "春",
+      "meaning": "봄",
+      "reading": "봄",
+      "strokes": 9,
+      "element": "목",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 183,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "夏",
+      "meaning": "여름",
+      "reading": "여름",
+      "strokes": 10,
+      "element": "화",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 184,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "秋",
+      "meaning": "가을",
+      "reading": "가을",
+      "strokes": 9,
+      "element": "금",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 185,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    },
+    {
+      "character": "冬",
+      "meaning": "겨울",
+      "reading": "겨울",
+      "strokes": 5,
+      "element": "수",
+      "source": "hanja-data.ts",
+      "confidenceScore": 0.9,
+      "metadata": {
+        "originalIndex": 186,
+        "importedAt": "2025-08-20T06:40:12.829Z"
+      }
+    }
+  ],
+  "source": {
+    "name": "mixed_sources",
+    "fetchedAt": "2025-08-20T06:40:12.830Z",
+    "version": "1.0.0"
+  },
+  "metadata": {
+    "totalRecords": 187,
+    "format": "json",
+    "encoding": "utf8"
+  }
+}

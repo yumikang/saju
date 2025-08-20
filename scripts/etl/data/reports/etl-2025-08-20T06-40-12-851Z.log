@@ -1,0 +1,9 @@
+{"timestamp":"2025-08-20T06:40:12.851Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/raw","outputDir":"scripts/etl/data/normalized","logLevel":"info","batchSize":100,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:40:12.852Z","level":"INFO","step":"20_normalize","message":"=== Starting ETL Step: 20_normalize ===","meta":{"step":"20_normalize","startTime":"2025-08-20T06:40:12.852Z"}}
+{"timestamp":"2025-08-20T06:40:12.852Z","level":"INFO","step":"20_normalize","message":"Loading raw data from: scripts/etl/data/raw/raw_data.json"}
+{"timestamp":"2025-08-20T06:40:12.854Z","level":"INFO","step":"20_normalize","message":"Loaded 187 raw records"}
+{"timestamp":"2025-08-20T06:40:12.854Z","level":"INFO","step":"20_normalize","message":"Processing in batches of 100"}
+{"timestamp":"2025-08-20T06:40:12.856Z","level":"INFO","step":"20_normalize","message":"=== Completed ETL Step: 20_normalize ===","meta":{"step":"20_normalize","duration":4,"result":{"success":true,"processedCount":187,"successCount":187,"errorCount":0,"processingTimeMs":4}}}
+{"timestamp":"2025-08-20T06:40:12.856Z","level":"INFO","message":"Normalization completed. Output saved to: scripts/etl/data/normalized/normalized_data.json"}
+{"timestamp":"2025-08-20T06:40:12.856Z","level":"INFO","message":"Normalized: 187/187 records"}
+{"timestamp":"2025-08-20T06:40:12.856Z","level":"INFO","message":"Field normalization stats:","meta":{"element":{"attempted":187,"successful":187,"failed":0},"yinYang":{"attempted":0,"successful":0,"failed":0},"strokes":{"attempted":187,"successful":187,"failed":0},"meaning":{"attempted":187,"successful":187,"failed":0},"reading":{"attempted":187,"successful":187,"failed":0}}}

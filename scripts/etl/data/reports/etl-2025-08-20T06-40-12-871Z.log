@@ -1,0 +1,14 @@
+{"timestamp":"2025-08-20T06:40:12.871Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/validated","outputDir":"scripts/etl/data/loaded","logLevel":"info","batchSize":50,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:40:12.871Z","level":"INFO","step":"60_load","message":"=== Starting ETL Step: 60_load ===","meta":{"step":"60_load","startTime":"2025-08-20T06:40:12.871Z"}}
+{"timestamp":"2025-08-20T06:40:12.871Z","level":"INFO","step":"60_load","message":"Loading validated data from: scripts/etl/data/validated/validated_data.json"}
+{"timestamp":"2025-08-20T06:40:12.875Z","level":"INFO","step":"60_load","message":"Loaded 185 validated records"}
+{"timestamp":"2025-08-20T06:40:12.875Z","level":"INFO","step":"60_load","message":"Testing database connection..."}
+{"timestamp":"2025-08-20T06:40:12.882Z","level":"INFO","step":"60_load","message":"Database connection successful"}
+{"timestamp":"2025-08-20T06:40:12.892Z","level":"INFO","step":"60_load","message":"Database stats before load: {\"totalRecords\":0,\"statusDistribution\":{},\"elementDistribution\":{},\"yinYangDistribution\":{}}"}
+{"timestamp":"2025-08-20T06:40:12.892Z","level":"INFO","step":"60_load","message":"Processing database load in batches of 50"}
+{"timestamp":"2025-08-20T06:40:13.070Z","level":"INFO","step":"60_load","message":"Database stats after load: {\"totalRecords\":185,\"statusDistribution\":{\"ok\":185},\"elementDistribution\":{\"EARTH\":27,\"WOOD\":43,\"WATER\":41,\"FIRE\":36,\"METAL\":38},\"yinYangDistribution\":{}}"}
+{"timestamp":"2025-08-20T06:40:13.074Z","level":"INFO","step":"60_load","message":"=== Completed ETL Step: 60_load ===","meta":{"step":"60_load","duration":203,"result":{"success":true,"processedCount":185,"successCount":185,"errorCount":0,"processingTimeMs":203}}}
+{"timestamp":"2025-08-20T06:40:13.074Z","level":"INFO","message":"Database load completed. Output saved to: scripts/etl/data/loaded/load_result.json"}
+{"timestamp":"2025-08-20T06:40:13.074Z","level":"INFO","message":"Loaded 185/185 records to database"}
+{"timestamp":"2025-08-20T06:40:13.074Z","level":"INFO","message":"Success rate: 100%"}
+{"timestamp":"2025-08-20T06:40:13.075Z","level":"INFO","message":"Final database stats:","meta":{"totalRecords":185,"statusDistribution":{"ok":185},"elementDistribution":{"EARTH":27,"WOOD":43,"WATER":41,"FIRE":36,"METAL":38},"yinYangDistribution":{}}}

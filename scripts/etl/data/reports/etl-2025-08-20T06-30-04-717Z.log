@@ -1,0 +1,10 @@
+{"timestamp":"2025-08-20T06:30:04.717Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/resolved","outputDir":"scripts/etl/data/validated","logLevel":"info","batchSize":100,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:30:04.717Z","level":"INFO","step":"50_validate","message":"=== Starting ETL Step: 50_validate ===","meta":{"step":"50_validate","startTime":"2025-08-20T06:30:04.717Z"}}
+{"timestamp":"2025-08-20T06:30:04.717Z","level":"INFO","step":"50_validate","message":"Loading resolved data from: scripts/etl/data/resolved/resolved_data.json"}
+{"timestamp":"2025-08-20T06:30:04.718Z","level":"INFO","step":"50_validate","message":"Loaded 185 resolved records"}
+{"timestamp":"2025-08-20T06:30:04.718Z","level":"INFO","step":"50_validate","message":"Processing validation in batches of 100"}
+{"timestamp":"2025-08-20T06:30:04.721Z","level":"INFO","step":"50_validate","message":"Checking for duplicate characters"}
+{"timestamp":"2025-08-20T06:30:04.726Z","level":"INFO","step":"50_validate","message":"=== Completed ETL Step: 50_validate ===","meta":{"step":"50_validate","duration":9,"result":{"success":true,"processedCount":185,"successCount":185,"errorCount":0,"processingTimeMs":9}}}
+{"timestamp":"2025-08-20T06:30:04.726Z","level":"INFO","message":"Validation completed. Output saved to: scripts/etl/data/validated/validated_data.json"}
+{"timestamp":"2025-08-20T06:30:04.726Z","level":"INFO","message":"Validated 185 records"}
+{"timestamp":"2025-08-20T06:30:04.726Z","level":"INFO","message":"Validation summary: All 12 validation rules passed"}

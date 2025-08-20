@@ -1,0 +1,22 @@
+{"timestamp":"2025-08-20T06:58:47.101Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/raw","outputDir":"scripts/etl/data/raw","logLevel":"info","batchSize":1000,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:58:47.136Z","level":"INFO","step":"10_ingest_gov","message":"=== Starting ETL Step: 10_ingest_gov ===","meta":{"step":"10_ingest_gov","startTime":"2025-08-20T06:58:47.136Z"}}
+{"timestamp":"2025-08-20T06:58:47.136Z","level":"INFO","step":"10_ingest_gov","message":"Reading Supreme Court data from: scripts/etl/data/raw/supreme-court-hanja.json"}
+{"timestamp":"2025-08-20T06:58:47.151Z","level":"INFO","step":"10_ingest_gov","message":"Found 10163 records in Supreme Court data"}
+{"timestamp":"2025-08-20T06:58:47.153Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 1000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.154Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 2000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.155Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 3000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.156Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 4000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.156Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 5000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.158Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 6000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.159Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 7000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.160Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 8000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.161Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 9000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.164Z","level":"INFO","step":"10_ingest_gov","message":"Progress: 10000/10163 records processed"}
+{"timestamp":"2025-08-20T06:58:47.164Z","level":"INFO","step":"10_ingest_gov","message":"Conversion completed: 10163 success, 0 skipped, 0 errors"}
+{"timestamp":"2025-08-20T06:58:47.194Z","level":"INFO","step":"10_ingest_gov","message":"=== Completed ETL Step: 10_ingest_gov ===","meta":{"step":"10_ingest_gov","duration":58,"result":{"success":true,"processedCount":10163,"successCount":10163,"errorCount":0,"processingTimeMs":57}}}
+{"timestamp":"2025-08-20T06:58:47.194Z","level":"INFO","message":"Supreme Court data ingestion completed. Output saved to: scripts/etl/data/raw/gov-2025-08-20T06-58-47-164Z.json"}
+{"timestamp":"2025-08-20T06:58:47.194Z","level":"INFO","message":"Total records: 10163, Skipped: 0, Errors: 0"}
+{"timestamp":"2025-08-20T06:58:47.194Z","level":"INFO","message":"Sample records:"}
+{"timestamp":"2025-08-20T06:58:47.194Z","level":"INFO","message":"  伽 (가): 절"}
+{"timestamp":"2025-08-20T06:58:47.195Z","level":"INFO","message":"  佳 (가): 아름다울"}
+{"timestamp":"2025-08-20T06:58:47.195Z","level":"INFO","message":"  假 (가): 빌"}

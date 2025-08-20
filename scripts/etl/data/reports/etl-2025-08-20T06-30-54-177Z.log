@@ -1,0 +1,7 @@
+{"timestamp":"2025-08-20T06:30:54.177Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/raw","outputDir":"scripts/etl/data/raw","logLevel":"info","batchSize":1000,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:30:54.177Z","level":"INFO","message":"Ingesting data from existing hanja-data.ts"}
+{"timestamp":"2025-08-20T06:30:54.177Z","level":"INFO","message":"Successfully ingested 187 records from hanja-data.ts"}
+{"timestamp":"2025-08-20T06:30:54.177Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/raw","outputDir":"scripts/etl/data/raw","logLevel":"info","batchSize":1000,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:30:54.177Z","level":"INFO","message":"Preparing Supreme Court data source (placeholder)"}
+{"timestamp":"2025-08-20T06:30:54.177Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/raw","outputDir":"scripts/etl/data/raw","logLevel":"info","batchSize":1000,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:30:54.177Z","level":"INFO","message":"Preparing external data sources (placeholder)"}

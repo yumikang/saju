@@ -1,0 +1,8 @@
+{"timestamp":"2025-08-20T06:40:12.825Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/raw","outputDir":"scripts/etl/data/raw","logLevel":"info","batchSize":1000,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:40:12.825Z","level":"INFO","step":"10_ingest","message":"=== Starting ETL Step: 10_ingest ===","meta":{"step":"10_ingest","startTime":"2025-08-20T06:40:12.825Z"}}
+{"timestamp":"2025-08-20T06:40:12.825Z","level":"INFO","step":"10_ingest","message":"Step 1: Ingesting from hanja-data.ts"}
+{"timestamp":"2025-08-20T06:40:12.829Z","level":"INFO","step":"10_ingest","message":"Step 2: Preparing Supreme Court data"}
+{"timestamp":"2025-08-20T06:40:12.830Z","level":"INFO","step":"10_ingest","message":"Step 3: Preparing external sources"}
+{"timestamp":"2025-08-20T06:40:12.851Z","level":"INFO","step":"10_ingest","message":"=== Completed ETL Step: 10_ingest ===","meta":{"step":"10_ingest","duration":26,"result":{"success":true,"processedCount":187,"successCount":187,"errorCount":0,"processingTimeMs":26}}}
+{"timestamp":"2025-08-20T06:40:12.851Z","level":"INFO","message":"Ingestion completed. Output saved to: scripts/etl/data/raw/raw_data.json"}
+{"timestamp":"2025-08-20T06:40:12.851Z","level":"INFO","message":"Total records: 187, Errors: 0"}

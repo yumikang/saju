@@ -1,0 +1,2 @@
+{"timestamp":"2025-08-20T06:37:09.592Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/raw","outputDir":"scripts/etl/data/raw","logLevel":"info","batchSize":1000,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:37:09.592Z","level":"INFO","message":"Preparing external data sources (placeholder)"}

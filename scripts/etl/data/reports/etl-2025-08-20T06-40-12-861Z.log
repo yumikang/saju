@@ -1,0 +1,12 @@
+{"timestamp":"2025-08-20T06:40:12.861Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/merged","outputDir":"scripts/etl/data/resolved","logLevel":"info","batchSize":100,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:40:12.861Z","level":"INFO","step":"40_resolve","message":"=== Starting ETL Step: 40_resolve ===","meta":{"step":"40_resolve","startTime":"2025-08-20T06:40:12.861Z"}}
+{"timestamp":"2025-08-20T06:40:12.861Z","level":"INFO","step":"40_resolve","message":"Loading merged data from: scripts/etl/data/merged/merged_data.json"}
+{"timestamp":"2025-08-20T06:40:12.862Z","level":"INFO","step":"40_resolve","message":"Loaded 185 merged records"}
+{"timestamp":"2025-08-20T06:40:12.862Z","level":"INFO","step":"40_resolve","message":"Processing conflict resolution in batches of 100"}
+{"timestamp":"2025-08-20T06:40:12.864Z","level":"INFO","step":"40_resolve","message":"=== Completed ETL Step: 40_resolve ===","meta":{"step":"40_resolve","duration":3,"result":{"success":true,"processedCount":185,"successCount":185,"errorCount":0,"processingTimeMs":3}}}
+{"timestamp":"2025-08-20T06:40:12.864Z","level":"INFO","message":"Conflict resolution completed. Output saved to: scripts/etl/data/resolved/resolved_data.json"}
+{"timestamp":"2025-08-20T06:40:12.864Z","level":"INFO","message":"Processed 185 records"}
+{"timestamp":"2025-08-20T06:40:12.864Z","level":"INFO","message":"Found 0 conflicts"}
+{"timestamp":"2025-08-20T06:40:12.864Z","level":"INFO","message":"Resolved 0 conflicts"}
+{"timestamp":"2025-08-20T06:40:12.864Z","level":"INFO","message":"Remaining 0 conflicts need review"}
+{"timestamp":"2025-08-20T06:40:12.864Z","level":"INFO","message":"Resolution strategies used:","meta":{}}

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,168 +7,164 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-// User model - stores user account information
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
+  id            String         @id @default(uuid())
+  email         String         @unique
   name          String?
   phone         String?
-  avatarUrl     String?   @map("avatar_url")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-  
-  // Relations
-  sajuData      SajuData[]
-  namingResults NamingResult[]
+  avatarUrl     String?        @map("avatar_url")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
   favorites     Favorite[]
+  namingResults NamingResult[]
+  sajuData      SajuData[]
   sessions      UserSession[]
-  
+
   @@map("users")
 }
 
-// SajuData model - stores birth information and saju calculations
 model SajuData {
-  id              String    @id @default(uuid())
-  userId          String    @map("user_id")
-  name            String
-  birthDate       DateTime  @map("birth_date")
-  birthTime       String    @map("birth_time") // HH:mm format
-  isLunar         Boolean   @default(false) @map("is_lunar")
-  gender          String    // 'M' or 'F'
-  
-  // Saju pillars (천간지지)
-  yearGan         String    @map("year_gan")
-  yearJi          String    @map("year_ji")
-  monthGan        String    @map("month_gan")
-  monthJi         String    @map("month_ji")
-  dayGan          String    @map("day_gan")
-  dayJi           String    @map("day_ji")
-  hourGan         String    @map("hour_gan")
-  hourJi          String    @map("hour_ji")
-  
-  // Elements analysis (오행)
-  woodCount       Int       @map("wood_count")
-  fireCount       Int       @map("fire_count")
-  earthCount      Int       @map("earth_count")
-  metalCount      Int       @map("metal_count")
-  waterCount      Int       @map("water_count")
-  
-  // Yongsin (용신)
-  primaryYongsin  String?   @map("primary_yongsin")
-  secondaryYongsin String?  @map("secondary_yongsin")
-  
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  
-  // Relations
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  namingResults   NamingResult[]
-  
-  @@map("saju_data")
+  id               String         @id @default(uuid())
+  userId           String         @map("user_id")
+  name             String
+  birthDate        DateTime       @map("birth_date")
+  birthTime        String         @map("birth_time")
+  isLunar          Boolean        @default(false) @map("is_lunar")
+  gender           String
+  yearGan          String         @map("year_gan")
+  yearJi           String         @map("year_ji")
+  monthGan         String         @map("month_gan")
+  monthJi          String         @map("month_ji")
+  dayGan           String         @map("day_gan")
+  dayJi            String         @map("day_ji")
+  hourGan          String         @map("hour_gan")
+  hourJi           String         @map("hour_ji")
+  woodCount        Int            @map("wood_count")
+  fireCount        Int            @map("fire_count")
+  earthCount       Int            @map("earth_count")
+  metalCount       Int            @map("metal_count")
+  waterCount       Int            @map("water_count")
+  primaryYongsin   String?        @map("primary_yongsin")
+  secondaryYongsin String?        @map("secondary_yongsin")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  namingResults    NamingResult[]
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
+  @@map("saju_data")
 }
 
-// NamingResult model - stores generated names
 model NamingResult {
-  id              String    @id @default(uuid())
-  userId          String    @map("user_id")
-  sajuDataId      String    @map("saju_data_id")
-  
-  // Name components
-  lastName        String    @map("last_name")
-  firstName       String    @map("first_name")
-  fullName        String    @map("full_name")
-  
-  // Hanja information
-  lastNameHanja   String?   @map("last_name_hanja")
-  firstNameHanja  String?   @map("first_name_hanja")
-  
-  // Name analysis
-  totalStrokes    Int       @map("total_strokes")
-  balanceScore    Float     @map("balance_score") // 오행 균형 점수
-  soundScore      Float     @map("sound_score")   // 음향 점수
-  meaningScore    Float     @map("meaning_score") // 의미 점수
-  overallScore    Float     @map("overall_score") // 종합 점수
-  
-  // AI generation metadata
-  generationMethod String   @map("generation_method") // 'manual', 'ai_basic', 'ai_advanced'
-  aiModel         String?   @map("ai_model")
-  aiPrompt        String?   @map("ai_prompt")
-  
-  // User preferences
-  preferredValues Json?     @map("preferred_values") // 사용자가 선택한 가치관
-  notes           String?
-  
-  createdAt       DateTime  @default(now()) @map("created_at")
-  
-  // Relations
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sajuData        SajuData  @relation(fields: [sajuDataId], references: [id], onDelete: Cascade)
-  favorites       Favorite[]
-  
-  @@map("naming_results")
+  id               String     @id @default(uuid())
+  userId           String     @map("user_id")
+  sajuDataId       String     @map("saju_data_id")
+  lastName         String     @map("last_name")
+  firstName        String     @map("first_name")
+  fullName         String     @map("full_name")
+  lastNameHanja    String?    @map("last_name_hanja")
+  firstNameHanja   String?    @map("first_name_hanja")
+  totalStrokes     Int        @map("total_strokes")
+  balanceScore     Float      @map("balance_score")
+  soundScore       Float      @map("sound_score")
+  meaningScore     Float      @map("meaning_score")
+  overallScore     Float      @map("overall_score")
+  generationMethod String     @map("generation_method")
+  aiModel          String?    @map("ai_model")
+  aiPrompt         String?    @map("ai_prompt")
+  preferredValues  Json?      @map("preferred_values")
+  notes            String?
+  createdAt        DateTime   @default(now()) @map("created_at")
+  favorites        Favorite[]
+  sajuData         SajuData   @relation(fields: [sajuDataId], references: [id], onDelete: Cascade)
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([sajuDataId])
+  @@map("naming_results")
 }
 
-// Favorite model - stores user's favorite names
 model Favorite {
-  id              String    @id @default(uuid())
-  userId          String    @map("user_id")
-  namingResultId  String    @map("naming_result_id")
-  rating          Int?      // 1-5 star rating
-  comment         String?
-  createdAt       DateTime  @default(now()) @map("created_at")
-  
-  // Relations
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  namingResult    NamingResult @relation(fields: [namingResultId], references: [id], onDelete: Cascade)
-  
+  id             String       @id @default(uuid())
+  userId         String       @map("user_id")
+  namingResultId String       @map("naming_result_id")
+  rating         Int?
+  comment        String?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  namingResult   NamingResult @relation(fields: [namingResultId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, namingResultId])
   @@map("favorites")
 }
 
-// HanjaDict model - stores hanja character database
 model HanjaDict {
-  id              String    @id @default(uuid())
-  character       String    @unique
-  meaning         String
-  koreanReading   String    @map("korean_reading")
-  chineseReading  String?   @map("chinese_reading")
-  strokes         Int
-  radical         String?
-  
-  // Elements
-  element         String    // 목, 화, 토, 금, 수
-  
-  // Usage statistics
-  usageFrequency  Int       @default(0) @map("usage_frequency")
-  nameFrequency   Int       @default(0) @map("name_frequency")
-  
-  // Categories (stored as comma-separated string for SQLite)
-  category        String    // 'positive,nature,virtue' etc.
-  gender          String?   // 'M', 'F', 'N' (neutral)
-  
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  
-  @@map("hanja_dict")
+  id             String       @id @default(uuid())
+  character      String       @unique
+  meaning        String?
+  strokes        Int?
+  element        Element?
+  yinYang        YinYang?     @map("yin_yang")
+  review         ReviewStatus @default(ok)
+  evidenceJSON   String?      @map("evidence_json")
+  decidedBy      String?      @map("decided_by")
+  ruleset        String?
+  codepoint      Int?
+  koreanReading  String?      @map("korean_reading")
+  chineseReading String?      @map("chinese_reading")
+  radical        String?
+  usageFrequency Int?         @default(0) @map("usage_frequency")
+  nameFrequency  Int?         @default(0) @map("name_frequency")
+  category       String?
+  gender         String?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
   @@index([element])
   @@index([strokes])
+  @@index([usageFrequency], map: "usage_frequency_idx")
+  @@map("hanja_dict")
 }
 
-// UserSession model - for session management
+model HanjaReading {
+  id        Int      @id @default(autoincrement())
+  character String
+  reading   String
+  soundElem Element? @map("sound_elem")
+  isPrimary Boolean  @default(false) @map("is_primary")
+
+  @@unique([character, reading])
+  @@index([reading])
+  @@map("hanja_reading")
+}
+
 model UserSession {
-  id              String    @id @default(uuid())
-  userId          String    @map("user_id")
-  token           String    @unique
-  expiresAt       DateTime  @map("expires_at")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  
-  // Relations
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@map("user_sessions")
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([expiresAt])
+  @@map("user_sessions")
+}
+
+enum Element {
+  METAL @map("金")
+  WOOD  @map("木")
+  WATER @map("水")
+  FIRE  @map("火")
+  EARTH @map("土")
+}
+
+enum YinYang {
+  YIN  @map("음")
+  YANG @map("양")
+}
+
+enum ReviewStatus {
+  ok
+  needs_review
 }

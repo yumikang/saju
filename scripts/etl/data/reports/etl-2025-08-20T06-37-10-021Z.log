@@ -1,0 +1,12 @@
+{"timestamp":"2025-08-20T06:37:10.021Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/normalized","outputDir":"scripts/etl/data/merged","logLevel":"info","batchSize":100,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-20T06:37:10.021Z","level":"INFO","step":"30_dedup","message":"=== Starting ETL Step: 30_dedup ===","meta":{"step":"30_dedup","startTime":"2025-08-20T06:37:10.021Z"}}
+{"timestamp":"2025-08-20T06:37:10.021Z","level":"INFO","step":"30_dedup","message":"Loading normalized data from: scripts/etl/data/normalized/normalized_data.json"}
+{"timestamp":"2025-08-20T06:37:10.022Z","level":"INFO","step":"30_dedup","message":"Loaded 187 normalized records"}
+{"timestamp":"2025-08-20T06:37:10.022Z","level":"INFO","step":"30_dedup","message":"Grouping duplicate records by character"}
+{"timestamp":"2025-08-20T06:37:10.022Z","level":"INFO","step":"30_dedup","message":"Found 185 unique characters, 2 duplicate groups"}
+{"timestamp":"2025-08-20T06:37:10.022Z","level":"INFO","step":"30_dedup","message":"Processing duplicate groups in batches of 100"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","step":"30_dedup","message":"=== Completed ETL Step: 30_dedup ===","meta":{"step":"30_dedup","duration":3,"result":{"success":true,"processedCount":185,"successCount":185,"errorCount":0,"processingTimeMs":3}}}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"Deduplication completed. Output saved to: scripts/etl/data/merged/merged_data.json"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"Removed 2 duplicates from 187 records"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"Final count: 185 unique records"}
+{"timestamp":"2025-08-20T06:37:10.024Z","level":"INFO","message":"Merge strategies:","meta":{"no_merge":183,"quality_based_merge":2}}
