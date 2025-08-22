@@ -1,0 +1,14 @@
+{"timestamp":"2025-08-21T08:30:29.215Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/resolved","outputDir":"scripts/etl/data/validated","logLevel":"info","batchSize":100,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-21T08:30:29.230Z","level":"INFO","step":"50_validate","message":"=== Starting ETL Step: 50_validate ===","meta":{"step":"50_validate","startTime":"2025-08-21T08:30:29.230Z"}}
+{"timestamp":"2025-08-21T08:30:29.230Z","level":"INFO","step":"50_validate","message":"Loading resolved data from: scripts/etl/data/resolved/resolved_data.json"}
+{"timestamp":"2025-08-21T08:30:29.257Z","level":"INFO","step":"50_validate","message":"Loaded 9461 resolved records"}
+{"timestamp":"2025-08-21T08:30:29.257Z","level":"INFO","step":"50_validate","message":"Processing validation in batches of 100"}
+{"timestamp":"2025-08-21T08:30:29.287Z","level":"INFO","step":"50_validate","message":"Checking for duplicate characters"}
+{"timestamp":"2025-08-21T08:30:29.509Z","level":"INFO","step":"50_validate","message":"=== Completed ETL Step: 50_validate ===","meta":{"step":"50_validate","duration":279,"result":{"success":true,"processedCount":9461,"successCount":9461,"errorCount":0,"processingTimeMs":279}}}
+{"timestamp":"2025-08-21T08:30:29.510Z","level":"INFO","message":"Validation completed. Output saved to: scripts/etl/data/validated/validated_data.json"}
+{"timestamp":"2025-08-21T08:30:29.510Z","level":"INFO","message":"Validated 9461 records"}
+{"timestamp":"2025-08-21T08:30:29.510Z","level":"INFO","message":"Validation summary: 3 of 12 validation rules failed"}
+{"timestamp":"2025-08-21T08:30:29.510Z","level":"WARN","message":"Failed validation rules:"}
+{"timestamp":"2025-08-21T08:30:29.510Z","level":"WARN","message":"  - required_character: 456/9461 failed"}
+{"timestamp":"2025-08-21T08:30:29.510Z","level":"WARN","message":"  - valid_cjk_character: 674/9461 failed"}
+{"timestamp":"2025-08-21T08:30:29.510Z","level":"WARN","message":"  - required_meaning_or_reading: 1/9461 failed"}

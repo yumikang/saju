@@ -7,7 +7,7 @@ export const expandedHanjaDatabase: Record<string, EnhancedHanjaChar[]> = {
   "김": [
     {
       id: "kim_01", char: "金", meaning: "쇠, 금", reading: "김", strokes: 8,
-      primary_element: "金", yin_yang: "陰", fortune: "길",
+      primary_element: "金", yin_yang: "음", fortune: "길",
       naming_tags: ["재물운", "권위", "성공"], gender_preference: "중성",
       popularity_score: 95, category: "성씨", is_common: true, unicode: "U+91D1"
     }
@@ -16,13 +16,13 @@ export const expandedHanjaDatabase: Record<string, EnhancedHanjaChar[]> = {
   "이": [
     {
       id: "lee_01", char: "李", meaning: "오얏나무", reading: "이", strokes: 7,
-      primary_element: "木", yin_yang: "陽", fortune: "길",
+      primary_element: "木", yin_yang: "양", fortune: "길",
       naming_tags: ["번영", "성장", "자연"], gender_preference: "중성",
       popularity_score: 93, category: "성씨", is_common: true, unicode: "U+674E"
     },
     {
       id: "lee_02", char: "伊", meaning: "그, 이", reading: "이", strokes: 6,
-      primary_element: "토", yin_yang: "음", fortune: "중길",
+      primary_element: "土", yin_yang: "음", fortune: "중길",
       naming_tags: ["안정", "조화"], gender_preference: "여성",
       popularity_score: 60, category: "성씨", is_common: false, unicode: "U+4F0A"
     }
@@ -31,7 +31,7 @@ export const expandedHanjaDatabase: Record<string, EnhancedHanjaChar[]> = {
   "박": [
     {
       id: "park_01", char: "朴", meaning: "박달나무", reading: "박", strokes: 6,
-      primary_element: "木", yin_yang: "陽", fortune: "길",
+      primary_element: "木", yin_yang: "양", fortune: "길",
       naming_tags: ["소박", "진실", "자연"], gender_preference: "중성",
       popularity_score: 90, category: "성씨", is_common: true, unicode: "U+6734"
     }
@@ -41,19 +41,19 @@ export const expandedHanjaDatabase: Record<string, EnhancedHanjaChar[]> = {
   "민": [
     {
       id: "min_01", char: "民", meaning: "백성", reading: "민", strokes: 5,
-      primary_element: "水", yin_yang: "陽", fortune: "길",
+      primary_element: "水", yin_yang: "양", fortune: "길",
       naming_tags: ["리더십", "소통", "인덕"], gender_preference: "남성",
       popularity_score: 88, category: "이름", is_common: true, unicode: "U+6C11"
     },
     {
       id: "min_02", char: "敏", meaning: "민첩할", reading: "민", strokes: 11,
-      primary_element: "水", secondary_element: "金", yin_yang: "陽", fortune: "대길",
+      primary_element: "水", secondary_element: "金", yin_yang: "양", fortune: "대길",
       naming_tags: ["지혜", "빠른판단", "능력"], gender_preference: "중성",
       popularity_score: 92, category: "이름", is_common: true, unicode: "U+654F"
     },
     {
       id: "min_03", char: "旻", meaning: "가을하늘", reading: "민", strokes: 8,
-      primary_element: "火", yin_yang: "陽", fortune: "길",
+      primary_element: "火", yin_yang: "양", fortune: "길",
       naming_tags: ["광활함", "높은뜻", "자연"], gender_preference: "남성",
       popularity_score: 75, category: "이름", is_common: false, unicode: "U+65FB"
     }
@@ -62,19 +62,19 @@ export const expandedHanjaDatabase: Record<string, EnhancedHanjaChar[]> = {
   "준": [
     {
       id: "jun_01", char: "俊", meaning: "준수할", reading: "준", strokes: 9,
-      primary_element: "火", yin_yang: "陽", fortune: "대길",
+      primary_element: "火", yin_yang: "양", fortune: "대길",
       naming_tags: ["외모", "재능", "뛰어남"], gender_preference: "남성",
       popularity_score: 94, category: "이름", is_common: true, unicode: "U+4FCA"
     },
     {
       id: "jun_02", char: "峻", meaning: "높고 험할", reading: "준", strokes: 10,
-      primary_element: "土", yin_yang: "陽", fortune: "길",
+      primary_element: "土", yin_yang: "양", fortune: "길",
       naming_tags: ["의지", "굳건함", "산"], gender_preference: "남성",
       popularity_score: 78, category: "이름", is_common: true, unicode: "U+5CFB"
     },
     {
       id: "jun_03", char: "駿", meaning: "준마", reading: "준", strokes: 17,
-      primary_element: "金", yin_yang: "陽", fortune: "대길",
+      primary_element: "金", yin_yang: "양", fortune: "대길",
       naming_tags: ["속도", "명마", "뛰어남"], gender_preference: "남성",
       popularity_score: 85, category: "이름", is_common: false, unicode: "U+99FF"
     }
@@ -83,7 +83,7 @@ export const expandedHanjaDatabase: Record<string, EnhancedHanjaChar[]> = {
   "서": [
     {
       id: "seo_01", char: "瑞", meaning: "상서로울", reading: "서", strokes: 13,
-      primary_element: "金", yin_yang: "陽", fortune: "대길",
+      primary_element: "金", yin_yang: "양", fortune: "대길",
       naming_tags: ["길상", "행복", "복"], gender_preference: "중성",
       popularity_score: 90, category: "이름", is_common: true, unicode: "U+745E"
     },
@@ -156,7 +156,7 @@ export const expandedHanjaDatabase: Record<string, EnhancedHanjaChar[]> = {
   "은": [
     {
       id: "eun_01", char: "恩", meaning: "은혜", reading: "은", strokes: 10,
-      primary_element: "토", yin_yang: "음", fortune: "대길",
+      primary_element: "土", yin_yang: "음", fortune: "대길",
       naming_tags: ["감사", "사랑", "배려"], gender_preference: "여성",
       popularity_score: 88, category: "이름", is_common: true, unicode: "U+6069"
     },
@@ -262,7 +262,7 @@ export const expandedHanjaDatabase: Record<string, EnhancedHanjaChar[]> = {
     },
     {
       id: "seong_02", char: "聖", meaning: "성인", reading: "성", strokes: 13,
-      primary_element: "토", yin_yang: "양", fortune: "대길",
+      primary_element: "土", yin_yang: "양", fortune: "대길",
       naming_tags: ["고귀함", "성인", "완전함"], gender_preference: "남성",
       popularity_score: 85, category: "이름", is_common: true, unicode: "U+8056"
     }
@@ -277,7 +277,7 @@ export const expandedHanjaDatabase: Record<string, EnhancedHanjaChar[]> = {
     },
     {
       id: "seung_02", char: "承", meaning: "받들", reading: "승", strokes: 8,
-      primary_element: "금", yin_yang: "양", fortune: "길",
+      primary_element: "金", yin_yang: "양", fortune: "길",
       naming_tags: ["계승", "이어받음", "책임"], gender_preference: "남성",
       popularity_score: 80, category: "이름", is_common: true, unicode: "U+627F"
     }

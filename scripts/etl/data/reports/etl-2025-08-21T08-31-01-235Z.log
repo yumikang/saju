@@ -1,0 +1,15 @@
+{"timestamp":"2025-08-21T08:31:01.237Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data","outputDir":"scripts/etl/data/reports","logLevel":"info","batchSize":1000,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-08-21T08:31:01.251Z","level":"INFO","step":"70_report","message":"=== Starting ETL Step: 70_report ===","meta":{"step":"70_report","startTime":"2025-08-21T08:31:01.251Z"}}
+{"timestamp":"2025-08-21T08:31:01.251Z","level":"INFO","step":"70_report","message":"Collecting ETL pipeline results..."}
+{"timestamp":"2025-08-21T08:31:01.544Z","level":"INFO","step":"70_report","message":"Analyzing data quality..."}
+{"timestamp":"2025-08-21T08:31:01.545Z","level":"INFO","step":"70_report","message":"Analyzing data quality across pipeline stages"}
+{"timestamp":"2025-08-21T08:31:01.545Z","level":"INFO","step":"70_report","message":"Analyzing performance..."}
+{"timestamp":"2025-08-21T08:31:01.941Z","level":"INFO","step":"70_report","message":"Generating HTML report..."}
+{"timestamp":"2025-08-21T08:31:02.406Z","level":"INFO","step":"70_report","message":"=== Completed ETL Step: 70_report ===","meta":{"step":"70_report","duration":1155,"result":{"success":true,"processedCount":6,"successCount":6,"errorCount":0,"processingTimeMs":1155}}}
+{"timestamp":"2025-08-21T08:31:02.406Z","level":"INFO","message":"Report generation completed."}
+{"timestamp":"2025-08-21T08:31:02.408Z","level":"INFO","message":"JSON report: scripts/etl/data/reports/etl_pipeline_report.json"}
+{"timestamp":"2025-08-21T08:31:02.408Z","level":"INFO","message":"HTML report: scripts/etl/data/reports/etl_pipeline_report.html"}
+{"timestamp":"2025-08-21T08:31:02.408Z","level":"INFO","message":"Summary report: scripts/etl/data/reports/etl_pipeline_summary.md"}
+{"timestamp":"2025-08-21T08:31:02.408Z","level":"INFO","message":"Pipeline success: YES"}
+{"timestamp":"2025-08-21T08:31:02.408Z","level":"INFO","message":"Total duration: 0ms"}
+{"timestamp":"2025-08-21T08:31:02.408Z","level":"INFO","message":"Final records: 8787/9461"}

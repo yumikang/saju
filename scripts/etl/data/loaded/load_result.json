@@ -1,15 +1,9 @@
 {
-  "recordsProcessed": 185,
-  "recordsLoaded": 185,
-  "recordsSkipped": 0,
+  "recordsProcessed": 9461,
+  "recordsLoaded": 8787,
+  "recordsSkipped": 674,
   "recordsFailed": 0,
   "databaseStatsBefore": {
-    "totalRecords": 0,
-    "statusDistribution": {},
-    "elementDistribution": {},
-    "yinYangDistribution": {}
-  },
-  "databaseStatsAfter": {
     "totalRecords": 185,
     "statusDistribution": {
       "ok": 185
@@ -23,9 +17,23 @@
     },
     "yinYangDistribution": {}
   },
+  "databaseStatsAfter": {
+    "totalRecords": 8787,
+    "statusDistribution": {
+      "ok": 8787
+    },
+    "elementDistribution": {
+      "EARTH": 27,
+      "WOOD": 43,
+      "WATER": 41,
+      "FIRE": 36,
+      "METAL": 38
+    },
+    "yinYangDistribution": {}
+  },
   "loadMetrics": {
-    "batchCount": 4,
-    "averageBatchSize": 46.25,
-    "successRate": 1
+    "batchCount": 190,
+    "averageBatchSize": 49.794736842105266,
+    "successRate": 0.9287601733431984
   }
 }

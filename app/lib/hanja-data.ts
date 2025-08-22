@@ -50,10 +50,6 @@ export const hanjaDatabase: Record<string, HanjaChar[]> = {
     { char: "曺", meaning: "무리", reading: "조", strokes: 11, element: "금" }
   ],
   
-  // 윤(尹) 성씨
-  "윤": [
-    { char: "尹", meaning: "다스릴", reading: "윤", strokes: 4, element: "토" }
-  ],
   
   // 장(張) 성씨
   "장": [
@@ -142,10 +138,6 @@ export const hanjaDatabase: Record<string, HanjaChar[]> = {
     { char: "白", meaning: "흰", reading: "배", strokes: 5, element: "금" }
   ],
   
-  // 조(曺) 성씨
-  "조": [
-    { char: "曺", meaning: "무리", reading: "조", strokes: 11, element: "금" }
-  ],
   
   // 이름용 한자들
   "민": [
@@ -219,9 +211,11 @@ export const hanjaDatabase: Record<string, HanjaChar[]> = {
   ],
   
   "윤": [
+    { char: "尹", meaning: "다스릴", reading: "윤", strokes: 4, element: "토" },
     { char: "允", meaning: "허락할", reading: "윤", strokes: 4, element: "토" },
     { char: "潤", meaning: "윤택할", reading: "윤", strokes: 15, element: "수" },
-    { char: "玧", meaning: "옥", reading: "윤", strokes: 7, element: "금" }
+    { char: "玧", meaning: "옥", reading: "윤", strokes: 7, element: "금" },
+    { char: "胤", meaning: "후사", reading: "윤", strokes: 9, element: "목" }
   ],
   
   "태": [
@@ -290,11 +284,6 @@ export const hanjaDatabase: Record<string, HanjaChar[]> = {
     { char: "桃", meaning: "복숭아", reading: "도", strokes: 10, element: "목" }
   ],
   
-  "윤": [
-    { char: "潤", meaning: "윤택할", reading: "윤", strokes: 15, element: "수" },
-    { char: "允", meaning: "허락할", reading: "윤", strokes: 4, element: "토" },
-    { char: "胤", meaning: "후사", reading: "윤", strokes: 9, element: "목" }
-  ],
   
   "석": [
     { char: "石", meaning: "돌", reading: "석", strokes: 5, element: "금" },
@@ -374,11 +363,6 @@ export const hanjaDatabase: Record<string, HanjaChar[]> = {
     { char: "粲", meaning: "빛날", reading: "찬", strokes: 13, element: "화" }
   ],
   
-  "혁": [
-    { char: "革", meaning: "가죽", reading: "혁", strokes: 9, element: "목" },
-    { char: "赫", meaning: "빛날", reading: "혁", strokes: 14, element: "목" }
-  ],
-  
   "림": [
     { char: "林", meaning: "수풀", reading: "림", strokes: 8, element: "목" },
     { char: "臨", meaning: "임할", reading: "림", strokes: 17, element: "화" }
@@ -407,8 +391,7 @@ export const hanjaDatabase: Record<string, HanjaChar[]> = {
   ],
   
   "솔": [
-    { char: "率", meaning: "거느릴", reading: "솔", strokes: 11, element: "금" },
-    { char: "率", meaning: "솔직할", reading: "솔", strokes: 11, element: "금" }
+    { char: "率", meaning: "거느릴", reading: "솔", strokes: 11, element: "금" }
   ],
   
   "별": [
@@ -419,11 +402,6 @@ export const hanjaDatabase: Record<string, HanjaChar[]> = {
   "결": [
     { char: "結", meaning: "맺을", reading: "결", strokes: 12, element: "목" },
     { char: "潔", meaning: "깨끗할", reading: "결", strokes: 15, element: "수" }
-  ],
-  
-  "슬": [
-    { char: "瑟", meaning: "거문고", reading: "슬", strokes: 13, element: "금" },
-    { char: "瑬", meaning: "옥", reading: "슬", strokes: 14, element: "금" }
   ],
   
   "담": [
@@ -438,10 +416,6 @@ export const hanjaDatabase: Record<string, HanjaChar[]> = {
   
   "들": [
     { char: "野", meaning: "들", reading: "들", strokes: 11, element: "목" }
-  ],
-  
-  "별": [
-    { char: "星", meaning: "별", reading: "별", strokes: 9, element: "화" }
   ],
   
   "봄": [

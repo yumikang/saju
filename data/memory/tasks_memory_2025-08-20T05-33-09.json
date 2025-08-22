@@ -1,0 +1,96 @@
+{
+  "tasks": [
+    {
+      "id": "f60ceece-fbd3-4021-9327-5520886ef119",
+      "name": "Socket.IO 서버 설정 및 Express 통합",
+      "description": "별도 포트(3001)에서 실행될 Socket.IO 서버를 설정하고 Express와 통합합니다. CORS 설정으로 Remix 서버(3000)와 통신을 가능하게 하며, Redis를 통한 세션 공유를 구성합니다.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-13T06:04:08.805Z",
+      "updatedAt": "2025-08-13T06:10:01.453Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "REFERENCE",
+          "description": "Socket.IO 패키지 추가"
+        },
+        {
+          "path": "app/socket/server.ts",
+          "type": "CREATE",
+          "description": "Socket.IO 서버 메인 파일"
+        },
+        {
+          "path": ".env",
+          "type": "TO_MODIFY",
+          "description": "SOCKET_PORT=3001 추가"
+        }
+      ],
+      "implementationGuide": "1. app/socket/server.ts 파일 생성\n2. Express 서버 초기화 및 Socket.IO 통합\n3. CORS 설정: origin: http://localhost:3000\n4. Redis 어댑터 설정 (이미 설치된 redis 패키지 활용)\n5. 네임스페이스 구성: /naming, /queue\n6. 미들웨어 설정: 인증, rate limiting\n7. pseudocode:\n   - createServer(express)\n   - new Server(httpServer, corsOptions)\n   - io.adapter(createAdapter(pubClient, subClient))\n   - io.on('connection', handleConnection)",
+      "verificationCriteria": "Socket.IO 서버가 3001 포트에서 실행되고, Remix 서버와 CORS 통신이 가능하며, Redis 연결이 정상 작동해야 함",
+      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다.",
+      "summary": "Socket.IO 서버를 포트 3001에서 성공적으로 설정하고 실행했습니다. Express와 통합되었으며, CORS 설정으로 Remix 서버(3000)와 통신 가능하도록 구성했습니다. 메인, /naming, /queue 네임스페이스가 구성되었고, 인증 및 rate limiting 미들웨어가 구현되었습니다.",
+      "completedAt": "2025-08-13T06:10:01.450Z"
+    },
+    {
+      "id": "b9b0ebec-d052-48c6-a90f-59eddd7bd485",
+      "name": "클라이언트 Socket 연결 훅 구현",
+      "description": "React 컴포넌트에서 사용할 useSocket 커스텀 훅을 구현합니다. 자동 재연결, 오프라인 처리, 메모리 관리 기능을 포함합니다.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-13T06:04:08.805Z",
+      "updatedAt": "2025-08-13T06:17:56.835Z",
+      "relatedFiles": [
+        {
+          "path": "app/hooks/useSocket.ts",
+          "type": "CREATE",
+          "description": "Socket 연결 훅"
+        },
+        {
+          "path": "app/hooks/useMemoryCleanup.ts",
+          "type": "REFERENCE",
+          "description": "메모리 관리 활용"
+        },
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "socket.io-client 추가"
+        }
+      ],
+      "implementationGuide": "1. app/hooks/useSocket.ts 생성\n2. Socket.IO 클라이언트 초기화\n3. 연결 상태 관리 (connected, connecting, disconnected)\n4. 자동 재연결 로직 (exponential backoff)\n5. 이벤트 리스너 관리 및 cleanup\n6. 기존 useMemoryCleanup.ts 활용\n7. pseudocode:\n   - const socket = io(SOCKET_URL, options)\n   - useEffect(() => { connect; return disconnect })\n   - const emit = useCallback((event, data) => {})\n   - return { socket, connected, emit, on, off }",
+      "verificationCriteria": "Socket 연결이 안정적이고, 네트워크 변경 시 자동 재연결되며, 메모리 누수가 없어야 함",
+      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다.",
+      "summary": "Successfully implemented comprehensive useSocket React hooks with auto-reconnection, offline handling, memory management, and TypeScript type safety for Socket.IO client connections",
+      "completedAt": "2025-08-13T06:17:56.835Z"
+    },
+    {
+      "id": "8198d1a3-d4e0-4ec9-8903-d216f7b130b8",
+      "name": "Zustand 스토어와 실시간 상태 동기화",
+      "description": "기존 Zustand 스토어를 확장하여 Socket.IO 이벤트와 실시간으로 동기화합니다. 작명 진행상황과 대기열 상태를 전역 상태로 관리합니다.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "b9b0ebec-d052-48c6-a90f-59eddd7bd485"
+        }
+      ],
+      "createdAt": "2025-08-13T06:04:08.805Z",
+      "updatedAt": "2025-08-14T01:35:25.357Z",
+      "relatedFiles": [
+        {
+          "path": "app/store/realtime.store.ts",
+          "type": "CREATE",
+          "description": "실시간 상태 스토어"
+        },
+        {
+          "path": "app/hooks/useSocket.ts",
+          "type": "REFERENCE",
+          "description": "Socket 훅 연동"
+        }
+      ],
+      "implementationGuide": "1. app/store/realtime.store.ts 생성\n2. 실시간 상태 인터페이스 정의\n3. Socket 이벤트와 store 액션 매핑\n4. 낙관적 업데이트 구현\n5. pseudocode:\n   - interface RealtimeState { progress, queue, errors }\n   - const useRealtimeStore = create((set) => {})\n   - socket.on('naming:progress', (data) => set({ progress: data }))\n   - middleware for optimistic updates\n6. DevTools 연동",
+      "verificationCriteria": "Socket 이벤트가 Zustand 스토어에 실시간 반영되고, 컴포넌트가 자동 리렌더링되어야 함",
+      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다.",
+      "summary": "Zustand 스토어와 Socket.IO 실시간 상태 동기화를 성공적으로 구현했습니다. DevTools 연동, 낙관적 업데이트, 메트릭 추적 기능을 포함한 완벽한 실시간 상태 관리 시스템을 구축했습니다.",
+      "completedAt": "2025-08-14T01:35:25.356Z"
+    }
+  ]
+}

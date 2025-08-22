@@ -1,4 +1,9 @@
 // 강화된 한자 데이터베이스 구조
+
+// 타입 정의 - 회귀 방지용
+export type YinYang = '음' | '양';
+export type Element = '水' | '木' | '火' | '土' | '金';
+
 export interface EnhancedHanjaChar {
   id: string; // 고유 식별자
   char: string; // 한자
@@ -7,9 +12,9 @@ export interface EnhancedHanjaChar {
   strokes: number; // 획수
   
   // 오행/음양 속성
-  primary_element: '水' | '木' | '火' | '土' | '金'; // 주 오행
-  secondary_element?: '水' | '木' | '火' | '土' | '金'; // 부 오행
-  yin_yang: '陰' | '陽'; // 음양
+  primary_element: Element; // 주 오행
+  secondary_element?: Element; // 부 오행
+  yin_yang: YinYang; // 음양
   
   // 작명 속성
   fortune: '대길' | '길' | '중길' | '평' | '흉'; // 길흉
@@ -25,6 +30,221 @@ export interface EnhancedHanjaChar {
   category: '성씨' | '이름' | '공통'; // 카테고리
   is_common: boolean; // 흔한 한자 여부
   unicode: string; // 유니코드
+}
+
+// 데이터 검증 결과 타입
+export interface ValidationResult<T> {
+  success: boolean;
+  value?: T;
+  error?: string;
+  originalValue?: any;
+}
+
+export interface BatchValidationReport {
+  totalProcessed: number;
+  successCount: number;
+  errorCount: number;
+  errors: Array<{
+    field: string;
+    originalValue: any;
+    error: string;
+    recordId?: string;
+  }>;
+}
+
+// 변환 유틸리티 - 회귀 방지용 (strict 모드)
+export function normalizeYinYang(value: string | null | undefined): YinYang {
+  const result = safeNormalizeYinYang(value);
+  if (!result.success) {
+    throw new Error(result.error);
+  }
+  return result.value!;
+}
+
+export function normalizeElement(value: string | null | undefined): Element {
+  const result = safeNormalizeElement(value);
+  if (!result.success) {
+    throw new Error(result.error);
+  }
+  return result.value!;
+}
+
+// 안전한 변환 유틸리티 - "리포트 후 스킵" 모드용
+export function safeNormalizeYinYang(value: string | null | undefined): ValidationResult<YinYang> {
+  if (!value) {
+    return {
+      success: false,
+      error: 'yin_yang value is null or undefined',
+      originalValue: value
+    };
+  }
+
+  const normalized = value.toString().trim().toLowerCase();
+  
+  switch (normalized) {
+    case '陰':
+    case '음':
+    case 'yin':
+    case '阴': // 간체자
+      return { success: true, value: '음' };
+    case '陽':
+    case '양':
+    case 'yang':
+    case '阳': // 간체자
+      return { success: true, value: '양' };
+    default:
+      return {
+        success: false,
+        error: `Invalid yin_yang value: ${value}. Expected: 音/陰/음/yin or 陽/양/yang`,
+        originalValue: value
+      };
+  }
+}
+
+export function safeNormalizeElement(value: string | null | undefined): ValidationResult<Element> {
+  if (!value) {
+    return {
+      success: false,
+      error: 'element value is null or undefined',
+      originalValue: value
+    };
+  }
+
+  const normalized = value.toString().trim().toLowerCase();
+  
+  // 한글 매핑
+  const koreanMap: Record<string, Element> = {
+    '수': '水', '물': '水', 'water': '水',
+    '목': '木', '나무': '木', 'wood': '木',
+    '화': '火', '불': '火', 'fire': '火',
+    '토': '土', '흙': '土', 'earth': '土',
+    '금': '金', '쇠': '金', 'metal': '金'
+  };
+
+  // CJK 한자 매핑 (정체자/간체자)
+  const cjkMap: Record<string, Element> = {
+    '水': '水', // 정체자/간체자 동일
+    '木': '木',
+    '火': '火', 
+    '土': '土',
+    '金': '金'
+  };
+
+  // 1. CJK 한자 체크 (우선순위)
+  if (cjkMap[normalized]) {
+    return { success: true, value: cjkMap[normalized] };
+  }
+
+  // 2. 한글/영문 체크
+  if (koreanMap[normalized]) {
+    return { success: true, value: koreanMap[normalized] };
+  }
+
+  return {
+    success: false,
+    error: `Invalid element value: ${value}. Expected: 水/木/火/土/金 or 수/목/화/토/금 or water/wood/fire/earth/metal`,
+    originalValue: value
+  };
+}
+
+// 배치 처리용 검증 헬퍼
+export function validateHanjaData(
+  data: any[], 
+  options: { continueOnError?: boolean; reportMode?: boolean } = {}
+): BatchValidationReport {
+  const report: BatchValidationReport = {
+    totalProcessed: 0,
+    successCount: 0,
+    errorCount: 0,
+    errors: []
+  };
+
+  for (const item of data) {
+    report.totalProcessed++;
+    let hasError = false;
+
+    // yin_yang 검증
+    if (item.yin_yang !== undefined) {
+      const yinYangResult = safeNormalizeYinYang(item.yin_yang);
+      if (!yinYangResult.success) {
+        hasError = true;
+        report.errors.push({
+          field: 'yin_yang',
+          originalValue: item.yin_yang,
+          error: yinYangResult.error!,
+          recordId: item.id || item.char || 'unknown'
+        });
+      }
+    }
+
+    // primary_element 검증
+    if (item.primary_element !== undefined) {
+      const elementResult = safeNormalizeElement(item.primary_element);
+      if (!elementResult.success) {
+        hasError = true;
+        report.errors.push({
+          field: 'primary_element',
+          originalValue: item.primary_element,
+          error: elementResult.error!,
+          recordId: item.id || item.char || 'unknown'
+        });
+      }
+    }
+
+    // secondary_element 검증
+    if (item.secondary_element !== undefined) {
+      const elementResult = safeNormalizeElement(item.secondary_element);
+      if (!elementResult.success) {
+        hasError = true;
+        report.errors.push({
+          field: 'secondary_element',
+          originalValue: item.secondary_element,
+          error: elementResult.error!,
+          recordId: item.id || item.char || 'unknown'
+        });
+      }
+    }
+
+    if (hasError) {
+      report.errorCount++;
+      if (!options.continueOnError && !options.reportMode) {
+        break; // 첫 에러에서 중단
+      }
+    } else {
+      report.successCount++;
+    }
+  }
+
+  return report;
+}
+
+// 리포트 출력 헬퍼
+export function printValidationReport(report: BatchValidationReport): void {
+  console.log(`\n=== 한자 데이터 검증 리포트 ===`);
+  console.log(`총 처리: ${report.totalProcessed}건`);
+  console.log(`성공: ${report.successCount}건`);
+  console.log(`실패: ${report.errorCount}건`);
+  
+  if (report.errors.length > 0) {
+    console.log(`\n=== 오류 상세 ===`);
+    report.errors.forEach((error, index) => {
+      console.log(`${index + 1}. [${error.recordId}] ${error.field}: ${error.error}`);
+      console.log(`   원본값: ${JSON.stringify(error.originalValue)}`);
+    });
+  }
+}
+
+// 오행 충돌 처리 헬퍼
+export function getElementWithConflictHandling(character: string, element: Element): Element | null {
+  // 현재 알려진 충돌 한자 하드코딩 (임시)
+  const conflictedCharacters = ['賢', '星'];
+  
+  if (conflictedCharacters.includes(character)) {
+    // 충돌 한자는 오행 마스킹 (null 반환)
+    return null;
+  }
+  
+  return element;
 }
 
 // 성별/연령별 인기 한자 데이터

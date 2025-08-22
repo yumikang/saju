@@ -1,259 +1,488 @@
 {
   "tasks": [
     {
-      "id": "f60ceece-fbd3-4021-9327-5520886ef119",
-      "name": "Socket.IO 서버 설정 및 Express 통합",
-      "description": "별도 포트(3001)에서 실행될 Socket.IO 서버를 설정하고 Express와 통합합니다. CORS 설정으로 Remix 서버(3000)와 통신을 가능하게 하며, Redis를 통한 세션 공유를 구성합니다.",
+      "id": "aa422f43-75b0-4310-bded-128269ef6761",
+      "name": "Prisma 스키마 확장 및 마이그레이션",
+      "description": "HanjaDict와 HanjaReading 모델을 contracts.md 규칙에 따라 확장하고, Element/YinYang/ReviewStatus enum 타입을 추가하여 데이터 무결성을 보장",
+      "notes": "기존 데이터와의 호환성을 위해 nullable 필드로 설정. 마이그레이션 후 기존 데이터 검증 필요",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-08-13T06:04:08.805Z",
-      "updatedAt": "2025-08-13T06:10:01.453Z",
+      "createdAt": "2025-08-20T05:33:09.484Z",
+      "updatedAt": "2025-08-20T05:38:28.562Z",
       "relatedFiles": [
         {
-          "path": "package.json",
-          "type": "REFERENCE",
-          "description": "Socket.IO 패키지 추가"
-        },
-        {
-          "path": "app/socket/server.ts",
-          "type": "CREATE",
-          "description": "Socket.IO 서버 메인 파일"
-        },
-        {
-          "path": ".env",
+          "path": "prisma/schema.prisma",
           "type": "TO_MODIFY",
-          "description": "SOCKET_PORT=3001 추가"
+          "description": "스키마 확장 및 enum 타입 추가",
+          "lineStart": 1,
+          "lineEnd": 50
         }
       ],
-      "implementationGuide": "1. app/socket/server.ts 파일 생성\n2. Express 서버 초기화 및 Socket.IO 통합\n3. CORS 설정: origin: http://localhost:3000\n4. Redis 어댑터 설정 (이미 설치된 redis 패키지 활용)\n5. 네임스페이스 구성: /naming, /queue\n6. 미들웨어 설정: 인증, rate limiting\n7. pseudocode:\n   - createServer(express)\n   - new Server(httpServer, corsOptions)\n   - io.adapter(createAdapter(pubClient, subClient))\n   - io.on('connection', handleConnection)",
-      "verificationCriteria": "Socket.IO 서버가 3001 포트에서 실행되고, Remix 서버와 CORS 통신이 가능하며, Redis 연결이 정상 작동해야 함",
-      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다.",
-      "summary": "Socket.IO 서버를 포트 3001에서 성공적으로 설정하고 실행했습니다. Express와 통합되었으며, CORS 설정으로 Remix 서버(3000)와 통신 가능하도록 구성했습니다. 메인, /naming, /queue 네임스페이스가 구성되었고, 인증 및 rate limiting 미들웨어가 구현되었습니다.",
-      "completedAt": "2025-08-13T06:10:01.450Z"
+      "implementationGuide": "1. schema.prisma에 enum Element { 金 木 水 火 土 }, enum YinYang { 음 양 }, enum ReviewStatus { ok needs_review } 추가\\n2. HanjaDict 모델 확장: element Element?, yinYang YinYang?, review ReviewStatus @default(ok), evidenceJSON String?, decidedBy String?, ruleset String?, codepoint Int?\\n3. HanjaReading 모델 신규 생성: character String, reading String, soundElem Element?, isPrimary Boolean @default(false), @@unique([character, reading])\\n4. 인덱스 추가: @@index([element]), @@index([reading])\\n5. npx prisma migrate dev 실행하여 마이그레이션 생성",
+      "verificationCriteria": "마이그레이션 성공적으로 완료되고, enum 타입이 정상 생성되며, 기존 데이터가 손실 없이 유지됨",
+      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련",
+      "summary": "Prisma 스키마 확장 성공적으로 완료: Element(金木水火土), YinYang(음양), ReviewStatus enum 타입 추가됨. HanjaDict 모델은 contracts.md 규칙에 따라 확장되었고, HanjaReading 모델이 새로 생성됨. 마이그레이션 성공적으로 실행되어 기존 데이터 손실 없이 스키마가 업데이트됨. enum 값은 @map 속성을 사용하여 CJK/한글 문자와 매핑됨.",
+      "completedAt": "2025-08-20T05:38:28.562Z"
     },
     {
-      "id": "fbc03b1c-fb4c-4efb-85f3-bc88086f8f92",
-      "name": "실시간 이벤트 핸들러 구현",
-      "description": "작명 프로세스의 각 단계별 이벤트 핸들러를 구현합니다. naming:start, naming:progress, naming:complete, naming:error, queue:update 등의 이벤트를 처리합니다.",
+      "id": "57728999-353c-42fc-bd8b-d841593aead5",
+      "name": "데이터 정규화 유틸리티 구현",
+      "description": "contracts.md 규칙에 따른 normalizeElement, normalizeYinYang 함수를 구현하고, ValidationResult 패턴으로 안전한 변환 시스템 구축",
+      "notes": "유일 경로 원칙 준수 - DB 진입 전 반드시 정규화 거쳐야 함. 에러 핸들링으로 배치 작업 중단 방지",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "aa422f43-75b0-4310-bded-128269ef6761"
+        }
+      ],
+      "createdAt": "2025-08-20T05:33:09.484Z",
+      "updatedAt": "2025-08-20T05:46:25.128Z",
+      "relatedFiles": [
+        {
+          "path": "app/lib/hanja-normalize.ts",
+          "type": "CREATE",
+          "description": "정규화 유틸리티 함수들",
+          "lineStart": 1,
+          "lineEnd": 100
+        },
+        {
+          "path": "app/lib/hanja-enhanced.ts",
+          "type": "TO_MODIFY",
+          "description": "기존 정규화 함수 통합",
+          "lineStart": 1,
+          "lineEnd": 50
+        }
+      ],
+      "implementationGuide": "1. app/lib/hanja-normalize.ts 파일 생성\\n2. normalizeElement 함수: 한글(토금수화목) → CJK(土金水火木) 변환, 매핑 테이블 사용\\n3. normalizeYinYang 함수: 陰/陽/음/양 → 음/양 변환\\n4. ValidationResult<T> 타입 정의: { success: boolean, data?: T, error?: string }\\n5. safeNormalizeElement, safeNormalizeYinYang 함수로 non-throwing 버전 제공\\n6. 단위 테스트 작성으로 모든 케이스 검증",
+      "verificationCriteria": "모든 입력값이 표준 CJK/한글 형태로 정확히 변환되고, 잘못된 입력에 대해 적절한 에러 메시지 반환",
+      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련",
+      "summary": "Prisma enum 호환 데이터 정규화 유틸리티를 성공적으로 구현했습니다. hanja-normalize.ts는 Element, YinYang, ReviewStatus에 대한 완전한 양방향 변환 시스템을 제공하며, 27개 단위 테스트가 모두 통과했습니다. contracts.md 규칙을 완전히 준수하고 ValidationResult 패턴으로 안전한 에러 처리를 보장합니다.",
+      "completedAt": "2025-08-20T05:46:25.125Z"
+    },
+    {
+      "id": "1cc3962f-2b9a-4045-95cb-8913f5e6e138",
+      "name": "ETL 파이프라인 기본 구조 구축",
+      "description": "scripts/etl/ 디렉토리에 7단계 ETL 파이프라인의 기본 구조를 만들고, 각 단계별 스크립트 템플릿을 생성",
+      "notes": "각 단계는 독립적으로 실행 가능하도록 설계. JSON 파일 기반으로 중간 결과 저장하여 디버깅 용이성 확보",
       "status": "in_progress",
       "dependencies": [
         {
-          "taskId": "f60ceece-fbd3-4021-9327-5520886ef119"
+          "taskId": "57728999-353c-42fc-bd8b-d841593aead5"
         }
       ],
-      "createdAt": "2025-08-13T06:04:08.805Z",
-      "updatedAt": "2025-08-13T06:11:50.219Z",
+      "createdAt": "2025-08-20T05:33:09.484Z",
+      "updatedAt": "2025-08-20T06:07:24.690Z",
       "relatedFiles": [
         {
-          "path": "app/socket/handlers/naming.handler.ts",
+          "path": "scripts/etl/",
           "type": "CREATE",
-          "description": "이벤트 핸들러"
+          "description": "ETL 파이프라인 스크립트들",
+          "lineStart": 1,
+          "lineEnd": 50
         },
         {
-          "path": "app/lib/ai-naming.server.ts",
-          "type": "REFERENCE",
-          "description": "AI 작명 로직 연동"
+          "path": "data/",
+          "type": "CREATE",
+          "description": "데이터 저장 디렉토리 구조",
+          "lineStart": 1,
+          "lineEnd": 10
         },
         {
-          "path": "app/socket/types.ts",
-          "type": "CREATE",
-          "description": "이벤트 타입 정의"
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "ETL 스크립트 명령어 추가",
+          "lineStart": 10,
+          "lineEnd": 30
         }
       ],
-      "implementationGuide": "1. app/socket/handlers/naming.handler.ts 생성\n2. 이벤트 타입 정의 (TypeScript interface)\n3. 각 이벤트별 핸들러 함수 구현\n4. AI 작명 프로세스와 연동 (ai-naming.server.ts 활용)\n5. 진행상황 브로드캐스팅 로직\n6. pseudocode:\n   - on('naming:start', validateRequest, startNaming)\n   - emit('naming:progress', { step, progress, message })\n   - on('naming:complete', saveResult, notifyClient)\n7. 에러 핸들링 및 재시도 로직",
-      "verificationCriteria": "모든 이벤트가 정상적으로 발생하고 처리되며, 클라이언트에 실시간으로 전달되어야 함",
-      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다."
+      "implementationGuide": "1. scripts/etl/ 디렉토리 생성\\n2. 각 단계별 스크립트 파일 생성: 10_fetch.ts, 20_parse_scourt.ts, 30_normalize.ts, 40_dedup_merge.ts, 50_resolve_conflict.ts, 60_validate.ts, 70_seed.ts, 80_report.ts\\n3. data/ 디렉토리 구조 생성: data/raw/, data/normalized/, data/merged/\\n4. 공통 타입 정의: ETLConfig, ProcessingResult, ValidationReport\\n5. 기본 로깅 및 에러 핸들링 시스템 구현\\n6. package.json에 ETL 스크립트 명령어 추가",
+      "verificationCriteria": "모든 ETL 스크립트가 생성되고, 기본 실행이 가능하며, 데이터 디렉토리 구조가 올바르게 구성됨",
+      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
     },
     {
-      "id": "b9b0ebec-d052-48c6-a90f-59eddd7bd485",
-      "name": "클라이언트 Socket 연결 훅 구현",
-      "description": "React 컴포넌트에서 사용할 useSocket 커스텀 훅을 구현합니다. 자동 재연결, 오프라인 처리, 메모리 관리 기능을 포함합니다.",
+      "id": "efa07a92-743f-4ac0-b1a1-8af101790be2",
+      "name": "기존 데이터 ETL 파이프라인 적용",
+      "description": "현재 hanja-data.ts의 236자 데이터를 새로운 ETL 파이프라인과 DB 스키마로 마이그레이션하고, 데이터 품질 검증",
+      "notes": "기존 데이터의 무결성을 보장하며, 새로운 스키마로 안전하게 이전. 중복 키 병합 로직이 올바르게 적용되는지 확인",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "1cc3962f-2b9a-4045-95cb-8913f5e6e138"
+        }
+      ],
+      "createdAt": "2025-08-20T05:33:09.484Z",
+      "updatedAt": "2025-08-20T05:33:09.484Z",
+      "relatedFiles": [
+        {
+          "path": "app/lib/hanja-data.ts",
+          "type": "REFERENCE",
+          "description": "기존 한자 데이터",
+          "lineStart": 10,
+          "lineEnd": 436
+        },
+        {
+          "path": "scripts/etl/30_normalize.ts",
+          "type": "TO_MODIFY",
+          "description": "기존 데이터 정규화",
+          "lineStart": 1,
+          "lineEnd": 100
+        },
+        {
+          "path": "scripts/etl/70_seed.ts",
+          "type": "TO_MODIFY",
+          "description": "DB 시드 로직",
+          "lineStart": 1,
+          "lineEnd": 100
+        }
+      ],
+      "implementationGuide": "1. 30_normalize.ts에서 기존 데이터 읽어와 정규화 적용\\n2. 40_dedup_merge.ts에서 문자 기준 병합 및 읽기 데이터 분리\\n3. 60_validate.ts에서 데이터 품질 검증 (표준값, 유실 문자, 중복 등)\\n4. 70_seed.ts에서 HanjaDict와 HanjaReading 테이블에 upsert\\n5. 80_report.ts에서 마이그레이션 결과 리포트 생성\\n6. 문자 수 유지 확인: 기존 188개 유니크 문자 → 188개 HanjaDict 레코드",
+      "verificationCriteria": "기존 188개 유니크 문자가 모두 HanjaDict에 저장되고, 다중 읽기가 HanjaReading 테이블에 정확히 분리됨",
+      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
+    },
+    {
+      "id": "c9a6ae77-2ec9-4262-bdd9-b3d50f8eaa10",
+      "name": "대법원 데이터 파서 구현",
+      "description": "대법원 인명용 한자 데이터를 파싱하여 1,000자 목표를 달성하기 위한 20_parse_scourt.ts 구현",
+      "notes": "대법원 데이터가 없는 경우 임시로 빈도 높은 한자 리스트 사용. 향후 실제 대법원 데이터로 교체 가능하도록 설계",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "efa07a92-743f-4ac0-b1a1-8af101790be2"
+        }
+      ],
+      "createdAt": "2025-08-20T05:33:09.484Z",
+      "updatedAt": "2025-08-20T05:33:09.484Z",
+      "relatedFiles": [
+        {
+          "path": "scripts/etl/20_parse_scourt.ts",
+          "type": "TO_MODIFY",
+          "description": "대법원 데이터 파서",
+          "lineStart": 1,
+          "lineEnd": 150
+        },
+        {
+          "path": "data/raw/",
+          "type": "REFERENCE",
+          "description": "원본 데이터 저장소",
+          "lineStart": 1,
+          "lineEnd": 10
+        }
+      ],
+      "implementationGuide": "1. 대법원 인명용 한자 데이터 소스 확보 (CSV, PDF, 또는 공개 API)\\n2. 20_parse_scourt.ts에서 소스별 파서 구현\\n3. 빈도 기반 상위 1,000자 선별 로직 구현\\n4. 기본 메타데이터 추출: 문자, 의미, 획수, 읽기\\n5. sourceTag와 버전 정보 추가하여 추적 가능성 확보\\n6. data/raw/scourt_*.json 형태로 결과 저장",
+      "verificationCriteria": "1,000자 데이터가 정확히 파싱되고, 메타데이터가 완전하며, JSON 형태로 저장됨",
+      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
+    },
+    {
+      "id": "4b660a0e-dbd2-405b-922c-b0f372da690d",
+      "name": "충돌 해결 시스템 구현",
+      "description": "50_resolve_conflict.ts에서 권위 소스 간 오행/음양 충돌을 자동으로 해결하고, needs_review 플래그 관리",
+      "notes": "향후 전문가 검토나 추가 권위 소스 도입 시 재계산 가능하도록 근거 데이터 보존",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c9a6ae77-2ec9-4262-bdd9-b3d50f8eaa10"
+        }
+      ],
+      "createdAt": "2025-08-20T05:33:09.484Z",
+      "updatedAt": "2025-08-20T05:33:09.484Z",
+      "relatedFiles": [
+        {
+          "path": "scripts/etl/50_resolve_conflict.ts",
+          "type": "TO_MODIFY",
+          "description": "충돌 해결 로직",
+          "lineStart": 1,
+          "lineEnd": 200
+        },
+        {
+          "path": "app/lib/hanja-conflicts.ts",
+          "type": "REFERENCE",
+          "description": "기존 충돌 관리",
+          "lineStart": 1,
+          "lineEnd": 50
+        }
+      ],
+      "implementationGuide": "1. 권위 소스별 가중치 테이블 정의: base(0.4), expanded(0.4), strokeRule(0.3), soundRule(0.3)\\n2. resolveElement 함수: 가중치 기반 투표 시스템으로 최종 값 결정\\n3. 박빙/동점 시 needs_review 자동 태깅\\n4. evidenceJSON에 결정 근거와 소스별 점수 기록\\n5. decidedBy 필드에 결정 방식 기록 (auto, manual, rule)\\n6. 충돌 상황 리포트 생성 및 콘솔 출력",
+      "verificationCriteria": "모든 충돌이 자동으로 해결되거나 needs_review로 태깅되고, 결정 근거가 명확히 기록됨",
+      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
+    },
+    {
+      "id": "b7dcff3e-c23f-499f-8349-b816fad66b79",
+      "name": "품질 검증 시스템 구현",
+      "description": "60_validate.ts에서 contracts.md 규칙 준수 여부를 검증하고, 데이터 품질 메트릭을 생성",
+      "notes": "CI/CD에서 활용할 수 있도록 exit code와 JSON 리포트 제공. 임계치 초과 시 배포 차단 가능",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "4b660a0e-dbd2-405b-922c-b0f372da690d"
+        }
+      ],
+      "createdAt": "2025-08-20T05:33:09.484Z",
+      "updatedAt": "2025-08-20T05:33:09.484Z",
+      "relatedFiles": [
+        {
+          "path": "scripts/etl/60_validate.ts",
+          "type": "TO_MODIFY",
+          "description": "품질 검증 로직",
+          "lineStart": 1,
+          "lineEnd": 150
+        },
+        {
+          "path": "scripts/etl/80_report.ts",
+          "type": "TO_MODIFY",
+          "description": "품질 리포트 생성",
+          "lineStart": 50,
+          "lineEnd": 100
+        }
+      ],
+      "implementationGuide": "1. 표준값 검증: 모든 element가 CJK(金木水火土), yinYang이 한글(음/양)인지 확인\\n2. 유니크 제약 검증: character 중복, reading 조합 중복 확인\\n3. 필수 필드 검증: 문자, 읽기, 의미 등 핵심 필드 누락 확인\\n4. 데이터 일관성 검증: 획수 범위, 문자 유니코드 유효성\\n5. 품질 메트릭 생성: needs_review 비율, 표준값 준수율, 완성도\\n6. 회귀 테스트: 문자 수 변화, 오행 분포 변화 감지",
+      "verificationCriteria": "모든 품질 규칙이 통과하고, 상세한 검증 리포트가 생성되며, 회귀 테스트가 정상 작동함",
+      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
+    },
+    {
+      "id": "015d098f-2809-4c0a-af74-dce16be92a44",
+      "name": "통합 테스트 및 MVP 검증",
+      "description": "전체 ETL 파이프라인을 end-to-end로 실행하고, 1,000자 MVP 목표 달성 여부를 검증",
+      "notes": "MVP 성공 기준 달성 확인: 추천 생성 성공률 ≥99%, needs_review <5%, ETL 파이프라인 자동화 완료",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "b7dcff3e-c23f-499f-8349-b816fad66b79"
+        }
+      ],
+      "createdAt": "2025-08-20T05:33:09.484Z",
+      "updatedAt": "2025-08-20T05:33:09.484Z",
+      "relatedFiles": [
+        {
+          "path": "scripts/etl/",
+          "type": "REFERENCE",
+          "description": "전체 ETL 파이프라인",
+          "lineStart": 1,
+          "lineEnd": 10
+        },
+        {
+          "path": "app/lib/",
+          "type": "REFERENCE",
+          "description": "기존 작명 엔진 연동",
+          "lineStart": 1,
+          "lineEnd": 50
+        }
+      ],
+      "implementationGuide": "1. 전체 ETL 파이프라인 순차 실행: 10_fetch → 20_parse → 30_normalize → 40_dedup → 50_resolve → 60_validate → 70_seed → 80_report\\n2. 최종 결과 검증: HanjaDict 레코드 수, HanjaReading 레코드 수, needs_review 비율\\n3. 성능 테스트: ETL 파이프라인 실행 시간, 메모리 사용량\\n4. 작명 엔진 연동 테스트: 기존 API가 새로운 DB 스키마와 정상 작동하는지 확인\\n5. 최종 품질 메트릭 검토: 표준값 준수율 100%, 유실률 0% 달성 확인",
+      "verificationCriteria": "1,000자 목표 달성, 모든 품질 기준 통과, 기존 작명 엔진과 정상 연동, ETL 파이프라인 완전 자동화",
+      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
+    },
+    {
+      "id": "dbb53345-88d4-4b5b-9dc8-6575b05d204f",
+      "name": "Supreme Court 한자 데이터 ingestion 스크립트 작성",
+      "description": "10_ingest_gov.ts 스크립트를 작성하여 supreme-court-hanja.json을 읽고 표준 raw 포맷으로 변환",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-08-13T06:04:08.805Z",
-      "updatedAt": "2025-08-13T06:17:56.835Z",
+      "createdAt": "2025-08-20T06:56:57.167Z",
+      "updatedAt": "2025-08-20T06:59:17.181Z",
       "relatedFiles": [
         {
-          "path": "app/hooks/useSocket.ts",
-          "type": "CREATE",
-          "description": "Socket 연결 훅"
+          "path": "scripts/etl/data/raw/supreme-court-hanja.json",
+          "type": "REFERENCE",
+          "description": "다운로드된 Supreme Court 원본 데이터"
         },
         {
-          "path": "app/hooks/useMemoryCleanup.ts",
-          "type": "REFERENCE",
-          "description": "메모리 관리 활용"
+          "path": "scripts/etl/10_ingest_gov.ts",
+          "type": "CREATE",
+          "description": "새로 작성할 gov 데이터 ingestion 스크립트"
         },
+        {
+          "path": "scripts/etl/types.ts",
+          "type": "REFERENCE",
+          "description": "ETL 타입 정의"
+        }
+      ],
+      "implementationGuide": "1. supreme-court-hanja.json 파일 읽기\n2. 각 레코드의 cd(hex code)를 실제 한자 문자로 변환\n3. ineum(한글 음), dic(의미) 등 필드 매핑\n4. 표준 RawHanjaRecord 형식으로 변환\n5. data/raw/gov-[timestamp].json으로 저장",
+      "verificationCriteria": "10,163개 레코드가 올바르게 변환되어 raw JSON으로 저장됨",
+      "analysisResult": "한국 인명용 한자 데이터(10,163자)를 ETL 파이프라인에 통합. 원본 데이터는 이미 다운로드됨(supreme-court-hanja.json). 기존 ETL 파이프라인 구조를 활용하여 단계별 처리.",
+      "summary": "Supreme Court 한자 데이터 ingestion 스크립트를 성공적으로 작성하고 실행했습니다. 10,163개의 한자가 hex 코드에서 실제 문자로 변환되었고, 훈음에서 의미가 추출되어 표준 RawHanjaRecord 형식으로 저장되었습니다. 원본 데이터는 gov-2025-08-20T06-58-47-164Z.json 파일로 보존되었습니다.",
+      "completedAt": "2025-08-20T06:59:17.180Z"
+    },
+    {
+      "id": "8cc16970-04e1-47fe-8f41-594fd0d51b07",
+      "name": "기존 ETL 파이프라인과 통합",
+      "description": "새로운 gov 데이터를 기존 파이프라인(normalize, dedup, resolve, validate, load)에서 처리할 수 있도록 조정",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "dbb53345-88d4-4b5b-9dc8-6575b05d204f"
+        }
+      ],
+      "createdAt": "2025-08-20T06:56:57.167Z",
+      "updatedAt": "2025-08-20T06:56:57.167Z",
+      "relatedFiles": [
+        {
+          "path": "scripts/etl/20_normalize.ts",
+          "type": "TO_MODIFY",
+          "description": "정규화 스크립트 수정"
+        },
+        {
+          "path": "scripts/etl/30_dedup.ts",
+          "type": "TO_MODIFY",
+          "description": "중복 제거 스크립트 수정"
+        }
+      ],
+      "implementationGuide": "1. 20_normalize.ts가 gov 데이터 포맷도 처리하도록 수정\n2. 오행/음양 매핑 로직 추가 (기존 hanja.json과 다른 구조)\n3. 중복 제거 시 기존 185개 데이터와 병합 고려",
+      "verificationCriteria": "gov 데이터가 기존 파이프라인을 통해 정상 처리됨",
+      "analysisResult": "한국 인명용 한자 데이터(10,163자)를 ETL 파이프라인에 통합. 원본 데이터는 이미 다운로드됨(supreme-court-hanja.json). 기존 ETL 파이프라인 구조를 활용하여 단계별 처리."
+    },
+    {
+      "id": "46eb983f-adc0-4c2f-9e1f-70d491a23203",
+      "name": "통합 ETL 실행 및 검증",
+      "description": "전체 ETL 파이프라인을 실행하여 10,000개 이상의 한자가 데이터베이스에 로드되는지 확인",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "8cc16970-04e1-47fe-8f41-594fd0d51b07"
+        }
+      ],
+      "createdAt": "2025-08-20T06:56:57.167Z",
+      "updatedAt": "2025-08-20T06:56:57.167Z",
+      "relatedFiles": [
         {
           "path": "package.json",
           "type": "TO_MODIFY",
-          "description": "socket.io-client 추가"
+          "description": "npm 스크립트 추가"
+        },
+        {
+          "path": "scripts/etl/orchestrator.ts",
+          "type": "TO_MODIFY",
+          "description": "orchestrator 수정"
         }
       ],
-      "implementationGuide": "1. app/hooks/useSocket.ts 생성\n2. Socket.IO 클라이언트 초기화\n3. 연결 상태 관리 (connected, connecting, disconnected)\n4. 자동 재연결 로직 (exponential backoff)\n5. 이벤트 리스너 관리 및 cleanup\n6. 기존 useMemoryCleanup.ts 활용\n7. pseudocode:\n   - const socket = io(SOCKET_URL, options)\n   - useEffect(() => { connect; return disconnect })\n   - const emit = useCallback((event, data) => {})\n   - return { socket, connected, emit, on, off }",
-      "verificationCriteria": "Socket 연결이 안정적이고, 네트워크 변경 시 자동 재연결되며, 메모리 누수가 없어야 함",
-      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다.",
-      "summary": "Successfully implemented comprehensive useSocket React hooks with auto-reconnection, offline handling, memory management, and TypeScript type safety for Socket.IO client connections",
-      "completedAt": "2025-08-13T06:17:56.835Z"
+      "implementationGuide": "1. npm run etl:gov로 gov 데이터만 처리\n2. npm run etl로 전체 데이터 처리\n3. 데이터베이스에서 총 레코드 수 확인\n4. 오행/음양 분포 검증",
+      "verificationCriteria": "데이터베이스에 10,000개 이상의 한자 레코드가 저장됨",
+      "analysisResult": "한국 인명용 한자 데이터(10,163자)를 ETL 파이프라인에 통합. 원본 데이터는 이미 다운로드됨(supreme-court-hanja.json). 기존 ETL 파이프라인 구조를 활용하여 단계별 처리."
     },
     {
-      "id": "8198d1a3-d4e0-4ec9-8903-d216f7b130b8",
-      "name": "Zustand 스토어와 실시간 상태 동기화",
-      "description": "기존 Zustand 스토어를 확장하여 Socket.IO 이벤트와 실시간으로 동기화합니다. 작명 진행상황과 대기열 상태를 전역 상태로 관리합니다.",
+      "id": "1560cabe-8605-4d2c-8d28-79c197b2f1bd",
+      "name": "한자-오행 룩업 테이블 생성",
+      "description": "기존 185개 데이터에서 한자-오행 매핑을 추출하여 Gov 데이터에 적용할 룩업 테이블 생성",
+      "notes": "기존 데이터 기반이므로 신뢰도 높음. Gov 데이터의 오행 매핑 기준으로 활용",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-21T06:07:13.361Z",
+      "updatedAt": "2025-08-21T06:10:49.619Z",
+      "relatedFiles": [
+        {
+          "path": "scripts/etl/data/raw/raw_data.json",
+          "type": "REFERENCE",
+          "description": "기존 한자-오행 매핑 소스"
+        },
+        {
+          "path": "scripts/etl/lib/hanja-element-lookup.ts",
+          "type": "CREATE",
+          "description": "생성할 룩업 테이블"
+        },
+        {
+          "path": "app/lib/hanja-normalize.ts",
+          "type": "REFERENCE",
+          "description": "오행 매핑 유틸리티"
+        }
+      ],
+      "implementationGuide": "1. scripts/etl/data/raw/raw_data.json에서 한자-오행 매핑 추출\\n2. Map<string, string> 형태로 룩업 테이블 생성\\n3. hanja-element-lookup.ts 파일로 저장\\n4. 검증: 185개 한자 모두 매핑되는지 확인",
+      "verificationCriteria": "185개 한자-오행 매핑이 완전히 추출되고 검증됨",
+      "analysisResult": "Gov 데이터(10,163자) ETL 정규화 및 중복 제거 단계 구현. 기존 ETL 파이프라인 확장을 통해 복수 읽기 처리, 오행/음양 매핑, 682개 중복 병합을 수행하여 10,000+ 한자 데이터베이스 구축",
+      "summary": "한자-오행 룩업 테이블 성공적으로 생성. 기존 185개 raw 데이터에서 184개 유니크 한자의 오행 매핑을 추출하여 Map 구조로 구성. 오행별 분포: 목(42개), 수(41개), 금(38개), 화(36개), 토(27개). 조회, 검증, 통계 함수 포함하여 Gov 데이터 정규화에 활용 준비 완료.",
+      "completedAt": "2025-08-21T06:10:49.618Z"
+    },
+    {
+      "id": "22c75b63-3f1d-4e90-be1a-14d89e546210",
+      "name": "20_normalize.ts Gov 데이터 처리 확장",
+      "description": "기존 정규화 스크립트를 확장하여 Gov 데이터의 복수 읽기 분할 및 오행 매핑 처리",
+      "notes": "기존 normalizeHanjaRecord 함수 확장, 호환성 유지",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "b9b0ebec-d052-48c6-a90f-59eddd7bd485"
+          "taskId": "1560cabe-8605-4d2c-8d28-79c197b2f1bd"
         }
       ],
-      "createdAt": "2025-08-13T06:04:08.805Z",
-      "updatedAt": "2025-08-14T01:35:25.357Z",
+      "createdAt": "2025-08-21T06:07:13.361Z",
+      "updatedAt": "2025-08-21T06:32:12.860Z",
       "relatedFiles": [
         {
-          "path": "app/store/realtime.store.ts",
-          "type": "CREATE",
-          "description": "실시간 상태 스토어"
-        },
-        {
-          "path": "app/hooks/useSocket.ts",
-          "type": "REFERENCE",
-          "description": "Socket 훅 연동"
-        }
-      ],
-      "implementationGuide": "1. app/store/realtime.store.ts 생성\n2. 실시간 상태 인터페이스 정의\n3. Socket 이벤트와 store 액션 매핑\n4. 낙관적 업데이트 구현\n5. pseudocode:\n   - interface RealtimeState { progress, queue, errors }\n   - const useRealtimeStore = create((set) => {})\n   - socket.on('naming:progress', (data) => set({ progress: data }))\n   - middleware for optimistic updates\n6. DevTools 연동",
-      "verificationCriteria": "Socket 이벤트가 Zustand 스토어에 실시간 반영되고, 컴포넌트가 자동 리렌더링되어야 함",
-      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다.",
-      "summary": "Zustand 스토어와 Socket.IO 실시간 상태 동기화를 성공적으로 구현했습니다. DevTools 연동, 낙관적 업데이트, 메트릭 추적 기능을 포함한 완벽한 실시간 상태 관리 시스템을 구축했습니다.",
-      "completedAt": "2025-08-14T01:35:25.356Z"
-    },
-    {
-      "id": "d6b821ab-aca3-4a71-94c1-9fd2a3459a41",
-      "name": "실시간 진행상황 UI 컴포넌트 구현",
-      "description": "작명 진행상황을 실시간으로 표시하는 UI 컴포넌트를 구현합니다. 모바일 최적화와 애니메이션을 포함합니다.",
-      "status": "in_progress",
-      "dependencies": [
-        {
-          "taskId": "8198d1a3-d4e0-4ec9-8903-d216f7b130b8"
-        }
-      ],
-      "createdAt": "2025-08-13T06:04:08.805Z",
-      "updatedAt": "2025-08-14T01:36:26.009Z",
-      "relatedFiles": [
-        {
-          "path": "app/components/realtime/NamingProgress.tsx",
-          "type": "CREATE",
-          "description": "진행상황 컴포넌트"
-        },
-        {
-          "path": "app/components/layout/ResponsiveCard.tsx",
-          "type": "REFERENCE",
-          "description": "카드 레이아웃 재사용"
-        },
-        {
-          "path": "app/store/realtime.store.ts",
-          "type": "REFERENCE",
-          "description": "실시간 상태"
-        }
-      ],
-      "implementationGuide": "1. app/components/realtime/NamingProgress.tsx 생성\n2. 진행 단계별 UI 구성 (Stepper 패턴)\n3. Framer Motion 활용 애니메이션\n4. 스켈레톤 로딩 상태\n5. 에러 상태 표시\n6. pseudocode:\n   - const { progress } = useRealtimeStore()\n   - const steps = ['사주 분석', 'AI 생성', '평가', '완료']\n   - AnimatePresence for smooth transitions\n   - ProgressBar with percentage\n7. 모바일 반응형 디자인",
-      "verificationCriteria": "진행상황이 실시간으로 부드럽게 업데이트되고, 모바일에서도 최적화되어 표시되어야 함",
-      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다."
-    },
-    {
-      "id": "3a921131-532e-42c7-aa6b-0846c1e7177f",
-      "name": "대기열 관리 시스템 구현",
-      "description": "다중 사용자 동시 요청 시 대기열을 관리하고 순서를 표시하는 시스템을 구현합니다. Redis를 활용한 큐 관리를 포함합니다.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "fbc03b1c-fb4c-4efb-85f3-bc88086f8f92"
-        }
-      ],
-      "createdAt": "2025-08-13T06:04:08.805Z",
-      "updatedAt": "2025-08-13T06:04:08.805Z",
-      "relatedFiles": [
-        {
-          "path": "app/socket/queue/manager.ts",
-          "type": "CREATE",
-          "description": "큐 매니저"
-        },
-        {
-          "path": "app/components/realtime/QueueStatus.tsx",
-          "type": "CREATE",
-          "description": "대기열 UI"
-        },
-        {
-          "path": ".env",
-          "type": "REFERENCE",
-          "description": "Redis 설정"
-        }
-      ],
-      "implementationGuide": "1. app/socket/queue/manager.ts 생성\n2. Redis 기반 큐 구조 구현 (Bull 라이브러리 고려)\n3. 대기 순서 계산 로직\n4. 예상 대기 시간 알고리즘\n5. pseudocode:\n   - class QueueManager { add, process, getPosition }\n   - redis.lpush('naming:queue', userId)\n   - broadcastQueueUpdate()\n   - processNext() with rate limiting\n6. 우선순위 큐 옵션",
-      "verificationCriteria": "대기열이 순서대로 처리되고, 각 사용자에게 정확한 대기 순서가 표시되어야 함",
-      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다."
-    },
-    {
-      "id": "a7375a40-ecf0-4f5b-90a6-8ef8a94c323a",
-      "name": "모바일 배터리 최적화 구현",
-      "description": "모바일 환경에서 배터리 소모를 최소화하는 최적화를 구현합니다. 백그라운드 처리와 적응형 폴링을 포함합니다.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "b9b0ebec-d052-48c6-a90f-59eddd7bd485"
-        }
-      ],
-      "createdAt": "2025-08-13T06:04:08.805Z",
-      "updatedAt": "2025-08-13T06:04:08.805Z",
-      "relatedFiles": [
-        {
-          "path": "app/hooks/useBatteryOptimization.ts",
-          "type": "CREATE",
-          "description": "배터리 최적화"
-        },
-        {
-          "path": "app/hooks/useSocket.ts",
+          "path": "scripts/etl/20_normalize.ts",
           "type": "TO_MODIFY",
-          "description": "최적화 통합"
+          "description": "정규화 스크립트 확장"
+        },
+        {
+          "path": "scripts/etl/lib/hanja-element-lookup.ts",
+          "type": "DEPENDENCY",
+          "description": "룩업 테이블 의존성"
+        },
+        {
+          "path": "scripts/etl/lib/etl-types.ts",
+          "type": "REFERENCE",
+          "description": "타입 정의"
         }
       ],
-      "implementationGuide": "1. app/hooks/useBatteryOptimization.ts 생성\n2. Battery Status API 활용\n3. 백그라운드 감지 (Page Visibility API)\n4. 적응형 폴링 간격 조정\n5. pseudocode:\n   - navigator.getBattery().then(battery => {})\n   - document.addEventListener('visibilitychange', handleVisibility)\n   - if (battery.level < 0.2) reducePollingFrequency()\n   - socket.io.reconnectionDelay = adaptive\n6. 저전력 모드 UI 표시",
-      "verificationCriteria": "배터리 잔량에 따라 연결 전략이 조정되고, 백그라운드에서 불필요한 연결이 중단되어야 함",
-      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다."
+      "implementationGuide": "1. Gov 데이터 감지 로직 추가 (source === 'supreme-court')\\n2. 복수 읽기 분할: reading.split(',').map(r => r.trim())\\n3. 첫 번째 읽기를 주 읽기로, 나머지는 alternativeReadings로 저장\\n4. 한자-오행 룩업 테이블 활용하여 element 매핑\\n5. Gov 메타데이터 보존 (hexCode, originalIndex, dictionaryInfo)",
+      "verificationCriteria": "Gov 데이터의 복수 읽기가 올바르게 분할되고 오행이 매핑됨",
+      "analysisResult": "Gov 데이터(10,163자) ETL 정규화 및 중복 제거 단계 구현. 기존 ETL 파이프라인 확장을 통해 복수 읽기 처리, 오행/음양 매핑, 682개 중복 병합을 수행하여 10,000+ 한자 데이터베이스 구축",
+      "summary": "Gov 데이터 정규화 처리 확장 완료. 10,350개 레코드 성공적으로 정규화(기존 187개 + Gov 10,163개). 주요 기능: 1) 복수 읽기 분할 처리 - 1,566개 한자의 쉼표로 구분된 읽기를 주 읽기와 대안 읽기로 분할, 2) 한자-오행 룩업 테이블 활용 - 201개 한자에 기존 데이터 기반 오행 매핑 자동 적용, 3) Gov 메타데이터 보존 - hexCode, dictionaryInfo 등 원본 메타데이터 유지. 호환성을 유지하면서 기존 정규화 로직 확장 완료.",
+      "completedAt": "2025-08-21T06:32:12.855Z"
     },
     {
-      "id": "56950f54-7be8-43c5-b36f-db71bfc8eccd",
-      "name": "실시간 기능 통합 테스트 작성",
-      "description": "Socket.IO 연결과 실시간 기능의 통합 테스트를 작성합니다. E2E 테스트와 단위 테스트를 포함합니다.",
+      "id": "fef36186-2425-4af8-9084-be4f6a2b779e",
+      "name": "30_dedup.ts Gov 중복 병합 규칙 구현",
+      "description": "기존 중복 제거 스크립트를 확장하여 Gov 데이터의 682개 중복 한자 병합 처리",
+      "notes": "기존 mergeRecords 함수 확장, 데이터 일관성 보장",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "d6b821ab-aca3-4a71-94c1-9fd2a3459a41"
-        },
-        {
-          "taskId": "3a921131-532e-42c7-aa6b-0846c1e7177f"
+          "taskId": "22c75b63-3f1d-4e90-be1a-14d89e546210"
         }
       ],
-      "createdAt": "2025-08-13T06:04:08.805Z",
-      "updatedAt": "2025-08-13T06:04:08.805Z",
+      "createdAt": "2025-08-21T06:07:13.361Z",
+      "updatedAt": "2025-08-21T06:07:13.361Z",
       "relatedFiles": [
         {
-          "path": "tests/realtime/socket.test.ts",
-          "type": "CREATE",
-          "description": "Socket 테스트"
+          "path": "scripts/etl/30_dedup.ts",
+          "type": "TO_MODIFY",
+          "description": "중복 제거 스크립트 확장"
         },
         {
-          "path": "tests/e2e/realtime.spec.ts",
-          "type": "CREATE",
-          "description": "E2E 테스트"
+          "path": "scripts/etl/lib/etl-types.ts",
+          "type": "REFERENCE",
+          "description": "타입 정의"
+        }
+      ],
+      "implementationGuide": "1. Gov 메타데이터 병합 함수 구현: mergeGovMetadata()\\n2. hexCode, originalIndex 배열로 통합\\n3. dictionaryInfo 병합 (중복 제거)\\n4. alternativeReadings 통합\\n5. 소스 우선순위 조정: supreme-court 우선도 8로 설정\\n6. 품질 점수 계산 시 Gov 데이터 특성 반영",
+      "verificationCriteria": "682개 중복 한자가 올바르게 병합되고 메타데이터가 보존됨",
+      "analysisResult": "Gov 데이터(10,163자) ETL 정규화 및 중복 제거 단계 구현. 기존 ETL 파이프라인 확장을 통해 복수 읽기 처리, 오행/음양 매핑, 682개 중복 병합을 수행하여 10,000+ 한자 데이터베이스 구축"
+    },
+    {
+      "id": "0af4c149-b7ae-4570-896c-8606d2c9fc7a",
+      "name": "통합 ETL 파이프라인 실행 및 검증",
+      "description": "기존+Gov 데이터를 통합하여 전체 ETL 파이프라인 실행 후 10,000+ 한자 데이터베이스 로드 검증",
+      "notes": "전체 파이프라인 통합 테스트, 품질 보장",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "fef36186-2425-4af8-9084-be4f6a2b779e"
+        }
+      ],
+      "createdAt": "2025-08-21T06:07:13.361Z",
+      "updatedAt": "2025-08-21T06:07:13.361Z",
+      "relatedFiles": [
+        {
+          "path": "scripts/etl/run-pipeline.ts",
+          "type": "REFERENCE",
+          "description": "파이프라인 실행기"
         },
         {
           "path": "package.json",
-          "type": "TO_MODIFY",
-          "description": "테스트 스크립트 추가"
+          "type": "REFERENCE",
+          "description": "npm 스크립트"
         }
       ],
-      "implementationGuide": "1. tests/realtime/socket.test.ts 생성\n2. Socket.IO Mock 서버 설정\n3. 연결/재연결 테스트\n4. 이벤트 송수신 테스트\n5. 대기열 시나리오 테스트\n6. pseudocode:\n   - describe('Socket Connection', () => {})\n   - test('auto reconnect on disconnect')\n   - test('queue position updates')\n   - test('naming progress events')\n7. Playwright E2E 테스트",
-      "verificationCriteria": "모든 실시간 기능 테스트가 통과하고, 네트워크 장애 시나리오도 정상 처리되어야 함",
-      "analysisResult": "Remix 기반 사주 작명 플랫폼에 Socket.IO를 통합하여 실시간 기능을 구현합니다. AI 작명 진행상황 표시, 대기열 관리, 실시간 피드백을 제공하며, 기존 아키텍처와 완벽히 통합됩니다."
+      "implementationGuide": "1. npm run etl로 전체 파이프라인 실행\\n2. Gov 데이터 포함 확인: 10,163 + 185 = 10,348개 입력\\n3. 중복 제거 후 약 9,666개 예상 (682개 중복 제거)\\n4. 데이터베이스 로드 검증\\n5. 오행/음양 분포 확인\\n6. 복수 읽기 데이터 무결성 검증",
+      "verificationCriteria": "10,000개 이상의 한자가 데이터베이스에 성공적으로 로드되고 품질 검증 통과",
+      "analysisResult": "Gov 데이터(10,163자) ETL 정규화 및 중복 제거 단계 구현. 기존 ETL 파이프라인 확장을 통해 복수 읽기 처리, 오행/음양 매핑, 682개 중복 병합을 수행하여 10,000+ 한자 데이터베이스 구축"
     }
   ]
 }
