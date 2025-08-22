@@ -1,6 +1,7 @@
-import { PrismaClient, Element } from '@prisma/client';
+import { PrismaClient, Element, Prisma } from '@prisma/client';
 import { prisma } from '~/lib/db.server';
 import { redis } from '~/lib/redis.server';
+import { CACHE_CONFIG, getCacheKey, getCacheTTL } from '~/lib/cache-config.server';
 
 // 표준 에러 응답 형식
 export interface ApiError {
@@ -141,13 +142,22 @@ export function validateInput(reading: string): { valid: boolean; error?: string
   return { valid: true };
 }
 
-// 캐시 키 생성
-function getCacheKey(options: HanjaSearchOptions): string {
+// 캐시 키 생성 (버전 포함)
+function generateCacheKey(options: HanjaSearchOptions): string {
   const { reading, isSurname, limit, cursor, sort } = options;
-  return `hanja:q:${reading}:${isSurname || false}:${limit || 20}:${cursor || ''}:${sort || 'default'}`;
+  return getCacheKey(
+    'hanja:q:<reading>:<surname>:<limit>:<cursor>:<sort>:<version>',
+    {
+      reading,
+      surname: isSurname || false,
+      limit: limit || 20,
+      cursor: cursor || 'none',
+      sort: sort || 'default'
+    }
+  );
 }
 
-// DB에서 한자 검색 (HanjaReading 테이블 활용)
+// DB에서 한자 검색 (Null-safe 정렬 적용 - SQLite 버전)
 export async function searchHanjaFromDB(
   options: HanjaSearchOptions
 ): Promise<PaginatedResponse<HanjaChar>> {
@@ -161,7 +171,7 @@ export async function searchHanjaFromDB(
   
   // 캐시 확인
   if (redis) {
-    const cacheKey = getCacheKey(options);
+    const cacheKey = generateCacheKey(options);
     try {
       const cached = await redis.get(cacheKey);
       if (cached) {
@@ -182,53 +192,63 @@ export async function searchHanjaFromDB(
   const hanjaReadings = await prisma.hanjaReading.findMany({
     where: {
       reading: { in: readings }
-    },
-    include: {
-      // HanjaDict와 조인하기 위해 character로 연결
-      // Prisma 스키마에 relation이 없으므로 별도 쿼리 필요
     }
   });
   
   // character 목록 추출
   const characters = [...new Set(hanjaReadings.map(hr => hr.character))];
   
-  // HanjaDict에서 상세 정보 가져오기
-  let query = prisma.hanjaDict.findMany({
-    where: {
-      character: { in: characters }
-    },
-    take: actualLimit
-  });
-  
-  // 커서 기반 페이지네이션
-  if (cursor) {
-    query = prisma.hanjaDict.findMany({
-      where: {
-        character: { in: characters }
-      },
-      take: actualLimit,
-      skip: 1,
-      cursor: { id: cursor }
-    });
+  if (characters.length === 0) {
+    // 검색 결과 없음
+    const response: PaginatedResponse<HanjaChar> = {
+      data: [],
+      pagination: {
+        total: 0,
+        limit: actualLimit,
+        cursor: undefined,
+        hasMore: false
+      }
+    };
+    
+    // 캐시 저장 (TTL 구분)
+    if (redis) {
+      const cacheKey = generateCacheKey(options);
+      const ttl = getCacheTTL(cursor);
+      try {
+        await redis.setex(cacheKey, ttl, JSON.stringify(response));
+      } catch (e) {
+        console.warn('Redis cache save error:', e);
+      }
+    }
+    
+    return response;
   }
   
-  // 정렬
-  let orderBy: any = {};
-  switch (sort) {
-    case 'popularity':
-      orderBy = [
-        { nameFrequency: 'desc' },
-        { usageFrequency: 'desc' }
-      ];
-      break;
-    case 'strokes':
-      orderBy = { strokes: 'asc' };
-      break;
-    case 'element':
-      orderBy = { element: 'asc' };
-      break;
+  // Prisma orderBy를 사용한 Null-safe 정렬
+  let orderBy: any[] = [];
+  
+  if (sort === 'popularity') {
+    // popularity 정렬: nameFrequency와 usageFrequency 우선
+    orderBy = [
+      { nameFrequency: 'desc' },
+      { usageFrequency: 'desc' },
+      { id: 'asc' }
+    ];
+  } else if (sort === 'strokes') {
+    // strokes 정렬: null과 0은 자연스럽게 뒤로 감
+    orderBy = [
+      { strokes: 'asc' },
+      { id: 'asc' }
+    ];
+  } else if (sort === 'element') {
+    // element 정렬: null은 자연스럽게 뒤로 감
+    orderBy = [
+      { element: 'asc' },
+      { id: 'asc' }
+    ];
   }
   
+  // 기본 쿼리로 데이터 가져오기
   const results = await prisma.hanjaDict.findMany({
     where: {
       character: { in: characters }
@@ -237,6 +257,56 @@ export async function searchHanjaFromDB(
     ...(cursor && { skip: 1, cursor: { id: cursor } }),
     orderBy
   });
+  
+  // NULL/0 값을 가진 레코드를 뒤로 보내는 후처리
+  if (sort === 'popularity') {
+    results.sort((a, b) => {
+      // NULL이나 0인 경우 뒤로
+      const aHasValue = (a.nameFrequency && a.nameFrequency > 0) || (a.usageFrequency && a.usageFrequency > 0);
+      const bHasValue = (b.nameFrequency && b.nameFrequency > 0) || (b.usageFrequency && b.usageFrequency > 0);
+      
+      if (aHasValue && !bHasValue) return -1;
+      if (!aHasValue && bHasValue) return 1;
+      
+      // 둘 다 값이 있으면 빈도로 정렬
+      if (aHasValue && bHasValue) {
+        const aFreq = (a.nameFrequency || 0) + (a.usageFrequency || 0);
+        const bFreq = (b.nameFrequency || 0) + (b.usageFrequency || 0);
+        return bFreq - aFreq; // 내림차순
+      }
+      
+      return 0;
+    });
+  } else if (sort === 'strokes') {
+    results.sort((a, b) => {
+      // NULL이나 0인 경우 뒤로
+      const aHasValue = a.strokes && a.strokes > 0;
+      const bHasValue = b.strokes && b.strokes > 0;
+      
+      if (aHasValue && !bHasValue) return -1;
+      if (!aHasValue && bHasValue) return 1;
+      
+      // 둘 다 값이 있으면 획수로 정렬
+      if (aHasValue && bHasValue) {
+        return a.strokes! - b.strokes!; // 오름차순
+      }
+      
+      return 0;
+    });
+  } else if (sort === 'element') {
+    results.sort((a, b) => {
+      // NULL인 경우 뒤로
+      if (a.element && !b.element) return -1;
+      if (!a.element && b.element) return 1;
+      
+      // 둘 다 값이 있으면 알파벳순
+      if (a.element && b.element) {
+        return a.element.localeCompare(b.element);
+      }
+      
+      return 0;
+    });
+  }
   
   // HanjaChar 형식으로 변환
   const hanjaChars: HanjaChar[] = results.map(hanja => {
@@ -280,7 +350,22 @@ export async function searchHanjaFromDB(
   
   // 성씨 모드일 때 priority로 추가 정렬
   if (isSurname) {
-    hanjaChars.sort((a, b) => (a.priority || 999) - (b.priority || 999));
+    // 먼저 성씨 여부와 priority로 정렬
+    hanjaChars.sort((a, b) => {
+      // 1. 성씨 우선
+      if (a.isSurname && !b.isSurname) return -1;
+      if (!a.isSurname && b.isSurname) return 1;
+      
+      // 2. priority 순 (낮은 값이 높은 우선순위)
+      const aPriority = a.priority || 999;
+      const bPriority = b.priority || 999;
+      if (aPriority !== bPriority) return aPriority - bPriority;
+      
+      // 3. frequency 순
+      const aFreq = (a.nameFrequency || 0) + (a.usageFrequency || 0);
+      const bFreq = (b.nameFrequency || 0) + (b.usageFrequency || 0);
+      return bFreq - aFreq;
+    });
   }
   
   // 응답 생성
@@ -294,11 +379,12 @@ export async function searchHanjaFromDB(
     }
   };
   
-  // 캐시 저장 (24시간)
+  // 캐시 저장 (TTL 구분)
   if (redis) {
-    const cacheKey = getCacheKey(options);
+    const cacheKey = generateCacheKey(options);
+    const ttl = getCacheTTL(cursor);
     try {
-      await redis.setex(cacheKey, 86400, JSON.stringify(response));
+      await redis.setex(cacheKey, ttl, JSON.stringify(response));
     } catch (e) {
       console.warn('Redis cache save error:', e);
     }

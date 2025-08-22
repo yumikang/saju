@@ -72,6 +72,8 @@ export function HanjaSelector({
   const fetcher = useFetcher()
   const apiCallCountRef = useRef(0)  // API 호출 횟수 추적 (테스트용)
   const listboxRef = useRef<HTMLDivElement>(null)  // listbox 스크롤 관리용
+  const comboboxId = useRef(`hanja-combobox-${Math.random().toString(36).substr(2, 9)}`).current
+  const listboxId = useRef(`hanja-listbox-${Math.random().toString(36).substr(2, 9)}`).current
   
   // Mode별 설정 가져오기
   const modeConfig = MODE_DEFAULTS[mode]
@@ -216,10 +218,6 @@ export function HanjaSelector({
       </div>
     )
   }
-
-  // Generate unique IDs for ARIA
-  const comboboxId = useRef(`hanja-combobox-${Math.random().toString(36).substr(2, 9)}`).current
-  const listboxId = useRef(`hanja-listbox-${Math.random().toString(36).substr(2, 9)}`).current
   
   // 키보드 이벤트 핸들러
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {

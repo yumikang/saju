@@ -25,6 +25,10 @@ function BabyInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
     dueDate: undefined as Date | undefined,
     isExpected: false
   })
+  
+  // IME 조합 상태 추적
+  const [isComposing, setIsComposing] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,10 +47,17 @@ function BabyInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
             value={formData.lastName}
             onChange={(e) => {
               setFormData({...formData, lastName: e.target.value, lastNameHanja: null})
+              if (!hasInteracted) setHasInteracted(true)
+            }}
+            onCompositionStart={() => setIsComposing(true)}
+            onCompositionEnd={() => setIsComposing(false)}
+            onBlur={() => {
+              if (!hasInteracted) setHasInteracted(true)
             }}
             required
           />
-          {formData.lastName && (
+          {/* 조합 중이 아니고, 성씨 입력이 있을 때만 한자 선택기 표시 */}
+          {formData.lastName && !isComposing && (
             <MultiHanjaSelector
               syllables={[formData.lastName]}
               selectedHanjas={[formData.lastNameHanja]}

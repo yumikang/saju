@@ -1,488 +1,194 @@
 {
   "tasks": [
     {
-      "id": "aa422f43-75b0-4310-bded-128269ef6761",
-      "name": "Prisma 스키마 확장 및 마이그레이션",
-      "description": "HanjaDict와 HanjaReading 모델을 contracts.md 규칙에 따라 확장하고, Element/YinYang/ReviewStatus enum 타입을 추가하여 데이터 무결성을 보장",
-      "notes": "기존 데이터와의 호환성을 위해 nullable 필드로 설정. 마이그레이션 후 기존 데이터 검증 필요",
+      "id": "8a6875f0-020f-4d07-933b-45ca33f54e97",
+      "name": "포커스 관리 시스템 구현",
+      "description": "highlightedIndex 상태 추가, aria-activedescendant 연결, 포커스된 항목 자동 스크롤 구현",
+      "notes": "포커스는 항상 combobox에 유지, 시각적 하이라이트만 이동",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-08-20T05:33:09.484Z",
-      "updatedAt": "2025-08-20T05:38:28.562Z",
+      "createdAt": "2025-08-22T07:29:58.480Z",
+      "updatedAt": "2025-08-22T07:31:46.215Z",
       "relatedFiles": [
         {
-          "path": "prisma/schema.prisma",
+          "path": "/app/components/ui/hanja-selector.tsx",
           "type": "TO_MODIFY",
-          "description": "스키마 확장 및 enum 타입 추가",
-          "lineStart": 1,
-          "lineEnd": 50
+          "description": "HanjaSelector 컴포넌트에 포커스 관리 로직 추가"
         }
       ],
-      "implementationGuide": "1. schema.prisma에 enum Element { 金 木 水 火 土 }, enum YinYang { 음 양 }, enum ReviewStatus { ok needs_review } 추가\\n2. HanjaDict 모델 확장: element Element?, yinYang YinYang?, review ReviewStatus @default(ok), evidenceJSON String?, decidedBy String?, ruleset String?, codepoint Int?\\n3. HanjaReading 모델 신규 생성: character String, reading String, soundElem Element?, isPrimary Boolean @default(false), @@unique([character, reading])\\n4. 인덱스 추가: @@index([element]), @@index([reading])\\n5. npx prisma migrate dev 실행하여 마이그레이션 생성",
-      "verificationCriteria": "마이그레이션 성공적으로 완료되고, enum 타입이 정상 생성되며, 기존 데이터가 손실 없이 유지됨",
-      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련",
-      "summary": "Prisma 스키마 확장 성공적으로 완료: Element(金木水火土), YinYang(음양), ReviewStatus enum 타입 추가됨. HanjaDict 모델은 contracts.md 규칙에 따라 확장되었고, HanjaReading 모델이 새로 생성됨. 마이그레이션 성공적으로 실행되어 기존 데이터 손실 없이 스키마가 업데이트됨. enum 값은 @map 속성을 사용하여 CJK/한글 문자와 매핑됨.",
-      "completedAt": "2025-08-20T05:38:28.562Z"
+      "implementationGuide": "1. useState로 highlightedIndex 상태 추가 (초기값 -1)\n2. combobox에 aria-activedescendant={highlightedIndex >= 0 ? `${listboxId}-option-${highlightedIndex}` : undefined} 추가\n3. 각 option에 data-highlighted={index === highlightedIndex} 속성 추가\n4. highlighted 상태에 따른 시각적 스타일 변경 (bg-gray-100 또는 ring-2)\n5. useEffect로 highlighted 항목이 viewport에 보이도록 scrollIntoView 구현",
+      "verificationCriteria": "aria-activedescendant가 현재 하이라이트된 option의 ID를 정확히 가리키고, 시각적 하이라이트가 명확히 표시됨",
+      "analysisResult": "HanjaSelector ARIA combobox 완전 구현 - 포커스 관리, 키보드 네비게이션, 스크린리더 피드백을 포함한 완전한 접근성 구현",
+      "summary": "포커스 관리 시스템을 성공적으로 구현했습니다. highlightedIndex 상태 추가, aria-activedescendant 연결, 시각적 하이라이트 스타일링(ring-2 ring-orange-500), 자동 스크롤(scrollIntoView), 드롭다운 열림/닫힘 시 인덱스 초기화 로직을 모두 구현했습니다.",
+      "completedAt": "2025-08-22T07:31:46.214Z"
     },
     {
-      "id": "57728999-353c-42fc-bd8b-d841593aead5",
-      "name": "데이터 정규화 유틸리티 구현",
-      "description": "contracts.md 규칙에 따른 normalizeElement, normalizeYinYang 함수를 구현하고, ValidationResult 패턴으로 안전한 변환 시스템 구축",
-      "notes": "유일 경로 원칙 준수 - DB 진입 전 반드시 정규화 거쳐야 함. 에러 핸들링으로 배치 작업 중단 방지",
+      "id": "0639fe50-f19a-4eda-90cd-8eb9170b7e65",
+      "name": "키보드 네비게이션 핵심 구현",
+      "description": "ArrowUp/Down, Enter, Escape 키 이벤트 처리 및 IME 가드 구현",
+      "notes": "event.preventDefault()로 기본 동작 차단 필수",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "aa422f43-75b0-4310-bded-128269ef6761"
+          "taskId": "8a6875f0-020f-4d07-933b-45ca33f54e97"
         }
       ],
-      "createdAt": "2025-08-20T05:33:09.484Z",
-      "updatedAt": "2025-08-20T05:46:25.128Z",
+      "createdAt": "2025-08-22T07:29:58.480Z",
+      "updatedAt": "2025-08-22T08:01:08.538Z",
       "relatedFiles": [
         {
-          "path": "app/lib/hanja-normalize.ts",
-          "type": "CREATE",
-          "description": "정규화 유틸리티 함수들",
-          "lineStart": 1,
-          "lineEnd": 100
-        },
-        {
-          "path": "app/lib/hanja-enhanced.ts",
+          "path": "/app/components/ui/hanja-selector.tsx",
           "type": "TO_MODIFY",
-          "description": "기존 정규화 함수 통합",
-          "lineStart": 1,
-          "lineEnd": 50
+          "description": "키보드 이벤트 핸들러 추가"
         }
       ],
-      "implementationGuide": "1. app/lib/hanja-normalize.ts 파일 생성\\n2. normalizeElement 함수: 한글(토금수화목) → CJK(土金水火木) 변환, 매핑 테이블 사용\\n3. normalizeYinYang 함수: 陰/陽/음/양 → 음/양 변환\\n4. ValidationResult<T> 타입 정의: { success: boolean, data?: T, error?: string }\\n5. safeNormalizeElement, safeNormalizeYinYang 함수로 non-throwing 버전 제공\\n6. 단위 테스트 작성으로 모든 케이스 검증",
-      "verificationCriteria": "모든 입력값이 표준 CJK/한글 형태로 정확히 변환되고, 잘못된 입력에 대해 적절한 에러 메시지 반환",
-      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련",
-      "summary": "Prisma enum 호환 데이터 정규화 유틸리티를 성공적으로 구현했습니다. hanja-normalize.ts는 Element, YinYang, ReviewStatus에 대한 완전한 양방향 변환 시스템을 제공하며, 27개 단위 테스트가 모두 통과했습니다. contracts.md 규칙을 완전히 준수하고 ValidationResult 패턴으로 안전한 에러 처리를 보장합니다.",
-      "completedAt": "2025-08-20T05:46:25.125Z"
+      "implementationGuide": "1. onKeyDown 핸들러 추가\n2. isComposing 체크로 IME 조합 중 이벤트 차단\n3. ArrowDown: highlightedIndex를 다음으로 이동 (마지막에서 0으로 순환)\n4. ArrowUp: highlightedIndex를 이전으로 이동 (0에서 마지막으로 순환)\n5. Enter: highlightedIndex >= 0이면 해당 항목 선택, preventDefault() 호출\n6. Escape: setIsOpen(false), highlightedIndex 초기화\n7. 드롭다운 열릴 때 highlightedIndex를 selectedHanja의 인덱스 또는 0으로 설정",
+      "verificationCriteria": "화살표 키로 하이라이트 이동, Enter로 선택, Escape로 닫기가 정상 작동",
+      "analysisResult": "HanjaSelector ARIA combobox 완전 구현 - 포커스 관리, 키보드 네비게이션, 스크린리더 피드백을 포함한 완전한 접근성 구현",
+      "summary": "키보드 네비게이션 핵심 기능을 성공적으로 구현했습니다. ArrowUp/Down으로 순환 네비게이션, Enter로 선택 및 폼 submit 방지, Escape로 닫기, Tab으로 선택 후 이동, IME 조합 중 키보드 이벤트 차단(isComposing 체크), Space/Enter로 드롭다운 열기 등 모든 핵심 기능이 구현되었습니다.",
+      "completedAt": "2025-08-22T08:01:08.530Z"
     },
     {
-      "id": "1cc3962f-2b9a-4045-95cb-8913f5e6e138",
-      "name": "ETL 파이프라인 기본 구조 구축",
-      "description": "scripts/etl/ 디렉토리에 7단계 ETL 파이프라인의 기본 구조를 만들고, 각 단계별 스크립트 템플릿을 생성",
-      "notes": "각 단계는 독립적으로 실행 가능하도록 설계. JSON 파일 기반으로 중간 결과 저장하여 디버깅 용이성 확보",
-      "status": "in_progress",
-      "dependencies": [
-        {
-          "taskId": "57728999-353c-42fc-bd8b-d841593aead5"
-        }
-      ],
-      "createdAt": "2025-08-20T05:33:09.484Z",
-      "updatedAt": "2025-08-20T06:07:24.690Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/etl/",
-          "type": "CREATE",
-          "description": "ETL 파이프라인 스크립트들",
-          "lineStart": 1,
-          "lineEnd": 50
-        },
-        {
-          "path": "data/",
-          "type": "CREATE",
-          "description": "데이터 저장 디렉토리 구조",
-          "lineStart": 1,
-          "lineEnd": 10
-        },
-        {
-          "path": "package.json",
-          "type": "TO_MODIFY",
-          "description": "ETL 스크립트 명령어 추가",
-          "lineStart": 10,
-          "lineEnd": 30
-        }
-      ],
-      "implementationGuide": "1. scripts/etl/ 디렉토리 생성\\n2. 각 단계별 스크립트 파일 생성: 10_fetch.ts, 20_parse_scourt.ts, 30_normalize.ts, 40_dedup_merge.ts, 50_resolve_conflict.ts, 60_validate.ts, 70_seed.ts, 80_report.ts\\n3. data/ 디렉토리 구조 생성: data/raw/, data/normalized/, data/merged/\\n4. 공통 타입 정의: ETLConfig, ProcessingResult, ValidationReport\\n5. 기본 로깅 및 에러 핸들링 시스템 구현\\n6. package.json에 ETL 스크립트 명령어 추가",
-      "verificationCriteria": "모든 ETL 스크립트가 생성되고, 기본 실행이 가능하며, 데이터 디렉토리 구조가 올바르게 구성됨",
-      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
-    },
-    {
-      "id": "efa07a92-743f-4ac0-b1a1-8af101790be2",
-      "name": "기존 데이터 ETL 파이프라인 적용",
-      "description": "현재 hanja-data.ts의 236자 데이터를 새로운 ETL 파이프라인과 DB 스키마로 마이그레이션하고, 데이터 품질 검증",
-      "notes": "기존 데이터의 무결성을 보장하며, 새로운 스키마로 안전하게 이전. 중복 키 병합 로직이 올바르게 적용되는지 확인",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "1cc3962f-2b9a-4045-95cb-8913f5e6e138"
-        }
-      ],
-      "createdAt": "2025-08-20T05:33:09.484Z",
-      "updatedAt": "2025-08-20T05:33:09.484Z",
-      "relatedFiles": [
-        {
-          "path": "app/lib/hanja-data.ts",
-          "type": "REFERENCE",
-          "description": "기존 한자 데이터",
-          "lineStart": 10,
-          "lineEnd": 436
-        },
-        {
-          "path": "scripts/etl/30_normalize.ts",
-          "type": "TO_MODIFY",
-          "description": "기존 데이터 정규화",
-          "lineStart": 1,
-          "lineEnd": 100
-        },
-        {
-          "path": "scripts/etl/70_seed.ts",
-          "type": "TO_MODIFY",
-          "description": "DB 시드 로직",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "1. 30_normalize.ts에서 기존 데이터 읽어와 정규화 적용\\n2. 40_dedup_merge.ts에서 문자 기준 병합 및 읽기 데이터 분리\\n3. 60_validate.ts에서 데이터 품질 검증 (표준값, 유실 문자, 중복 등)\\n4. 70_seed.ts에서 HanjaDict와 HanjaReading 테이블에 upsert\\n5. 80_report.ts에서 마이그레이션 결과 리포트 생성\\n6. 문자 수 유지 확인: 기존 188개 유니크 문자 → 188개 HanjaDict 레코드",
-      "verificationCriteria": "기존 188개 유니크 문자가 모두 HanjaDict에 저장되고, 다중 읽기가 HanjaReading 테이블에 정확히 분리됨",
-      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
-    },
-    {
-      "id": "c9a6ae77-2ec9-4262-bdd9-b3d50f8eaa10",
-      "name": "대법원 데이터 파서 구현",
-      "description": "대법원 인명용 한자 데이터를 파싱하여 1,000자 목표를 달성하기 위한 20_parse_scourt.ts 구현",
-      "notes": "대법원 데이터가 없는 경우 임시로 빈도 높은 한자 리스트 사용. 향후 실제 대법원 데이터로 교체 가능하도록 설계",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "efa07a92-743f-4ac0-b1a1-8af101790be2"
-        }
-      ],
-      "createdAt": "2025-08-20T05:33:09.484Z",
-      "updatedAt": "2025-08-20T05:33:09.484Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/etl/20_parse_scourt.ts",
-          "type": "TO_MODIFY",
-          "description": "대법원 데이터 파서",
-          "lineStart": 1,
-          "lineEnd": 150
-        },
-        {
-          "path": "data/raw/",
-          "type": "REFERENCE",
-          "description": "원본 데이터 저장소",
-          "lineStart": 1,
-          "lineEnd": 10
-        }
-      ],
-      "implementationGuide": "1. 대법원 인명용 한자 데이터 소스 확보 (CSV, PDF, 또는 공개 API)\\n2. 20_parse_scourt.ts에서 소스별 파서 구현\\n3. 빈도 기반 상위 1,000자 선별 로직 구현\\n4. 기본 메타데이터 추출: 문자, 의미, 획수, 읽기\\n5. sourceTag와 버전 정보 추가하여 추적 가능성 확보\\n6. data/raw/scourt_*.json 형태로 결과 저장",
-      "verificationCriteria": "1,000자 데이터가 정확히 파싱되고, 메타데이터가 완전하며, JSON 형태로 저장됨",
-      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
-    },
-    {
-      "id": "4b660a0e-dbd2-405b-922c-b0f372da690d",
-      "name": "충돌 해결 시스템 구현",
-      "description": "50_resolve_conflict.ts에서 권위 소스 간 오행/음양 충돌을 자동으로 해결하고, needs_review 플래그 관리",
-      "notes": "향후 전문가 검토나 추가 권위 소스 도입 시 재계산 가능하도록 근거 데이터 보존",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "c9a6ae77-2ec9-4262-bdd9-b3d50f8eaa10"
-        }
-      ],
-      "createdAt": "2025-08-20T05:33:09.484Z",
-      "updatedAt": "2025-08-20T05:33:09.484Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/etl/50_resolve_conflict.ts",
-          "type": "TO_MODIFY",
-          "description": "충돌 해결 로직",
-          "lineStart": 1,
-          "lineEnd": 200
-        },
-        {
-          "path": "app/lib/hanja-conflicts.ts",
-          "type": "REFERENCE",
-          "description": "기존 충돌 관리",
-          "lineStart": 1,
-          "lineEnd": 50
-        }
-      ],
-      "implementationGuide": "1. 권위 소스별 가중치 테이블 정의: base(0.4), expanded(0.4), strokeRule(0.3), soundRule(0.3)\\n2. resolveElement 함수: 가중치 기반 투표 시스템으로 최종 값 결정\\n3. 박빙/동점 시 needs_review 자동 태깅\\n4. evidenceJSON에 결정 근거와 소스별 점수 기록\\n5. decidedBy 필드에 결정 방식 기록 (auto, manual, rule)\\n6. 충돌 상황 리포트 생성 및 콘솔 출력",
-      "verificationCriteria": "모든 충돌이 자동으로 해결되거나 needs_review로 태깅되고, 결정 근거가 명확히 기록됨",
-      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
-    },
-    {
-      "id": "b7dcff3e-c23f-499f-8349-b816fad66b79",
-      "name": "품질 검증 시스템 구현",
-      "description": "60_validate.ts에서 contracts.md 규칙 준수 여부를 검증하고, 데이터 품질 메트릭을 생성",
-      "notes": "CI/CD에서 활용할 수 있도록 exit code와 JSON 리포트 제공. 임계치 초과 시 배포 차단 가능",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "4b660a0e-dbd2-405b-922c-b0f372da690d"
-        }
-      ],
-      "createdAt": "2025-08-20T05:33:09.484Z",
-      "updatedAt": "2025-08-20T05:33:09.484Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/etl/60_validate.ts",
-          "type": "TO_MODIFY",
-          "description": "품질 검증 로직",
-          "lineStart": 1,
-          "lineEnd": 150
-        },
-        {
-          "path": "scripts/etl/80_report.ts",
-          "type": "TO_MODIFY",
-          "description": "품질 리포트 생성",
-          "lineStart": 50,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "1. 표준값 검증: 모든 element가 CJK(金木水火土), yinYang이 한글(음/양)인지 확인\\n2. 유니크 제약 검증: character 중복, reading 조합 중복 확인\\n3. 필수 필드 검증: 문자, 읽기, 의미 등 핵심 필드 누락 확인\\n4. 데이터 일관성 검증: 획수 범위, 문자 유니코드 유효성\\n5. 품질 메트릭 생성: needs_review 비율, 표준값 준수율, 완성도\\n6. 회귀 테스트: 문자 수 변화, 오행 분포 변화 감지",
-      "verificationCriteria": "모든 품질 규칙이 통과하고, 상세한 검증 리포트가 생성되며, 회귀 테스트가 정상 작동함",
-      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
-    },
-    {
-      "id": "015d098f-2809-4c0a-af74-dce16be92a44",
-      "name": "통합 테스트 및 MVP 검증",
-      "description": "전체 ETL 파이프라인을 end-to-end로 실행하고, 1,000자 MVP 목표 달성 여부를 검증",
-      "notes": "MVP 성공 기준 달성 확인: 추천 생성 성공률 ≥99%, needs_review <5%, ETL 파이프라인 자동화 완료",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "b7dcff3e-c23f-499f-8349-b816fad66b79"
-        }
-      ],
-      "createdAt": "2025-08-20T05:33:09.484Z",
-      "updatedAt": "2025-08-20T05:33:09.484Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/etl/",
-          "type": "REFERENCE",
-          "description": "전체 ETL 파이프라인",
-          "lineStart": 1,
-          "lineEnd": 10
-        },
-        {
-          "path": "app/lib/",
-          "type": "REFERENCE",
-          "description": "기존 작명 엔진 연동",
-          "lineStart": 1,
-          "lineEnd": 50
-        }
-      ],
-      "implementationGuide": "1. 전체 ETL 파이프라인 순차 실행: 10_fetch → 20_parse → 30_normalize → 40_dedup → 50_resolve → 60_validate → 70_seed → 80_report\\n2. 최종 결과 검증: HanjaDict 레코드 수, HanjaReading 레코드 수, needs_review 비율\\n3. 성능 테스트: ETL 파이프라인 실행 시간, 메모리 사용량\\n4. 작명 엔진 연동 테스트: 기존 API가 새로운 DB 스키마와 정상 작동하는지 확인\\n5. 최종 품질 메트릭 검토: 표준값 준수율 100%, 유실률 0% 달성 확인",
-      "verificationCriteria": "1,000자 목표 달성, 모든 품질 기준 통과, 기존 작명 엔진과 정상 연동, ETL 파이프라인 완전 자동화",
-      "analysisResult": "Phase 1 MVP 목표: 기존 236자 → 1,000자 확장을 위한 ETL 파이프라인 구축. 데이터 정규화, 중복 제거, 충돌 해결 시스템을 통해 운영 안정성을 확보하고, contracts.md 규칙을 준수하여 5,000자까지 확장 가능한 기반 마련"
-    },
-    {
-      "id": "dbb53345-88d4-4b5b-9dc8-6575b05d204f",
-      "name": "Supreme Court 한자 데이터 ingestion 스크립트 작성",
-      "description": "10_ingest_gov.ts 스크립트를 작성하여 supreme-court-hanja.json을 읽고 표준 raw 포맷으로 변환",
+      "id": "48992414-1180-4424-8415-6d88a75d4224",
+      "name": "키보드 네비게이션 확장 기능",
+      "description": "Home/End, PageUp/PageDown 키 지원 추가",
+      "notes": "페이지 단위 이동은 5개씩으로 설정",
       "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "0639fe50-f19a-4eda-90cd-8eb9170b7e65"
+        }
+      ],
+      "createdAt": "2025-08-22T07:29:58.480Z",
+      "updatedAt": "2025-08-22T08:04:21.975Z",
+      "relatedFiles": [
+        {
+          "path": "/app/components/ui/hanja-selector.tsx",
+          "type": "TO_MODIFY",
+          "description": "확장 키보드 이벤트 추가"
+        }
+      ],
+      "implementationGuide": "1. Home 키: highlightedIndex를 0으로 설정\n2. End 키: highlightedIndex를 hanjaList.length - 1로 설정\n3. PageUp: highlightedIndex를 Math.max(0, highlightedIndex - 5)로 설정\n4. PageDown: highlightedIndex를 Math.min(hanjaList.length - 1, highlightedIndex + 5)로 설정\n5. 모든 키 이벤트에서 event.preventDefault() 호출",
+      "verificationCriteria": "Home/End로 처음/끝 이동, PageUp/Down으로 5개씩 이동 확인",
+      "analysisResult": "HanjaSelector ARIA combobox 완전 구현 - 포커스 관리, 키보드 네비게이션, 스크린리더 피드백을 포함한 완전한 접근성 구현",
+      "summary": "키보드 네비게이션 확장 기능을 성공적으로 구현했습니다. Home 키로 첫 번째 항목, End 키로 마지막 항목 이동, PageUp/PageDown으로 5개씩 건너뛰기 기능을 추가했으며, 모든 키에 preventDefault()를 적용하여 스크롤 등의 부작용을 방지했습니다.",
+      "completedAt": "2025-08-22T08:04:21.969Z"
+    },
+    {
+      "id": "1bcdaf1f-0f6b-4faf-9b46-81bc75baa530",
+      "name": "스크린리더 라이브 리전 구현",
+      "description": "aria-live 영역 추가 및 동적 피드백 메시지 시스템 구축",
+      "notes": "sr-only 클래스: position: absolute; width: 1px; height: 1px; clip: rect(0,0,0,0); overflow: hidden",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "0639fe50-f19a-4eda-90cd-8eb9170b7e65"
+        }
+      ],
+      "createdAt": "2025-08-22T07:29:58.480Z",
+      "updatedAt": "2025-08-22T08:08:57.640Z",
+      "relatedFiles": [
+        {
+          "path": "/app/components/ui/hanja-selector.tsx",
+          "type": "TO_MODIFY",
+          "description": "aria-live 영역 및 announcement 로직 추가"
+        }
+      ],
+      "implementationGuide": "1. 컴포넌트 최상단에 aria-live='polite' div 추가 (position: absolute, sr-only 클래스)\n2. useState로 announcement 상태 추가\n3. 검색 결과 변경 시: `${hanjaList.length}개의 ${modeConfig.placeholderSuffix} 검색됨`\n4. 결과 없을 시: '검색 결과가 없습니다. 두음법칙을 확인해보세요'\n5. 선택 시: `${hanja.char}, ${hanja.meaning}, ${hanja.strokes}획 선택됨`\n6. 하이라이트 이동 시: `${hanja.char}, ${hanja.meaning}` (옵션)\n7. useEffect로 announcement 변경 시 300ms 후 빈 문자열로 리셋 (중복 읽기 방지)",
+      "verificationCriteria": "스크린리더가 결과 개수, 선택 상태를 정확히 읽음",
+      "analysisResult": "HanjaSelector ARIA combobox 완전 구현 - 포커스 관리, 키보드 네비게이션, 스크린리더 피드백을 포함한 완전한 접근성 구현",
+      "summary": "스크린리더 라이브 리전을 완벽하게 구현했습니다. aria-live=\"polite\" 영역 추가, 검색 결과 개수 알림, 빈 결과 시 두음법칙 힌트 제공, 선택 확인 메시지, 1초 후 자동 리셋으로 중복 읽기 방지 등 모든 접근성 요구사항을 충족했습니다. sr-only 클래스로 시각적으로 숨기면서 스크린리더에만 노출되도록 처리했습니다.",
+      "completedAt": "2025-08-22T08:08:57.639Z"
+    },
+    {
+      "id": "55c06247-a950-4cb1-9f15-4873b697e7d6",
+      "name": "Empty 상태 UX 개선",
+      "description": "검색 결과 없을 때 두음법칙 힌트 제공",
+      "notes": "두음법칙 매핑은 hanja-service.server.ts의 DUEUM_MAP 참조",
+      "status": "pending",
       "dependencies": [],
-      "createdAt": "2025-08-20T06:56:57.167Z",
-      "updatedAt": "2025-08-20T06:59:17.181Z",
+      "createdAt": "2025-08-22T07:29:58.480Z",
+      "updatedAt": "2025-08-22T07:29:58.480Z",
       "relatedFiles": [
         {
-          "path": "scripts/etl/data/raw/supreme-court-hanja.json",
-          "type": "REFERENCE",
-          "description": "다운로드된 Supreme Court 원본 데이터"
-        },
-        {
-          "path": "scripts/etl/10_ingest_gov.ts",
-          "type": "CREATE",
-          "description": "새로 작성할 gov 데이터 ingestion 스크립트"
-        },
-        {
-          "path": "scripts/etl/types.ts",
-          "type": "REFERENCE",
-          "description": "ETL 타입 정의"
+          "path": "/app/components/ui/hanja-selector.tsx",
+          "type": "TO_MODIFY",
+          "description": "Empty 상태 UI 개선"
         }
       ],
-      "implementationGuide": "1. supreme-court-hanja.json 파일 읽기\n2. 각 레코드의 cd(hex code)를 실제 한자 문자로 변환\n3. ineum(한글 음), dic(의미) 등 필드 매핑\n4. 표준 RawHanjaRecord 형식으로 변환\n5. data/raw/gov-[timestamp].json으로 저장",
-      "verificationCriteria": "10,163개 레코드가 올바르게 변환되어 raw JSON으로 저장됨",
-      "analysisResult": "한국 인명용 한자 데이터(10,163자)를 ETL 파이프라인에 통합. 원본 데이터는 이미 다운로드됨(supreme-court-hanja.json). 기존 ETL 파이프라인 구조를 활용하여 단계별 처리.",
-      "summary": "Supreme Court 한자 데이터 ingestion 스크립트를 성공적으로 작성하고 실행했습니다. 10,163개의 한자가 hex 코드에서 실제 문자로 변환되었고, 훈음에서 의미가 추출되어 표준 RawHanjaRecord 형식으로 저장되었습니다. 원본 데이터는 gov-2025-08-20T06-58-47-164Z.json 파일로 보존되었습니다.",
-      "completedAt": "2025-08-20T06:59:17.180Z"
+      "implementationGuide": "1. DUEUM_MAP 객체 정의 (이↔리, 유↔류, 임↔림 등)\n2. Empty 상태 컴포넌트 개선:\n   - '검색 결과가 없습니다' 메시지\n   - reading이 DUEUM_MAP에 있으면 '\"${alternative}\"로도 검색해보세요' 힌트 추가\n   - 일반적 두음 예시 표시: '두음법칙: 이↔리, 유↔류, 임↔림'\n3. 힌트 클릭 시 해당 음으로 재검색 트리거 (onReadingChange 콜백 추가 필요)",
+      "verificationCriteria": "결과 없을 때 두음법칙 힌트가 표시되고 대체 검색어 제안",
+      "analysisResult": "HanjaSelector ARIA combobox 완전 구현 - 포커스 관리, 키보드 네비게이션, 스크린리더 피드백을 포함한 완전한 접근성 구현"
     },
     {
-      "id": "8cc16970-04e1-47fe-8f41-594fd0d51b07",
-      "name": "기존 ETL 파이프라인과 통합",
-      "description": "새로운 gov 데이터를 기존 파이프라인(normalize, dedup, resolve, validate, load)에서 처리할 수 있도록 조정",
+      "id": "b2652370-9a62-48c4-9bcf-884bd44cd1cf",
+      "name": "Error 상태 및 재시도 메커니즘",
+      "description": "네트워크 오류 처리 및 exponential backoff 재시도 구현",
+      "notes": "재시도 간격: 1초, 2초, 4초 (최대 10초)",
       "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "dbb53345-88d4-4b5b-9dc8-6575b05d204f"
-        }
-      ],
-      "createdAt": "2025-08-20T06:56:57.167Z",
-      "updatedAt": "2025-08-20T06:56:57.167Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/etl/20_normalize.ts",
-          "type": "TO_MODIFY",
-          "description": "정규화 스크립트 수정"
-        },
-        {
-          "path": "scripts/etl/30_dedup.ts",
-          "type": "TO_MODIFY",
-          "description": "중복 제거 스크립트 수정"
-        }
-      ],
-      "implementationGuide": "1. 20_normalize.ts가 gov 데이터 포맷도 처리하도록 수정\n2. 오행/음양 매핑 로직 추가 (기존 hanja.json과 다른 구조)\n3. 중복 제거 시 기존 185개 데이터와 병합 고려",
-      "verificationCriteria": "gov 데이터가 기존 파이프라인을 통해 정상 처리됨",
-      "analysisResult": "한국 인명용 한자 데이터(10,163자)를 ETL 파이프라인에 통합. 원본 데이터는 이미 다운로드됨(supreme-court-hanja.json). 기존 ETL 파이프라인 구조를 활용하여 단계별 처리."
-    },
-    {
-      "id": "46eb983f-adc0-4c2f-9e1f-70d491a23203",
-      "name": "통합 ETL 실행 및 검증",
-      "description": "전체 ETL 파이프라인을 실행하여 10,000개 이상의 한자가 데이터베이스에 로드되는지 확인",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "8cc16970-04e1-47fe-8f41-594fd0d51b07"
-        }
-      ],
-      "createdAt": "2025-08-20T06:56:57.167Z",
-      "updatedAt": "2025-08-20T06:56:57.167Z",
-      "relatedFiles": [
-        {
-          "path": "package.json",
-          "type": "TO_MODIFY",
-          "description": "npm 스크립트 추가"
-        },
-        {
-          "path": "scripts/etl/orchestrator.ts",
-          "type": "TO_MODIFY",
-          "description": "orchestrator 수정"
-        }
-      ],
-      "implementationGuide": "1. npm run etl:gov로 gov 데이터만 처리\n2. npm run etl로 전체 데이터 처리\n3. 데이터베이스에서 총 레코드 수 확인\n4. 오행/음양 분포 검증",
-      "verificationCriteria": "데이터베이스에 10,000개 이상의 한자 레코드가 저장됨",
-      "analysisResult": "한국 인명용 한자 데이터(10,163자)를 ETL 파이프라인에 통합. 원본 데이터는 이미 다운로드됨(supreme-court-hanja.json). 기존 ETL 파이프라인 구조를 활용하여 단계별 처리."
-    },
-    {
-      "id": "1560cabe-8605-4d2c-8d28-79c197b2f1bd",
-      "name": "한자-오행 룩업 테이블 생성",
-      "description": "기존 185개 데이터에서 한자-오행 매핑을 추출하여 Gov 데이터에 적용할 룩업 테이블 생성",
-      "notes": "기존 데이터 기반이므로 신뢰도 높음. Gov 데이터의 오행 매핑 기준으로 활용",
-      "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-08-21T06:07:13.361Z",
-      "updatedAt": "2025-08-21T06:10:49.619Z",
+      "createdAt": "2025-08-22T07:29:58.480Z",
+      "updatedAt": "2025-08-22T07:29:58.480Z",
       "relatedFiles": [
         {
-          "path": "scripts/etl/data/raw/raw_data.json",
-          "type": "REFERENCE",
-          "description": "기존 한자-오행 매핑 소스"
+          "path": "/app/components/ui/hanja-selector.tsx",
+          "type": "TO_MODIFY",
+          "description": "Error 처리 및 재시도 로직 추가"
+        }
+      ],
+      "implementationGuide": "1. useState로 retryCount, isRetrying 상태 추가\n2. Error 상태 UI 개선:\n   - '네트워크 오류가 발생했습니다' 메시지\n   - '다시 시도' 버튼 (또는 Enter 키로 재시도)\n   - 재시도 중 로딩 표시\n3. Exponential backoff 구현:\n   - 재시도 간격: Math.min(1000 * Math.pow(2, retryCount), 10000)\n   - 최대 3회 재시도\n4. onKeyDown에서 Enter 키로 재시도 트리거\n5. 성공 시 retryCount 리셋",
+      "verificationCriteria": "네트워크 오류 시 재시도 버튼 표시, exponential backoff 작동 확인",
+      "analysisResult": "HanjaSelector ARIA combobox 완전 구현 - 포커스 관리, 키보드 네비게이션, 스크린리더 피드백을 포함한 완전한 접근성 구현"
+    },
+    {
+      "id": "27482e92-efe8-4b2f-8978-38f474b468c9",
+      "name": "로딩 최소 시간 구현",
+      "description": "깜빡임 방지를 위한 최소 로딩 시간 150-200ms 적용",
+      "notes": "사용자 경험 개선을 위한 미세 조정",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-08-22T07:29:58.480Z",
+      "updatedAt": "2025-08-22T07:29:58.480Z",
+      "relatedFiles": [
+        {
+          "path": "/app/components/ui/hanja-selector.tsx",
+          "type": "TO_MODIFY",
+          "description": "최소 로딩 시간 로직 추가"
+        }
+      ],
+      "implementationGuide": "1. useRef로 loadingStartTime 추가\n2. 로딩 시작 시 현재 시간 기록\n3. 로딩 완료 시:\n   - 경과 시간 계산\n   - 150ms 미만이면 setTimeout으로 지연\n   - 150ms 이상이면 즉시 표시\n4. useEffect cleanup에서 setTimeout 취소",
+      "verificationCriteria": "빠른 응답 시에도 최소 150ms 로딩 표시 유지",
+      "analysisResult": "HanjaSelector ARIA combobox 완전 구현 - 포커스 관리, 키보드 네비게이션, 스크린리더 피드백을 포함한 완전한 접근성 구현"
+    },
+    {
+      "id": "37177b7e-384a-4eb1-9747-f845164db4ed",
+      "name": "통합 테스트 페이지 구현",
+      "description": "모든 접근성 기능을 테스트할 수 있는 전용 페이지 생성",
+      "notes": "개발자 도구에서 Lighthouse Accessibility 실행 안내 포함",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "8a6875f0-020f-4d07-933b-45ca33f54e97"
         },
         {
-          "path": "scripts/etl/lib/hanja-element-lookup.ts",
+          "taskId": "0639fe50-f19a-4eda-90cd-8eb9170b7e65"
+        },
+        {
+          "taskId": "1bcdaf1f-0f6b-4faf-9b46-81bc75baa530"
+        }
+      ],
+      "createdAt": "2025-08-22T07:29:58.480Z",
+      "updatedAt": "2025-08-22T07:29:58.480Z",
+      "relatedFiles": [
+        {
+          "path": "/app/routes/test-hanja-accessibility.tsx",
           "type": "CREATE",
-          "description": "생성할 룩업 테이블"
-        },
-        {
-          "path": "app/lib/hanja-normalize.ts",
-          "type": "REFERENCE",
-          "description": "오행 매핑 유틸리티"
+          "description": "접근성 테스트 전용 페이지"
         }
       ],
-      "implementationGuide": "1. scripts/etl/data/raw/raw_data.json에서 한자-오행 매핑 추출\\n2. Map<string, string> 형태로 룩업 테이블 생성\\n3. hanja-element-lookup.ts 파일로 저장\\n4. 검증: 185개 한자 모두 매핑되는지 확인",
-      "verificationCriteria": "185개 한자-오행 매핑이 완전히 추출되고 검증됨",
-      "analysisResult": "Gov 데이터(10,163자) ETL 정규화 및 중복 제거 단계 구현. 기존 ETL 파이프라인 확장을 통해 복수 읽기 처리, 오행/음양 매핑, 682개 중복 병합을 수행하여 10,000+ 한자 데이터베이스 구축",
-      "summary": "한자-오행 룩업 테이블 성공적으로 생성. 기존 185개 raw 데이터에서 184개 유니크 한자의 오행 매핑을 추출하여 Map 구조로 구성. 오행별 분포: 목(42개), 수(41개), 금(38개), 화(36개), 토(27개). 조회, 검증, 통계 함수 포함하여 Gov 데이터 정규화에 활용 준비 완료.",
-      "completedAt": "2025-08-21T06:10:49.618Z"
-    },
-    {
-      "id": "22c75b63-3f1d-4e90-be1a-14d89e546210",
-      "name": "20_normalize.ts Gov 데이터 처리 확장",
-      "description": "기존 정규화 스크립트를 확장하여 Gov 데이터의 복수 읽기 분할 및 오행 매핑 처리",
-      "notes": "기존 normalizeHanjaRecord 함수 확장, 호환성 유지",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "1560cabe-8605-4d2c-8d28-79c197b2f1bd"
-        }
-      ],
-      "createdAt": "2025-08-21T06:07:13.361Z",
-      "updatedAt": "2025-08-21T06:32:12.860Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/etl/20_normalize.ts",
-          "type": "TO_MODIFY",
-          "description": "정규화 스크립트 확장"
-        },
-        {
-          "path": "scripts/etl/lib/hanja-element-lookup.ts",
-          "type": "DEPENDENCY",
-          "description": "룩업 테이블 의존성"
-        },
-        {
-          "path": "scripts/etl/lib/etl-types.ts",
-          "type": "REFERENCE",
-          "description": "타입 정의"
-        }
-      ],
-      "implementationGuide": "1. Gov 데이터 감지 로직 추가 (source === 'supreme-court')\\n2. 복수 읽기 분할: reading.split(',').map(r => r.trim())\\n3. 첫 번째 읽기를 주 읽기로, 나머지는 alternativeReadings로 저장\\n4. 한자-오행 룩업 테이블 활용하여 element 매핑\\n5. Gov 메타데이터 보존 (hexCode, originalIndex, dictionaryInfo)",
-      "verificationCriteria": "Gov 데이터의 복수 읽기가 올바르게 분할되고 오행이 매핑됨",
-      "analysisResult": "Gov 데이터(10,163자) ETL 정규화 및 중복 제거 단계 구현. 기존 ETL 파이프라인 확장을 통해 복수 읽기 처리, 오행/음양 매핑, 682개 중복 병합을 수행하여 10,000+ 한자 데이터베이스 구축",
-      "summary": "Gov 데이터 정규화 처리 확장 완료. 10,350개 레코드 성공적으로 정규화(기존 187개 + Gov 10,163개). 주요 기능: 1) 복수 읽기 분할 처리 - 1,566개 한자의 쉼표로 구분된 읽기를 주 읽기와 대안 읽기로 분할, 2) 한자-오행 룩업 테이블 활용 - 201개 한자에 기존 데이터 기반 오행 매핑 자동 적용, 3) Gov 메타데이터 보존 - hexCode, dictionaryInfo 등 원본 메타데이터 유지. 호환성을 유지하면서 기존 정규화 로직 확장 완료.",
-      "completedAt": "2025-08-21T06:32:12.855Z"
-    },
-    {
-      "id": "fef36186-2425-4af8-9084-be4f6a2b779e",
-      "name": "30_dedup.ts Gov 중복 병합 규칙 구현",
-      "description": "기존 중복 제거 스크립트를 확장하여 Gov 데이터의 682개 중복 한자 병합 처리",
-      "notes": "기존 mergeRecords 함수 확장, 데이터 일관성 보장",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "22c75b63-3f1d-4e90-be1a-14d89e546210"
-        }
-      ],
-      "createdAt": "2025-08-21T06:07:13.361Z",
-      "updatedAt": "2025-08-21T06:07:13.361Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/etl/30_dedup.ts",
-          "type": "TO_MODIFY",
-          "description": "중복 제거 스크립트 확장"
-        },
-        {
-          "path": "scripts/etl/lib/etl-types.ts",
-          "type": "REFERENCE",
-          "description": "타입 정의"
-        }
-      ],
-      "implementationGuide": "1. Gov 메타데이터 병합 함수 구현: mergeGovMetadata()\\n2. hexCode, originalIndex 배열로 통합\\n3. dictionaryInfo 병합 (중복 제거)\\n4. alternativeReadings 통합\\n5. 소스 우선순위 조정: supreme-court 우선도 8로 설정\\n6. 품질 점수 계산 시 Gov 데이터 특성 반영",
-      "verificationCriteria": "682개 중복 한자가 올바르게 병합되고 메타데이터가 보존됨",
-      "analysisResult": "Gov 데이터(10,163자) ETL 정규화 및 중복 제거 단계 구현. 기존 ETL 파이프라인 확장을 통해 복수 읽기 처리, 오행/음양 매핑, 682개 중복 병합을 수행하여 10,000+ 한자 데이터베이스 구축"
-    },
-    {
-      "id": "0af4c149-b7ae-4570-896c-8606d2c9fc7a",
-      "name": "통합 ETL 파이프라인 실행 및 검증",
-      "description": "기존+Gov 데이터를 통합하여 전체 ETL 파이프라인 실행 후 10,000+ 한자 데이터베이스 로드 검증",
-      "notes": "전체 파이프라인 통합 테스트, 품질 보장",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "fef36186-2425-4af8-9084-be4f6a2b779e"
-        }
-      ],
-      "createdAt": "2025-08-21T06:07:13.361Z",
-      "updatedAt": "2025-08-21T06:07:13.361Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/etl/run-pipeline.ts",
-          "type": "REFERENCE",
-          "description": "파이프라인 실행기"
-        },
-        {
-          "path": "package.json",
-          "type": "REFERENCE",
-          "description": "npm 스크립트"
-        }
-      ],
-      "implementationGuide": "1. npm run etl로 전체 파이프라인 실행\\n2. Gov 데이터 포함 확인: 10,163 + 185 = 10,348개 입력\\n3. 중복 제거 후 약 9,666개 예상 (682개 중복 제거)\\n4. 데이터베이스 로드 검증\\n5. 오행/음양 분포 확인\\n6. 복수 읽기 데이터 무결성 검증",
-      "verificationCriteria": "10,000개 이상의 한자가 데이터베이스에 성공적으로 로드되고 품질 검증 통과",
-      "analysisResult": "Gov 데이터(10,163자) ETL 정규화 및 중복 제거 단계 구현. 기존 ETL 파이프라인 확장을 통해 복수 읽기 처리, 오행/음양 매핑, 682개 중복 병합을 수행하여 10,000+ 한자 데이터베이스 구축"
+      "implementationGuide": "1. /routes/test-hanja-accessibility.tsx 파일 생성\n2. 테스트 시나리오 UI 구성:\n   - 키보드 네비게이션 체크리스트\n   - 스크린리더 피드백 확인 영역\n   - 각 상태(Loading, Empty, Error) 시뮬레이션 버튼\n   - Lighthouse 점수 확인 가이드\n3. 실시간 상태 모니터링:\n   - 현재 highlightedIndex 표시\n   - aria-activedescendant 값 표시\n   - announcement 메시지 로그\n4. axe-core 런타임 체크 스크립트 추가",
+      "verificationCriteria": "모든 접근성 기능이 테스트 페이지에서 검증 가능",
+      "analysisResult": "HanjaSelector ARIA combobox 완전 구현 - 포커스 관리, 키보드 네비게이션, 스크린리더 피드백을 포함한 완전한 접근성 구현"
     }
   ]
 }

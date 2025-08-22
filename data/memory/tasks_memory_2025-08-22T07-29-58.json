@@ -1,0 +1,100 @@
+{
+  "tasks": [
+    {
+      "id": "f41ab5f3-9634-4d1f-8640-797f010c9d00",
+      "name": "HanjaSelector 현재 구조 분석",
+      "description": "현재 HanjaSelector 컴포넌트의 구조와 props, 상태 관리 방식을 분석하여 개선 기반 마련",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-22T07:13:30.136Z",
+      "updatedAt": "2025-08-22T07:14:52.119Z",
+      "relatedFiles": [
+        {
+          "path": "/app/components/ui/hanja-selector.tsx",
+          "type": "TO_MODIFY",
+          "description": "메인 컴포넌트 파일"
+        }
+      ],
+      "implementationGuide": "1. HanjaSelector 컴포넌트 파일 읽기\n2. 현재 props 인터페이스 분석\n3. 상태 관리 및 API 호출 로직 파악\n4. 기존 접근성 구현 수준 확인",
+      "verificationCriteria": "현재 구조가 완전히 파악되고 개선점이 명확히 도출됨",
+      "analysisResult": "HanjaSelector 컴포넌트를 개선하여 mode prop 분리, ARIA 접근성 구현, Empty/Retry UX 개선을 수행합니다. 각 개선사항은 독립적이지만 순차적으로 진행하여 안정성을 확보합니다.",
+      "summary": "HanjaSelector 컴포넌트의 현재 구조를 완전히 분석했습니다. Props 인터페이스, 상태 관리, API 호출 로직, 접근성 현황, UX 처리를 파악하고 개선점을 명확히 도출했습니다. 특히 isSurname이 하드코딩된 문제, 부분적인 접근성 구현, 누락된 UX 기능들을 식별했습니다.",
+      "completedAt": "2025-08-22T07:14:52.117Z"
+    },
+    {
+      "id": "99ae1a63-7b86-4421-8aca-cfe941ace4a1",
+      "name": "Mode prop 인터페이스 설계",
+      "description": "mode prop을 추가하고 타입 안전성을 보장하는 인터페이스 설계",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "f41ab5f3-9634-4d1f-8640-797f010c9d00"
+        }
+      ],
+      "createdAt": "2025-08-22T07:13:30.136Z",
+      "updatedAt": "2025-08-22T07:17:01.669Z",
+      "relatedFiles": [
+        {
+          "path": "/app/components/ui/hanja-selector.tsx",
+          "type": "TO_MODIFY",
+          "description": "인터페이스 정의 추가"
+        }
+      ],
+      "implementationGuide": "1. HanjaSelectorMode 타입 정의: 'surname' | 'general'\n2. HanjaSelectorProps 인터페이스 확장\n3. mode별 기본값 정의 (surname: popularity/20, general: strokes/50)\n4. TypeScript 타입 안전성 확보",
+      "verificationCriteria": "타입 정의가 명확하고 mode별 기본값이 정의됨",
+      "analysisResult": "HanjaSelector 컴포넌트를 개선하여 mode prop 분리, ARIA 접근성 구현, Empty/Retry UX 개선을 수행합니다. 각 개선사항은 독립적이지만 순차적으로 진행하여 안정성을 확보합니다.",
+      "summary": "Mode prop 인터페이스 설계를 완료했습니다. HanjaSelectorMode 타입('surname' | 'general')을 정의하고, MODE_DEFAULTS 상수로 각 모드별 기본값(surname: popularity/20, general: strokes/50)을 설정했습니다. HanjaSelectorProps에 mode prop을 추가하고 TypeScript 타입 안전성을 확보했습니다.",
+      "completedAt": "2025-08-22T07:17:01.667Z"
+    },
+    {
+      "id": "9d49a604-56fc-4ddd-b370-03d2372076ef",
+      "name": "Mode별 API 파라미터 자동 설정 구현",
+      "description": "mode에 따라 API 호출 시 적절한 파라미터가 자동으로 설정되도록 구현",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "99ae1a63-7b86-4421-8aca-cfe941ace4a1"
+        }
+      ],
+      "createdAt": "2025-08-22T07:13:30.136Z",
+      "updatedAt": "2025-08-22T07:19:36.731Z",
+      "relatedFiles": [
+        {
+          "path": "/app/components/ui/hanja-selector.tsx",
+          "type": "TO_MODIFY",
+          "description": "API 호출 로직 수정"
+        }
+      ],
+      "implementationGuide": "1. mode에 따른 파라미터 결정 로직 구현\n2. surname mode: surname=true, sort='popularity', limit=20\n3. general mode: surname=false, sort='strokes', limit=50\n4. fetcher.load 호출 시 파라미터 적용",
+      "verificationCriteria": "mode 변경 시 API 파라미터가 올바르게 변경됨",
+      "analysisResult": "HanjaSelector 컴포넌트를 개선하여 mode prop 분리, ARIA 접근성 구현, Empty/Retry UX 개선을 수행합니다. 각 개선사항은 독립적이지만 순차적으로 진행하여 안정성을 확보합니다.",
+      "summary": "Mode별 API 파라미터 자동 설정을 완료했습니다. URLSearchParams를 사용하여 mode에 따라 자동으로 surname, sort, limit 파라미터를 설정하도록 구현했습니다. surname 모드에서는 surname=true, sort=popularity, limit=20이, general 모드에서는 surname=false, sort=strokes, limit=50이 자동 적용됩니다. 테스트 페이지도 생성하여 검증 가능합니다.",
+      "completedAt": "2025-08-22T07:19:36.729Z"
+    },
+    {
+      "id": "19f4b8ed-e1e7-4353-8fe5-3254e64da780",
+      "name": "ARIA combobox 기본 구조 구현",
+      "description": "WAI-ARIA combobox 패턴에 따른 기본 role과 속성 적용",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "9d49a604-56fc-4ddd-b370-03d2372076ef"
+        }
+      ],
+      "createdAt": "2025-08-22T07:13:30.136Z",
+      "updatedAt": "2025-08-22T07:24:12.972Z",
+      "relatedFiles": [
+        {
+          "path": "/app/components/ui/hanja-selector.tsx",
+          "type": "TO_MODIFY",
+          "description": "ARIA 속성 추가"
+        }
+      ],
+      "implementationGuide": "1. wrapper에 role='combobox' 추가\n2. aria-expanded={isOpen} 속성 추가\n3. aria-controls로 listbox ID 연결\n4. listbox에 role='listbox', 각 항목에 role='option'\n5. aria-autocomplete='list' 추가",
+      "verificationCriteria": "모든 ARIA role과 속성이 올바르게 적용됨",
+      "analysisResult": "HanjaSelector 컴포넌트를 개선하여 mode prop 분리, ARIA 접근성 구현, Empty/Retry UX 개선을 수행합니다. 각 개선사항은 독립적이지만 순차적으로 진행하여 안정성을 확보합니다.",
+      "summary": "ARIA combobox 기본 구조를 성공적으로 구현했습니다. role=\"combobox\", aria-expanded, aria-controls, aria-haspopup=\"listbox\", aria-autocomplete=\"list\"를 추가하고, listbox와 option role을 적용했으며, 각 요소에 적절한 aria-label과 aria-selected 속성을 설정했습니다.",
+      "completedAt": "2025-08-22T07:24:12.971Z"
+    }
+  ]
+}
