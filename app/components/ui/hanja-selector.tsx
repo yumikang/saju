@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useFetcher } from "@remix-run/react"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover"
-import { ChevronDown, Check } from "lucide-react"
+import { ChevronDown, Check, Loader2 } from "lucide-react"
 import { cn } from "~/lib/utils"
-import { getHanjaByReading, HanjaChar } from "~/lib/hanja-data"
+import type { HanjaChar } from "~/lib/hanja-data"
 
 interface HanjaSelectorProps {
   reading: string
@@ -22,9 +23,45 @@ export function HanjaSelector({
   required = false
 }: HanjaSelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const hanjaList = getHanjaByReading(reading)
+  const fetcher = useFetcher()
+  
+  // API 호출
+  useEffect(() => {
+    if (reading) {
+      // 성씨 입력인지 확인 (컨텍스트나 prop으로 판단 가능)
+      const isSurname = true; // 일단 성씨 모드로 설정
+      fetcher.load(`/api/hanja/search?reading=${encodeURIComponent(reading)}&surname=${isSurname}`)
+    }
+  }, [reading])
+  
+  // 로딩 상태
+  const isLoading = fetcher.state === "loading"
+  
+  // API 응답 데이터 처리
+  const apiResponse = fetcher.data as any
+  const hanjaList: HanjaChar[] = apiResponse?.data || apiResponse || []
+  
+  // 에러 처리
+  if (apiResponse?.code === 'INVALID_INPUT' || apiResponse?.code === 'INTERNAL_ERROR') {
+    return (
+      <div className="w-full px-3 py-2 border border-red-300 rounded-md bg-red-50 text-red-500 text-sm">
+        {apiResponse.message || "오류가 발생했습니다"}
+      </div>
+    )
+  }
 
-  if (hanjaList.length === 0) {
+  // 로딩 중
+  if (isLoading) {
+    return (
+      <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm flex items-center gap-2">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        <span>한자 검색 중...</span>
+      </div>
+    )
+  }
+
+  // 결과 없음
+  if (!isLoading && hanjaList.length === 0) {
     return (
       <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm">
         해당 음절의 한자가 없습니다
