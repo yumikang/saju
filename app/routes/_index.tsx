@@ -1,10 +1,19 @@
-import { Link } from "@remix-run/react"
+import { Link, useLoaderData } from "@remix-run/react"
 import { motion } from "framer-motion"
-import { Sparkles, Crown, Users, ArrowRight, Clock, Shield, Award } from "lucide-react"
+import { Sparkles, Crown, Users, ArrowRight, Clock, Shield, Award, LogIn, User as UserIcon } from "lucide-react"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
+import type { LoaderFunctionArgs } from "@remix-run/node"
+import { json } from "@remix-run/node"
+import { getOptionalUser } from "~/utils/user-auth.server"
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await getOptionalUser(request)
+  return json({ user })
+}
 
 export default function Index() {
+  const { user } = useLoaderData<typeof loader>()
   const services = [
     {
       id: 'naming',
@@ -46,6 +55,52 @@ export default function Index() {
 
   return (
     <div className="bg-gradient-to-b from-orange-50 to-orange-100">
+      {/* 네비게이션 헤더 */}
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* 로고 */}
+            <Link to="/" className="flex items-center">
+              <h1 className="text-xl font-bold text-orange-500">사주명리</h1>
+            </Link>
+            
+            {/* 네비게이션 메뉴 */}
+            <nav className="flex items-center gap-4">
+              {user ? (
+                <>
+                  {/* 로그인된 사용자 메뉴 */}
+                  <Link to="/naming/history" className="text-gray-700 hover:text-orange-500 transition-colors">
+                    작명 이력
+                  </Link>
+                  <Link to="/naming/favorites" className="text-gray-700 hover:text-orange-500 transition-colors">
+                    즐겨찾기
+                  </Link>
+                  <Link to="/account" className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
+                    <UserIcon className="w-5 h-5" />
+                    <span>내 계정</span>
+                  </Link>
+                  <Link to="/logout">
+                    <Button variant="outline" size="sm">
+                      로그아웃
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  {/* 비로그인 사용자 메뉴 */}
+                  <Link to="/login">
+                    <Button className="bg-orange-500 hover:bg-orange-600 flex items-center gap-2">
+                      <LogIn className="w-4 h-4" />
+                      로그인
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+        </div>
+      </header>
+
       {/* 헤더 섹션 */}
       <section className="container mx-auto px-4 py-20">
         <motion.div
