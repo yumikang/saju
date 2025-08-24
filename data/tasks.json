@@ -1,177 +1,237 @@
 {
   "tasks": [
     {
-      "id": "87a3d08a-ffd4-4d84-922c-38ed3789936a",
-      "name": "UserOAuth 테이블 추가 및 계정 연결 구조 구현",
-      "description": "User(1) - UserOAuth(N) 구조로 DB 스키마 변경. 동일 이메일로 여러 OAuth provider 로그인 시 하나의 User 계정에 연결",
-      "notes": "기존 데이터 마이그레이션 스크립트 필요. 이메일이 없는 경우 처리 로직 포함",
+      "id": "3fb1b9d3-bd50-4f8a-93cf-a91906b8f720",
+      "name": "naming/history 라우트 파일 생성 및 기본 구조 구현",
+      "description": "app/routes/naming.history.tsx 파일을 생성하고 기본 라우트 구조를 설정합니다. requireUserProfile 가드를 적용하여 인증된 사용자만 접근할 수 있도록 합니다.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-08-24T07:38:24.209Z",
-      "updatedAt": "2025-08-24T07:41:17.503Z",
+      "createdAt": "2025-08-24T09:14:17.621Z",
+      "updatedAt": "2025-08-24T09:15:12.332Z",
       "relatedFiles": [
+        {
+          "path": "app/routes/naming.history.tsx",
+          "type": "CREATE",
+          "description": "새로 생성할 라우트 파일"
+        },
+        {
+          "path": "app/utils/user-auth.server.ts",
+          "type": "REFERENCE",
+          "description": "requireUserProfile 함수 참조"
+        }
+      ],
+      "implementationGuide": "1. app/routes/naming.history.tsx 파일 생성\n2. requireUserProfile import 및 loader에서 사용\n3. 기본 컴포넌트 구조 설정\n4. meta 함수로 페이지 제목 설정",
+      "verificationCriteria": "파일이 생성되고 기본 라우트 구조가 설정되어 있으며, 인증되지 않은 사용자는 /onboard로 리디렉션됨",
+      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
+      "summary": "app/routes/naming.history.tsx 파일을 성공적으로 생성했습니다. requireUserProfile 가드를 적용하여 인증된 사용자만 접근 가능하도록 설정했고, 기본 라우트 구조와 UI 골격을 구현했습니다. meta 함수로 페이지 제목도 설정했습니다.",
+      "completedAt": "2025-08-24T09:15:12.332Z"
+    },
+    {
+      "id": "2d33d82a-d975-4872-8abf-cf808167380c",
+      "name": "naming/history loader 함수 구현 - 데이터 조회 로직",
+      "description": "사용자의 작명 이력을 데이터베이스에서 조회하는 loader 함수를 구현합니다. 커서 기반 페이지네이션을 적용하여 최근 20건씩 조회합니다.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "3fb1b9d3-bd50-4f8a-93cf-a91906b8f720"
+        }
+      ],
+      "createdAt": "2025-08-24T09:14:17.621Z",
+      "updatedAt": "2025-08-24T09:16:42.924Z",
+      "relatedFiles": [
+        {
+          "path": "app/routes/naming.history.tsx",
+          "type": "TO_MODIFY",
+          "description": "loader 함수 추가"
+        },
+        {
+          "path": "app/utils/db.server.ts",
+          "type": "REFERENCE",
+          "description": "Prisma client 사용"
+        },
         {
           "path": "prisma/schema.prisma",
-          "type": "TO_MODIFY",
-          "description": "UserOAuth 모델 추가"
-        },
-        {
-          "path": "prisma/seed-migrate-oauth.ts",
-          "type": "CREATE",
-          "description": "기존 데이터 마이그레이션 스크립트"
+          "type": "REFERENCE",
+          "description": "NamingResult 모델 참조",
+          "lineStart": 69,
+          "lineEnd": 96
         }
       ],
-      "implementationGuide": "1. Prisma 스키마에 UserOAuth 모델 추가\n2. provider, providerUserId, email, profileRaw(JSON) 필드\n3. User와 1:N 관계 설정\n4. 기존 User의 provider 필드 마이그레이션\n5. unique 제약 조건 설정",
-      "verificationCriteria": "UserOAuth 테이블 생성 확인, 기존 User 데이터 정상 마이그레이션",
-      "analysisResult": "Admin 인증 시스템 보안 강화 - 계정 연결(Account Linking), 도메인 화이트리스트 기반 첫 관리자 승격, 세션 보안 강화, Rate limiting, 감사 로그 개선",
-      "summary": "UserOAuth 테이블 추가 완료. User(1) - UserOAuth(N) 구조로 DB 스키마 성공적으로 변경. provider, providerUserId, email, profileRaw 등 모든 필수 필드 포함. 외래 키 제약조건 및 인덱스 설정 완료",
-      "completedAt": "2025-08-24T07:41:17.502Z"
+      "implementationGuide": "1. Prisma를 사용하여 NamingResult 조회\n2. userId 필터링 및 createdAt DESC 정렬\n3. cursor 파라미터 처리 (searchParams에서 가져오기)\n4. take: 20 제한 및 cursor 기반 skip 로직\n5. sajuData와 함께 include하여 관련 정보 포함",
+      "verificationCriteria": "loader가 사용자의 작명 이력을 최근 순으로 20건씩 조회하고, cursor 파라미터가 있을 경우 해당 지점부터 조회함",
+      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
+      "summary": "loader 함수에 커서 기반 페이지네이션 로직을 완전히 구현했습니다. Prisma를 사용하여 사용자의 NamingResult를 최근 순으로 20건씩 조회하고, sajuData 정보도 함께 include합니다. cursor 파라미터 처리와 hasMore/nextCursor 로직도 구현했습니다.",
+      "completedAt": "2025-08-24T09:16:42.923Z"
     },
     {
-      "id": "0a79ddf2-cf6f-420e-9102-dbe28c68db52",
-      "name": "계정 연결(Account Linking) 로직 구현",
-      "description": "동일 이메일로 다른 OAuth provider 로그인 시 기존 계정에 자동 연결. 중복 계정 방지",
-      "notes": "이메일이 없거나 비확정인 경우 pending_email 상태 처리",
-      "status": "in_progress",
+      "id": "64a4c411-dcfd-453c-b5f5-253fc528b9e6",
+      "name": "naming/history UI 컴포넌트 구현",
+      "description": "작명 이력을 표시하는 UI 컴포넌트를 구현합니다. 카드형 레이아웃으로 각 작명 결과를 표시하고, 빈 상태일 때 온보딩 가이드를 보여줍니다.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "87a3d08a-ffd4-4d84-922c-38ed3789936a"
+          "taskId": "2d33d82a-d975-4872-8abf-cf808167380c"
         }
       ],
-      "createdAt": "2025-08-24T07:38:24.209Z",
-      "updatedAt": "2025-08-24T07:42:20.231Z",
+      "createdAt": "2025-08-24T09:14:17.621Z",
+      "updatedAt": "2025-08-24T09:18:41.198Z",
       "relatedFiles": [
         {
-          "path": "app/utils/auth.server.ts",
+          "path": "app/routes/naming.history.tsx",
           "type": "TO_MODIFY",
-          "description": "계정 연결 로직 추가"
+          "description": "UI 컴포넌트 구현"
         },
         {
-          "path": "app/routes/auth.link.tsx",
-          "type": "CREATE",
-          "description": "계정 연결 확인 페이지"
+          "path": "app/components/realtime/NamingResults.tsx",
+          "type": "REFERENCE",
+          "description": "카드 디자인 참조",
+          "lineStart": 74,
+          "lineEnd": 97
         }
       ],
-      "implementationGuide": "1. findOrCreateUser 함수 수정\n2. 이메일로 기존 User 검색\n3. 있으면 UserOAuth 레코드만 추가\n4. 없으면 새 User + UserOAuth 생성\n5. 계정 연결 감사 로그 기록",
-      "verificationCriteria": "동일 이메일로 다른 provider 로그인 시 하나의 User로 통합됨",
-      "analysisResult": "Admin 인증 시스템 보안 강화 - 계정 연결(Account Linking), 도메인 화이트리스트 기반 첫 관리자 승격, 세션 보안 강화, Rate limiting, 감사 로그 개선"
+      "implementationGuide": "1. useLoaderData로 데이터 가져오기\n2. 결과가 없을 때 온보딩 가이드 메시지 표시\n3. 카드 그리드 레이아웃 구현 (반응형)\n4. 각 카드에 fullName, scores, createdAt 표시\n5. lucide-react 아이콘 사용",
+      "verificationCriteria": "작명 이력이 카드 형태로 표시되고, 빈 상태에서 온보딩 가이드가 나타남. 반응형 레이아웃이 적용됨",
+      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
+      "summary": "작명 이력 UI를 완전히 구현했습니다. 카드형 레이아웃으로 각 작명 결과를 표시하며, 한글/한자 이름, 종합점수, 세부 점수(균형/음향/획수), 사주 정보, 생성일을 모두 포함합니다. 반응형 그리드 레이아웃(모바일 1열, 태블릿 2열, 데스크톱 3열)을 적용했고, lucide-react 아이콘으로 시각적 요소를 강화했습니다.",
+      "completedAt": "2025-08-24T09:18:41.197Z"
     },
     {
-      "id": "7de47052-e00e-4213-b33f-8dbffec7e04b",
-      "name": "도메인 화이트리스트 기반 관리자 승격 강화",
-      "description": "첫 관리자 자동 승격 시 이메일 도메인 체크. 환경변수로 허용 도메인 설정",
-      "notes": "@yourcompany.com 형식으로 도메인 지정",
-      "status": "pending",
+      "id": "67981b64-977d-4032-96fa-6ab70ff32621",
+      "name": "naming/history 무한 스크롤 구현",
+      "description": "useFetcher를 사용하여 무한 스크롤 기능을 구현합니다. 스크롤이 하단에 도달하면 다음 20건을 자동으로 로드합니다.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "0a79ddf2-cf6f-420e-9102-dbe28c68db52"
+          "taskId": "64a4c411-dcfd-453c-b5f5-253fc528b9e6"
         }
       ],
-      "createdAt": "2025-08-24T07:38:24.209Z",
-      "updatedAt": "2025-08-24T07:38:24.209Z",
+      "createdAt": "2025-08-24T09:14:17.621Z",
+      "updatedAt": "2025-08-24T09:21:25.480Z",
       "relatedFiles": [
         {
-          "path": ".env",
+          "path": "app/routes/naming.history.tsx",
           "type": "TO_MODIFY",
-          "description": "ADMIN_EMAIL_DOMAIN 추가"
-        },
-        {
-          "path": "app/utils/auth.server.ts",
-          "type": "TO_MODIFY",
-          "description": "도메인 체크 로직"
+          "description": "무한 스크롤 로직 추가"
         }
       ],
-      "implementationGuide": "1. ADMIN_EMAIL_DOMAIN 환경변수 추가\n2. determineUserRole 함수 수정\n3. 이메일 도메인 검증 로직\n4. 첫 사용자 + 허용 도메인일 때만 ADMIN\n5. 감사 로그에 승격 이유 기록",
-      "verificationCriteria": "허용된 도메인의 첫 사용자만 자동 ADMIN 권한 획득",
-      "analysisResult": "Admin 인증 시스템 보안 강화 - 계정 연결(Account Linking), 도메인 화이트리스트 기반 첫 관리자 승격, 세션 보안 강화, Rate limiting, 감사 로그 개선"
+      "implementationGuide": "1. useFetcher 훅 사용\n2. IntersectionObserver로 스크롤 감지\n3. 마지막 항목의 id를 cursor로 사용\n4. fetcher.load로 추가 데이터 요청\n5. 로딩 상태 표시 (스피너)",
+      "verificationCriteria": "스크롤이 하단에 도달하면 자동으로 다음 20건이 로드되고, 로딩 중 스피너가 표시됨",
+      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
+      "summary": "무한 스크롤 기능을 완전히 구현했습니다. useFetcher와 IntersectionObserver를 활용하여 스크롤이 하단에 도달하면 자동으로 다음 20건을 로드합니다. 로딩 중에는 Loader2 아이콘이 회전하는 스피너를 표시하고, cursor 기반 페이지네이션으로 중복 없이 데이터를 가져옵니다.",
+      "completedAt": "2025-08-24T09:21:25.480Z"
     },
     {
-      "id": "642f6068-97fd-45ea-98e3-a3097e9e5c1b",
-      "name": "세션 보안 강화 및 IP/UA 핑거프린트",
-      "description": "세션에 IP 주소와 User-Agent 저장. 변경 시 재인증 요구. secure, sameSite 설정 강화",
-      "notes": "프록시 환경에서 X-Forwarded-For 헤더 처리",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "0a79ddf2-cf6f-420e-9102-dbe28c68db52"
-        }
-      ],
-      "createdAt": "2025-08-24T07:38:24.209Z",
-      "updatedAt": "2025-08-24T07:38:24.209Z",
-      "relatedFiles": [
-        {
-          "path": "app/utils/session.server.ts",
-          "type": "TO_MODIFY",
-          "description": "세션 보안 설정 강화"
-        },
-        {
-          "path": "app/utils/auth.server.ts",
-          "type": "TO_MODIFY",
-          "description": "핑거프린트 검증 추가"
-        }
-      ],
-      "implementationGuide": "1. 세션에 IP, UA 해시 저장\n2. 요청마다 핑거프린트 검증\n3. 불일치 시 세션 무효화\n4. sameSite=strict 설정\n5. production에서 secure 필수",
-      "verificationCriteria": "IP 또는 UA 변경 시 재로그인 요구됨",
-      "analysisResult": "Admin 인증 시스템 보안 강화 - 계정 연결(Account Linking), 도메인 화이트리스트 기반 첫 관리자 승격, 세션 보안 강화, Rate limiting, 감사 로그 개선"
-    },
-    {
-      "id": "5c5f3c5f-b45a-4b2c-887e-65cc016df291",
-      "name": "Rate Limiting 미들웨어 구현",
-      "description": "/auth/* 및 /admin/* 엔드포인트에 rate limiting 적용. 429 응답 표준화",
-      "notes": "개발 환경에서는 제한 완화",
-      "status": "pending",
+      "id": "5421f3bd-662d-426d-a42d-0ca41d0cb968",
+      "name": "naming/favorites 라우트 파일 생성 및 기본 구조 구현",
+      "description": "app/routes/naming.favorites.tsx 파일을 생성하고 기본 라우트 구조를 설정합니다. requireUserProfile 가드를 적용합니다.",
+      "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-08-24T07:38:24.209Z",
-      "updatedAt": "2025-08-24T07:38:24.209Z",
+      "createdAt": "2025-08-24T09:14:17.621Z",
+      "updatedAt": "2025-08-24T09:22:46.273Z",
       "relatedFiles": [
         {
-          "path": "app/utils/rate-limit.server.ts",
+          "path": "app/routes/naming.favorites.tsx",
           "type": "CREATE",
-          "description": "Rate limiting 유틸리티"
+          "description": "새로 생성할 라우트 파일"
         },
         {
-          "path": "app/routes/auth.$.tsx",
-          "type": "CREATE",
-          "description": "Auth 라우트 rate limit 적용"
-        },
-        {
-          "path": "app/routes/admin.tsx",
-          "type": "CREATE",
-          "description": "Admin 라우트 보호"
+          "path": "app/utils/user-auth.server.ts",
+          "type": "REFERENCE",
+          "description": "requireUserProfile 함수 참조"
         }
       ],
-      "implementationGuide": "1. express-rate-limit 패키지 설치\n2. IP 기반 제한 (auth: 10req/min)\n3. 사용자 기반 제한 (admin: 30req/min)\n4. Redis store 설정 (선택사항)\n5. 429 에러 응답 포맷 통일",
-      "verificationCriteria": "과도한 요청 시 429 응답, 정상 요청은 통과",
-      "analysisResult": "Admin 인증 시스템 보안 강화 - 계정 연결(Account Linking), 도메인 화이트리스트 기반 첫 관리자 승격, 세션 보안 강화, Rate limiting, 감사 로그 개선"
+      "implementationGuide": "1. app/routes/naming.favorites.tsx 파일 생성\n2. requireUserProfile import 및 loader에서 사용\n3. 기본 컴포넌트 구조 설정\n4. meta 함수로 페이지 제목 설정",
+      "verificationCriteria": "파일이 생성되고 기본 라우트 구조가 설정되어 있으며, 인증되지 않은 사용자는 /onboard로 리디렉션됨",
+      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
+      "summary": "app/routes/naming.favorites.tsx 파일을 성공적으로 생성했습니다. requireUserProfile 가드를 적용하여 인증된 사용자만 접근 가능하도록 설정했고, 기본 라우트 구조와 UI 골격을 구현했습니다. meta 함수로 페이지 제목도 설정했습니다.",
+      "completedAt": "2025-08-24T09:22:46.273Z"
     },
     {
-      "id": "4417769b-8e54-47ff-a17a-7675583ece8a",
-      "name": "감사 로그 강화 및 모니터링",
-      "description": "로그인 성공/실패, 계정 연결, 역할 변경 등 모든 보안 이벤트 기록",
-      "notes": "GDPR 준수를 위해 개인정보 최소화",
-      "status": "pending",
+      "id": "ba80c151-ba53-4522-b00e-0a54f0186be0",
+      "name": "naming/favorites loader 함수 구현 - 즐겨찾기 조회",
+      "description": "사용자의 즐겨찾기 목록을 조회하는 loader 함수를 구현합니다. 정렬 옵션과 페이지네이션을 지원합니다.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "0a79ddf2-cf6f-420e-9102-dbe28c68db52"
+          "taskId": "5421f3bd-662d-426d-a42d-0ca41d0cb968"
         }
       ],
-      "createdAt": "2025-08-24T07:38:24.209Z",
-      "updatedAt": "2025-08-24T07:38:24.209Z",
+      "createdAt": "2025-08-24T09:14:17.621Z",
+      "updatedAt": "2025-08-24T09:24:34.010Z",
       "relatedFiles": [
         {
-          "path": "app/utils/audit.server.ts",
-          "type": "CREATE",
-          "description": "감사 로그 유틸리티"
+          "path": "app/routes/naming.favorites.tsx",
+          "type": "TO_MODIFY",
+          "description": "loader 함수 추가"
         },
         {
-          "path": "app/routes/admin.audit.tsx",
-          "type": "CREATE",
-          "description": "감사 로그 조회 페이지"
+          "path": "app/utils/db.server.ts",
+          "type": "REFERENCE",
+          "description": "Prisma client 사용"
+        },
+        {
+          "path": "prisma/schema.prisma",
+          "type": "REFERENCE",
+          "description": "Favorite 모델 참조",
+          "lineStart": 99,
+          "lineEnd": 111
         }
       ],
-      "implementationGuide": "1. 로그인 시도 기록 (성공/실패)\n2. 계정 연결 이벤트\n3. 권한 변경 이벤트\n4. 비정상 접근 시도\n5. 로그 조회 페이지 개선",
-      "verificationCriteria": "모든 보안 이벤트가 감사 로그에 기록되고 조회 가능",
-      "analysisResult": "Admin 인증 시스템 보안 강화 - 계정 연결(Account Linking), 도메인 화이트리스트 기반 첫 관리자 승격, 세션 보안 강화, Rate limiting, 감사 로그 개선"
+      "implementationGuide": "1. Prisma로 Favorite 조회 (namingResult include)\n2. URL searchParams에서 sort 파라미터 처리\n3. 정렬 옵션: recent(createdAt), popular(rating), strokes(totalStrokes)\n4. page 파라미터로 페이지네이션 (20개씩)\n5. 전체 개수도 함께 조회 (count)",
+      "verificationCriteria": "즐겨찾기 목록이 정렬 옵션에 따라 조회되고, 페이지네이션이 정상 작동함",
+      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
+      "summary": "loader 함수에 즐겨찾기 조회 로직을 완전히 구현했습니다. URL searchParams로 정렬 옵션(recent/popular/strokes)과 페이지 번호를 처리하고, Prisma로 사용자별 Favorite 데이터를 조회합니다. namingResult와 sajuData를 include하여 관련 정보도 함께 가져오며, 페이지네이션을 위한 totalCount와 totalPages도 계산합니다.",
+      "completedAt": "2025-08-24T09:24:34.009Z"
+    },
+    {
+      "id": "89350bf9-d565-457f-a399-967e8b2c0472",
+      "name": "naming/favorites action 함수 구현 - 즐겨찾기 토글",
+      "description": "즐겨찾기를 추가/제거하는 action 함수를 구현합니다. POST로 추가, DELETE로 제거를 처리합니다.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "ba80c151-ba53-4522-b00e-0a54f0186be0"
+        }
+      ],
+      "createdAt": "2025-08-24T09:14:17.621Z",
+      "updatedAt": "2025-08-24T09:26:38.580Z",
+      "relatedFiles": [
+        {
+          "path": "app/routes/naming.favorites.tsx",
+          "type": "TO_MODIFY",
+          "description": "action 함수 추가"
+        }
+      ],
+      "implementationGuide": "1. action 함수에서 request.method 확인\n2. POST: db.favorite.create() 실행\n3. DELETE: db.favorite.delete() 실행\n4. userId와 namingResultId로 unique 처리\n5. try-catch로 에러 처리 (이미 존재하는 경우 등)",
+      "verificationCriteria": "즐겨찾기 추가/제거가 정상 작동하고, 중복 추가 시 에러가 적절히 처리됨",
+      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
+      "summary": "action 함수를 완전히 구현했습니다. POST 메소드로 즐겨찾기 추가, DELETE 메소드로 제거를 처리합니다. 사용자 소유권 검증, 중복 확인, unique 제약 조건 처리 등 보안과 데이터 무결성을 모두 고려했습니다. try-catch로 에러를 적절히 처리하고 의미 있는 에러 메시지를 반환합니다.",
+      "completedAt": "2025-08-24T09:26:38.580Z"
+    },
+    {
+      "id": "d32848d9-08af-488d-84c7-38ac1d9709d6",
+      "name": "naming/favorites UI 컴포넌트 구현",
+      "description": "즐겨찾기 목록을 표시하는 UI를 구현합니다. 정렬 옵션 선택, 즐겨찾기 토글 버튼, 페이지네이션을 포함합니다.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "89350bf9-d565-457f-a399-967e8b2c0472"
+        }
+      ],
+      "createdAt": "2025-08-24T09:14:17.621Z",
+      "updatedAt": "2025-08-24T09:29:24.677Z",
+      "relatedFiles": [
+        {
+          "path": "app/routes/naming.favorites.tsx",
+          "type": "TO_MODIFY",
+          "description": "UI 컴포넌트 구현"
+        }
+      ],
+      "implementationGuide": "1. 정렬 옵션 select 드롭다운 구현\n2. 카드 그리드 레이아웃 (history와 동일한 스타일)\n3. 각 카드에 즐겨찾기 토글 버튼 (별 아이콘)\n4. useFetcher로 즐겨찾기 토글 처리\n5. 페이지네이션 버튼 구현",
+      "verificationCriteria": "즐겨찾기 목록이 표시되고, 정렬 옵션 변경과 즐겨찾기 토글이 정상 작동함. 페이지네이션이 작동함",
+      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
+      "summary": "즐겨찾기 UI를 완전히 구현했습니다. 정렬 옵션 드롭다운(최근 추가순/인기순/획수순), 카드형 레이아웃, 즐겨찾기 제거 버튼(노란 별 아이콘), 스마트 페이지네이션(현재 페이지 주변과 첫/마지막 페이지만 표시)을 모두 구현했습니다. useFetcher로 즐겨찾기 제거를 비동기 처리하고, history 페이지와 일관된 카드 디자인을 유지했습니다.",
+      "completedAt": "2025-08-24T09:29:24.677Z"
     }
   ]
 }

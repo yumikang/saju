@@ -14,7 +14,7 @@ model User {
   phone         String?
   avatarUrl     String?        @map("avatar_url")
   // Admin fields  
-  role          Role           @default(VIEWER)
+  role          Role           @default(USER)
   status        UserStatus     @default(ACTIVE)
   emailVerified Boolean        @default(false) @map("email_verified")
   lastLoginAt   DateTime?      @map("last_login_at") @db.Timestamptz(3)
@@ -27,6 +27,8 @@ model User {
   sajuData      SajuData[]
   sessions      UserSession[]
   auditLogs     AdminAuditLog[] @relation("Actor")
+  profile       UserProfile?
+  termsConsents TermsConsent[]
 
   @@index([email])
   @@index([role])
@@ -190,6 +192,7 @@ enum Role {
   ADMIN    @map("admin")
   OPERATOR @map("operator")
   VIEWER   @map("viewer")
+  USER     @map("user")
 }
 
 enum UserStatus {
@@ -241,4 +244,45 @@ model AdminAuditLog {
   @@index([targetType, targetId])
   @@index([createdAt])
   @@map("admin_audit_logs")
+}
+
+// User Profile - 사용자 추가 정보
+model UserProfile {
+  userId    String    @id @map("user_id")
+  nickname  String?
+  gender    Gender?
+  birthDate DateTime? @map("birth_date") @db.Date
+  phone     String?
+  bio       String?   @db.Text
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_profiles")
+}
+
+// Terms Consent - 약관 동의 이력
+model TermsConsent {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  version         String   // e.g., "2025-08-24"
+  tosAgreed       Boolean  @map("tos_agreed")
+  privacyAgreed   Boolean  @map("privacy_agreed")
+  marketingAgreed Boolean  @default(false) @map("marketing_agreed")
+  agreedAt        DateTime @default(now()) @map("agreed_at") @db.Timestamptz(3)
+  revokedAt       DateTime? @map("revoked_at") @db.Timestamptz(3) // 동의 철회 시각
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, version])
+  @@index([agreedAt])
+  @@map("terms_consents")
+}
+
+// Gender enum
+enum Gender {
+  MALE   @map("M")
+  FEMALE @map("F")
+  OTHER  @map("X")
 }

@@ -1,0 +1,164 @@
+{
+  "tasks": [
+    {
+      "id": "505b9c46-ab4c-46cb-9c85-b9c7ea628820",
+      "name": "데이터베이스 스키마 확장",
+      "description": "UserProfile, TermsConsent 테이블 추가 및 Role enum에 USER 추가",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T08:32:15.764Z",
+      "updatedAt": "2025-08-24T08:36:21.760Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/schema.prisma",
+          "type": "TO_MODIFY",
+          "description": "스키마 정의"
+        }
+      ],
+      "implementationGuide": "1. prisma/schema.prisma 수정\n2. UserProfile 모델: userId(PK), nickname, gender, birthDate, phone\n3. TermsConsent 모델: id, userId, version, tosAgreed, privacyAgreed, marketingAgreed, agreedAt\n4. Role enum에 USER 추가\n5. npx prisma migrate dev --name add_user_profile_and_terms",
+      "verificationCriteria": "마이그레이션 성공, Prisma Client 재생성 확인",
+      "analysisResult": "일반 사용자 로그인 시스템을 Admin과 완전 분리하여 구현. OAuth 인프라는 재사용하되 세션/쿠키/권한은 철저히 분리. 온보딩 플로우와 약관 동의 시스템 구축.",
+      "summary": "데이터베이스 스키마 확장 완료 - USER role 추가, UserProfile 및 TermsConsent 모델 생성, Gender enum 추가, 모든 인덱스와 외래키 제약조건이 올바르게 적용됨. PgBouncer 문제 해결을 위해 직접 연결 사용.",
+      "completedAt": "2025-08-24T08:36:21.759Z"
+    },
+    {
+      "id": "e827d49d-8f97-4836-bb42-11908507881f",
+      "name": "사용자 세션 스토리지 구현",
+      "description": "Admin과 분리된 사용자 전용 세션 스토리지 생성",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T08:32:15.764Z",
+      "updatedAt": "2025-08-24T08:43:17.202Z",
+      "relatedFiles": [
+        {
+          "path": "app/utils/user-session.server.ts",
+          "type": "CREATE",
+          "description": "사용자 세션 스토리지"
+        },
+        {
+          "path": "app/utils/session.server.ts",
+          "type": "REFERENCE",
+          "description": "Admin 세션 참고"
+        }
+      ],
+      "implementationGuide": "1. app/utils/user-session.server.ts 생성\n2. createCookieSessionStorage로 __user_session 쿠키 설정\n3. httpOnly: true, secure: true, sameSite: 'lax', maxAge: 28800 (8시간)\n4. 세션 타입 정의: UserSessionData interface",
+      "verificationCriteria": "세션 생성/파기 테스트, 쿠키 이름 충돌 없음 확인",
+      "analysisResult": "일반 사용자 로그인 시스템을 Admin과 완전 분리하여 구현. OAuth 인프라는 재사용하되 세션/쿠키/권한은 철저히 분리. 온보딩 플로우와 약관 동의 시스템 구축.",
+      "summary": "사용자 세션 스토리지 구현 완료 - __user_session 쿠키, SESSION_SECRET_USER 분리, UserSessionData 타입, 3종 가드 함수(requireUser, getOptionalUser, logoutUser), 세션 재생성, Admin 분리 보안 검증 모든 요구사항 충족",
+      "completedAt": "2025-08-24T08:43:17.202Z"
+    },
+    {
+      "id": "904f807b-f04a-4dda-82b6-754924bb6e38",
+      "name": "사용자 인증 전략 구현",
+      "description": "OAuth 전략을 사용자용으로 설정 (Google, Kakao, Naver)",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "e827d49d-8f97-4836-bb42-11908507881f"
+        }
+      ],
+      "createdAt": "2025-08-24T08:32:15.764Z",
+      "updatedAt": "2025-08-24T08:47:56.986Z",
+      "relatedFiles": [
+        {
+          "path": "app/utils/user-auth.server.ts",
+          "type": "CREATE",
+          "description": "사용자 인증 로직"
+        },
+        {
+          "path": "app/utils/auth.server.ts",
+          "type": "REFERENCE",
+          "description": "Admin 인증 참고"
+        }
+      ],
+      "implementationGuide": "1. app/utils/user-auth.server.ts 생성\n2. Authenticator 인스턴스 생성 (userAuthenticator)\n3. findOrCreateUser 함수 수정: role='USER' 할당\n4. OAuth strategies 설정 (콜백 URL: /auth/user/*/callback)\n5. requireUserLogin, requireUserProfile 가드 함수 생성",
+      "verificationCriteria": "OAuth 인증 플로우 테스트, role=USER 확인",
+      "analysisResult": "일반 사용자 로그인 시스템을 Admin과 완전 분리하여 구현. OAuth 인프라는 재사용하되 세션/쿠키/권한은 철저히 분리. 온보딩 플로우와 약관 동의 시스템 구축.",
+      "summary": "사용자 인증 전략 구현 완료 - userAuthenticator 생성, OAuth 3종 설정(/auth/user/{provider}/callback), role='USER' 고정, requireUserLogin/requireUserProfile 가드, Admin과 완전 분리된 인증 시스템 구축",
+      "completedAt": "2025-08-24T08:47:56.986Z"
+    },
+    {
+      "id": "0cb7562f-aa53-4e96-a31a-43be9fd6cb13",
+      "name": "사용자 로그인 페이지 구현",
+      "description": "/login 라우트 - SNS 로그인 버튼 UI",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "904f807b-f04a-4dda-82b6-754924bb6e38"
+        }
+      ],
+      "createdAt": "2025-08-24T08:32:15.764Z",
+      "updatedAt": "2025-08-24T08:51:31.728Z",
+      "relatedFiles": [
+        {
+          "path": "app/routes/login.tsx",
+          "type": "CREATE",
+          "description": "로그인 페이지"
+        },
+        {
+          "path": "app/routes/admin.login.tsx",
+          "type": "REFERENCE",
+          "description": "Admin 로그인 참고"
+        }
+      ],
+      "implementationGuide": "1. app/routes/login.tsx 생성\n2. Google, Kakao, Naver 로그인 버튼\n3. 이미 로그인 시 /account로 리다이렉트\n4. 한글 안내 메시지: 이메일 미제공 시 처리 방법\n5. 반응형 디자인, 모바일 최적화",
+      "verificationCriteria": "UI 렌더링, 버튼 클릭 시 OAuth 플로우 시작",
+      "analysisResult": "일반 사용자 로그인 시스템을 Admin과 완전 분리하여 구현. OAuth 인프라는 재사용하되 세션/쿠키/권한은 철저히 분리. 온보딩 플로우와 약관 동의 시스템 구축.",
+      "summary": "사용자 로그인 페이지 구현 완료 - /login 라우트 생성, SNS 3종 로그인 버튼, 이미 로그인 시 /account 리다이렉트, 한글 안내 메시지, 반응형 디자인, /logout 라우트, 기본 /account 페이지까지 구현",
+      "completedAt": "2025-08-24T08:51:31.727Z"
+    },
+    {
+      "id": "ae779f15-79a1-437b-ab63-c87fc62a915a",
+      "name": "OAuth 콜백 라우트 구현",
+      "description": "사용자용 OAuth 콜백 처리 (3개 provider)",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "904f807b-f04a-4dda-82b6-754924bb6e38"
+        }
+      ],
+      "createdAt": "2025-08-24T08:32:15.764Z",
+      "updatedAt": "2025-08-24T08:55:15.877Z",
+      "relatedFiles": [
+        {
+          "path": "app/routes/auth.user.*.tsx",
+          "type": "CREATE",
+          "description": "OAuth 라우트들"
+        }
+      ],
+      "implementationGuide": "1. app/routes/auth.user.google.tsx, auth.user.google.callback.tsx\n2. app/routes/auth.user.kakao.tsx, auth.user.kakao.callback.tsx\n3. app/routes/auth.user.naver.tsx, auth.user.naver.callback.tsx\n4. 성공 시 UserProfile 체크 → 없으면 /onboard, 있으면 /account\n5. Account Linking: 동일 이메일 시 UserOAuth 추가",
+      "verificationCriteria": "OAuth 인증 성공, 세션 생성, 적절한 리다이렉트",
+      "analysisResult": "일반 사용자 로그인 시스템을 Admin과 완전 분리하여 구현. OAuth 인프라는 재사용하되 세션/쿠키/권한은 철저히 분리. 온보딩 플로우와 약관 동의 시스템 구축.",
+      "summary": "OAuth 콜백 라우트 구현 완료 - Google/Kakao/Naver 3개 provider 각각 인증 시작점과 콜백 처리 라우트 총 6개 파일 생성, UserProfile/TermsConsent 체크로 온보딩 플로우 연결, 에러 처리 및 한글 메시지, Account Linking 자동 처리",
+      "completedAt": "2025-08-24T08:55:15.877Z"
+    },
+    {
+      "id": "51cab874-d30b-4499-bc20-cf766d137ca1",
+      "name": "온보딩 페이지 구현",
+      "description": "/onboard - 약관 동의 및 프로필 기본정보 수집",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "ae779f15-79a1-437b-ab63-c87fc62a915a"
+        },
+        {
+          "taskId": "505b9c46-ab4c-46cb-9c85-b9c7ea628820"
+        }
+      ],
+      "createdAt": "2025-08-24T08:32:15.764Z",
+      "updatedAt": "2025-08-24T09:03:15.045Z",
+      "relatedFiles": [
+        {
+          "path": "app/routes/onboard.tsx",
+          "type": "CREATE",
+          "description": "온보딩 페이지"
+        }
+      ],
+      "implementationGuide": "1. app/routes/onboard.tsx 생성\n2. Step 1: 약관 동의 (필수: 이용약관, 개인정보처리방침, 선택: 마케팅)\n3. Step 2: 프로필 정보 (닉네임, 성별, 생년월일 - 모두 선택)\n4. action: TermsConsent, UserProfile 저장\n5. 완료 후 /account로 리다이렉트",
+      "verificationCriteria": "약관 동의 저장, 프로필 생성, DB 확인",
+      "analysisResult": "일반 사용자 로그인 시스템을 Admin과 완전 분리하여 구현. OAuth 인프라는 재사용하되 세션/쿠키/권한은 철저히 분리. 온보딩 플로우와 약관 동의 시스템 구축.",
+      "summary": "온보딩 페이지 구현 완료 - 약관 동의(필수/선택), 프로필 입력(닉네임 필수, 성별/생년월일 선택), 서버 검증, 트랜잭션 처리, 감사 로그, next 파라미터 지원, requireUser 가드 강화(401/403 구분, Admin 분리) 모든 체크리스트 요구사항 충족",
+      "completedAt": "2025-08-24T09:03:15.045Z"
+    }
+  ]
+}
