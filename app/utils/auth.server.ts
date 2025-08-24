@@ -315,7 +315,18 @@ if (process.env.NAVER_CLIENT_ID && process.env.NAVER_CLIENT_SECRET) {
 
 // Auth helper functions
 export async function requireUser(request: Request): Promise<AuthUser> {
-  const user = await authenticator.isAuthenticated(request);
+  // Try OAuth authentication first
+  let user = await authenticator.isAuthenticated(request);
+  
+  // Fallback to session-based auth for dev
+  if (!user && process.env.NODE_ENV === "development") {
+    const session = await sessionStorage.getSession(request.headers.get("Cookie"));
+    const sessionUser = session.get("user");
+    if (sessionUser) {
+      user = sessionUser;
+    }
+  }
+  
   if (!user) {
     throw await authenticator.logout(request, { redirectTo: "/admin/login" });
   }
