@@ -125,7 +125,7 @@ export default function NamingHistory() {
       
       <div className="space-y-4">
         {results.length === 0 ? (
-          {/* 빈 상태 - 온보딩 가이드 */}
+          /* 빈 상태 - 온보딩 가이드 */
           <div className="text-center py-12">
             <div className="mx-auto max-w-md">
               <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
