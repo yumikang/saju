@@ -1,0 +1,31 @@
+{
+  "tasks": [
+    {
+      "id": "30ed5055-8864-41b7-aa9b-09ebba1f0fff",
+      "name": "Prometheus 및 postgres_exporter 설치 및 설정",
+      "description": "Prometheus와 postgres_exporter를 설치하고 PostgreSQL 메트릭 수집을 위한 기본 설정 구성",
+      "notes": "postgres_exporter는 pg_stat_statements 데이터를 포함한 PostgreSQL 메트릭을 Prometheus가 수집할 수 있는 형식으로 변환",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T07:03:14.425Z",
+      "updatedAt": "2025-08-24T07:06:09.216Z",
+      "relatedFiles": [
+        {
+          "path": "/ops/prometheus/prometheus.yml",
+          "type": "CREATE",
+          "description": "Prometheus 설정 파일"
+        },
+        {
+          "path": "/ops/prometheus/postgres_exporter.env",
+          "type": "CREATE",
+          "description": "postgres_exporter 환경 설정"
+        }
+      ],
+      "implementationGuide": "1. Homebrew로 Prometheus 설치\n2. postgres_exporter 바이너리 다운로드 및 설치\n3. postgres_exporter용 PostgreSQL 모니터링 사용자 생성\n4. prometheus.yml 설정 파일 작성\n5. postgres_exporter 서비스 설정",
+      "verificationCriteria": "Prometheus가 localhost:9090에서 실행되고, postgres_exporter가 localhost:9187에서 메트릭을 제공하는지 확인",
+      "analysisResult": "Prometheus + Grafana 대시보드 구축하여 pg_stat_statements 데이터를 시각화하고, 초기에는 보수적인 임계치로 알람을 설정한 후 일주일 운영 후 조정. 모니터링 리포트는 /ops/reports/에 날짜별로 아카이브하여 회고와 감사에 활용.",
+      "summary": "Prometheus와 postgres_exporter 설치 및 설정 완료. Prometheus는 localhost:9090에서 실행 중이며, postgres_exporter는 localhost:9187에서 PostgreSQL 메트릭을 제공하고 있음. 모니터링 사용자 생성 완료, 스크레이프 타겟 정상 작동 확인",
+      "completedAt": "2025-08-24T07:06:09.215Z"
+    }
+  ]
+}

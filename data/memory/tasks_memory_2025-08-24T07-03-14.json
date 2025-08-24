@@ -1,0 +1,153 @@
+{
+  "tasks": [
+    {
+      "id": "380b41db-99ba-4bc5-a063-afa6e4124cc5",
+      "name": "PgBouncer 연결 풀링 완성 및 검증",
+      "description": "PgBouncer 서비스를 시작하고 연결 풀링이 정상 작동하는지 검증. Prisma 연결 문자열을 PgBouncer 포트(6432)로 업데이트하고 성능 테스트 실행",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T06:33:23.308Z",
+      "updatedAt": "2025-08-24T06:37:25.705Z",
+      "relatedFiles": [
+        {
+          "path": "/opt/homebrew/etc/pgbouncer.ini",
+          "type": "TO_MODIFY",
+          "description": "PgBouncer 설정 파일"
+        },
+        {
+          "path": ".env",
+          "type": "TO_MODIFY",
+          "description": "DATABASE_URL 업데이트"
+        },
+        {
+          "path": "scripts/test-pgbouncer.ts",
+          "type": "CREATE",
+          "description": "연결 풀 테스트 스크립트"
+        }
+      ],
+      "implementationGuide": "1. brew services start pgbouncer로 서비스 시작\n2. psql -h localhost -p 6432 -U saju_user saju_naming으로 연결 테스트\n3. .env 파일의 DATABASE_URL을 postgresql://saju_user:password@localhost:6432/saju_naming으로 수정\n4. Prisma 연결 테스트 스크립트 작성 및 실행\n5. 연결 풀 통계 확인 (SHOW POOLS, SHOW STATS)",
+      "verificationCriteria": "1. PgBouncer 서비스가 정상 실행 중\n2. 포트 6432로 데이터베이스 연결 가능\n3. Prisma 쿼리가 PgBouncer를 통해 정상 실행\n4. 연결 풀 통계에서 active/idle 연결 확인",
+      "analysisResult": "PostgreSQL 프로덕션 환경 완벽 구축 - PgBouncer 연결 풀링, 모니터링, 백업 자동화, 부하 테스트, SSL/TLS 보안 설정을 통한 엔터프라이즈급 데이터베이스 인프라 구성",
+      "summary": "PgBouncer 연결 풀링이 성공적으로 구성되었습니다. 서비스가 정상 실행 중이며, 포트 6432로 연결 가능하고, Prisma가 PgBouncer를 통해 정상적으로 쿼리를 실행합니다. 트랜잭션 모드로 설정되어 있으며, 연결 풀 통계에서 active/idle 연결이 확인되었습니다.",
+      "completedAt": "2025-08-24T06:37:25.705Z"
+    },
+    {
+      "id": "08c97796-9bed-414a-8695-238ce8bdcc25",
+      "name": "Enable pg_stat_statements extension",
+      "description": "Configure and enable the pg_stat_statements extension in PostgreSQL for tracking query execution statistics",
+      "notes": "Requires PostgreSQL restart after configuration change",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T06:43:18.455Z",
+      "updatedAt": "2025-08-24T06:45:30.809Z",
+      "relatedFiles": [
+        {
+          "path": "/opt/homebrew/var/postgresql@15/postgresql.conf",
+          "type": "TO_MODIFY",
+          "description": "PostgreSQL configuration file"
+        }
+      ],
+      "implementationGuide": "1. Add pg_stat_statements to shared_preload_libraries in postgresql.conf\n2. Restart PostgreSQL service\n3. Create extension in saju_naming database\n4. Verify extension is working",
+      "verificationCriteria": "Extension appears in pg_extension table and pg_stat_statements view is accessible",
+      "analysisResult": "Set up comprehensive PostgreSQL query performance monitoring including pg_stat_statements extension, slow query logging, auto_explain for query plans, and monitoring scripts for production database performance analysis",
+      "summary": "Successfully enabled pg_stat_statements extension in PostgreSQL. Added extension to shared_preload_libraries, enabled compute_query_id, restarted PostgreSQL service, and created extension in saju_naming database.",
+      "completedAt": "2025-08-24T06:45:30.808Z"
+    },
+    {
+      "id": "0ea17753-60fd-4e9a-b58b-7a5d4021342c",
+      "name": "Configure slow query logging",
+      "description": "Set up slow query logging parameters to capture queries exceeding performance thresholds",
+      "notes": "Can be adjusted without restart using ALTER SYSTEM",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T06:43:18.455Z",
+      "updatedAt": "2025-08-24T06:48:57.826Z",
+      "relatedFiles": [
+        {
+          "path": "/opt/homebrew/var/postgresql@15/postgresql.conf",
+          "type": "TO_MODIFY",
+          "description": "PostgreSQL configuration file"
+        }
+      ],
+      "implementationGuide": "1. Set log_min_duration_statement to 100ms initially\n2. Configure log_line_prefix for better query tracking\n3. Enable log_duration and log_statement\n4. Set up log rotation parameters",
+      "verificationCriteria": "Slow queries appear in PostgreSQL logs with proper formatting",
+      "analysisResult": "Set up comprehensive PostgreSQL query performance monitoring including pg_stat_statements extension, slow query logging, auto_explain for query plans, and monitoring scripts for production database performance analysis",
+      "summary": "Successfully configured slow query logging with 100ms threshold, comprehensive log formatting, and enabled logging collector. All queries exceeding 100ms are now logged with detailed connection and timing information.",
+      "completedAt": "2025-08-24T06:48:57.825Z"
+    },
+    {
+      "id": "ef3b547a-1295-41f8-b967-d6de4d066e78",
+      "name": "Enable auto_explain module",
+      "description": "Configure auto_explain to automatically log execution plans for slow queries",
+      "notes": "Provides detailed query plans for performance analysis",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T06:43:18.455Z",
+      "updatedAt": "2025-08-24T06:50:41.591Z",
+      "relatedFiles": [
+        {
+          "path": "/opt/homebrew/var/postgresql@15/postgresql.conf",
+          "type": "TO_MODIFY",
+          "description": "PostgreSQL configuration file"
+        }
+      ],
+      "implementationGuide": "1. Add auto_explain to session_preload_libraries\n2. Set auto_explain.log_min_duration to 250ms\n3. Enable auto_explain.log_analyze for actual timings\n4. Configure auto_explain.log_format as json",
+      "verificationCriteria": "Query plans appear in logs for slow queries",
+      "analysisResult": "Set up comprehensive PostgreSQL query performance monitoring including pg_stat_statements extension, slow query logging, auto_explain for query plans, and monitoring scripts for production database performance analysis",
+      "summary": "Successfully enabled auto_explain module to automatically log execution plans for queries exceeding 250ms. Configured JSON format output with detailed buffer usage and timing information for comprehensive performance analysis.",
+      "completedAt": "2025-08-24T06:50:41.590Z"
+    },
+    {
+      "id": "43acd875-dc38-4d9a-9366-211144fa7c33",
+      "name": "Create performance monitoring queries",
+      "description": "Develop SQL queries and scripts to analyze performance using pg_stat_statements",
+      "notes": "These queries will be used for regular performance reviews",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "08c97796-9bed-414a-8695-238ce8bdcc25"
+        }
+      ],
+      "createdAt": "2025-08-24T06:43:18.455Z",
+      "updatedAt": "2025-08-24T06:53:51.633Z",
+      "relatedFiles": [
+        {
+          "path": "/Users/dongeuncheon/blee_project/saju/scripts/monitor-performance.sql",
+          "type": "CREATE",
+          "description": "Performance monitoring SQL queries"
+        }
+      ],
+      "implementationGuide": "1. Create query for top 10 slowest queries\n2. Create query for most frequently executed queries\n3. Create query for cache hit ratio analysis\n4. Create query for index usage statistics\n5. Package queries in monitoring script",
+      "verificationCriteria": "Queries successfully return performance metrics",
+      "analysisResult": "Set up comprehensive PostgreSQL query performance monitoring including pg_stat_statements extension, slow query logging, auto_explain for query plans, and monitoring scripts for production database performance analysis",
+      "summary": "Successfully created comprehensive performance monitoring SQL queries including top slowest queries, frequently executed queries, cache hit ratio analysis, index usage, table I/O statistics, and active query monitoring. All queries tested and working correctly.",
+      "completedAt": "2025-08-24T06:53:51.633Z"
+    },
+    {
+      "id": "26e5c4da-e45b-4fbd-944e-8c59cbddc770",
+      "name": "Create automated monitoring script",
+      "description": "Build TypeScript script to automatically collect and report performance metrics",
+      "notes": "Script will run periodically to track performance trends",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "43acd875-dc38-4d9a-9366-211144fa7c33"
+        }
+      ],
+      "createdAt": "2025-08-24T06:43:18.455Z",
+      "updatedAt": "2025-08-24T06:58:11.411Z",
+      "relatedFiles": [
+        {
+          "path": "/Users/dongeuncheon/blee_project/saju/scripts/monitor-performance.ts",
+          "type": "CREATE",
+          "description": "Automated performance monitoring script"
+        }
+      ],
+      "implementationGuide": "1. Create script to connect to database\n2. Execute performance monitoring queries\n3. Format results for easy analysis\n4. Generate performance reports\n5. Set up scheduled execution",
+      "verificationCriteria": "Script successfully generates performance reports",
+      "analysisResult": "Set up comprehensive PostgreSQL query performance monitoring including pg_stat_statements extension, slow query logging, auto_explain for query plans, and monitoring scripts for production database performance analysis",
+      "summary": "Successfully created automated TypeScript monitoring script with performance report generation. Features include JSON/HTML/text output formats, scheduled monitoring, performance recommendations, and comprehensive metrics collection from pg_stat_statements.",
+      "completedAt": "2025-08-24T06:58:11.410Z"
+    }
+  ]
+}

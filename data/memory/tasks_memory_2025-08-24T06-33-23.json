@@ -1,0 +1,112 @@
+{
+  "tasks": [
+    {
+      "id": "6ef5374e-e44f-42d2-b54b-ecac08717fcf",
+      "name": "PostgreSQL 설치 및 초기 설정",
+      "description": "PostgreSQL 15 설치, 데이터베이스 생성, 사용자 권한 설정, 연결 풀 구성",
+      "notes": "PgBouncer는 초기에는 선택사항, 트래픽 증가시 도입",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T05:42:27.475Z",
+      "updatedAt": "2025-08-24T05:52:38.747Z",
+      "relatedFiles": [
+        {
+          "path": ".env",
+          "type": "TO_MODIFY",
+          "description": "DATABASE_URL 변경"
+        },
+        {
+          "path": "docker-compose.yml",
+          "type": "TO_MODIFY",
+          "description": "PostgreSQL 서비스 추가"
+        }
+      ],
+      "implementationGuide": "1. brew install postgresql@15 && brew services start postgresql@15\n2. createdb saju_naming\n3. psql -d saju_naming -c \"CREATE USER saju_user WITH PASSWORD 'secure_password';\"\n4. .env 파일 업데이트: DATABASE_URL=\"postgresql://saju_user:secure_password@localhost:5432/saju_naming\"\n5. pg_hba.conf에서 연결 설정 확인",
+      "verificationCriteria": "psql로 연결 테스트, \\l 명령으로 데이터베이스 확인, SELECT version(); 실행 성공",
+      "analysisResult": "PostgreSQL 마이그레이션 및 성능 최적화를 위한 체계적인 작업 계획. SQLite에서 PostgreSQL로 전환하며 동시에 인덱싱, 워커 분리, 캐싱, 모니터링 등을 단계적으로 구현. 48시간 내 긴급 작업 완료 후 1주-4주에 걸쳐 점진적 개선.",
+      "summary": "PostgreSQL 15 설치 완료, saju_naming 데이터베이스 생성, saju_user 사용자 설정, .env 파일 업데이트, docker-compose.yml에 PostgreSQL 서비스 추가, 연결 테스트 성공",
+      "completedAt": "2025-08-24T05:52:38.745Z"
+    },
+    {
+      "id": "fab4758d-d065-41f6-9d76-42744058c7e4",
+      "name": "SQLite 백업 생성",
+      "description": "기존 SQLite 데이터베이스의 완전한 백업 생성 (3중 백업)",
+      "notes": "롤백 계획 필수, 백업 3개 이상 유지",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T05:42:27.475Z",
+      "updatedAt": "2025-08-24T05:56:41.658Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/dev.db",
+          "type": "REFERENCE",
+          "description": "원본 SQLite 데이터베이스"
+        },
+        {
+          "path": "scripts/backup.sh",
+          "type": "CREATE",
+          "description": "백업 자동화 스크립트"
+        }
+      ],
+      "implementationGuide": "1. sqlite3 prisma/dev.db \".backup prisma/backup-$(date +%Y%m%d-%H%M%S).db\"\n2. tar -czf prisma/backup-full-$(date +%Y%m%d).tar.gz prisma/dev.db\n3. AWS S3 또는 클라우드 스토리지에 추가 백업\n4. 백업 체크섬 생성: sha256sum prisma/dev.db > prisma/backup.sha256",
+      "verificationCriteria": "백업 파일 존재 확인, 체크섬 검증, sqlite3로 백업 파일 열기 테스트",
+      "analysisResult": "PostgreSQL 마이그레이션 및 성능 최적화를 위한 체계적인 작업 계획. SQLite에서 PostgreSQL로 전환하며 동시에 인덱싱, 워커 분리, 캐싱, 모니터링 등을 단계적으로 구현. 48시간 내 긴급 작업 완료 후 1주-4주에 걸쳐 점진적 개선.",
+      "summary": "SQLite 백업 3중 생성 완료 (.backup 명령, tar.gz 압축, 원본 복사), SHA256 체크섬 생성 및 검증, 무결성 검사 통과, 자동화 스크립트 작성, 복구 방법 문서화",
+      "completedAt": "2025-08-24T05:56:41.657Z"
+    },
+    {
+      "id": "6adca481-618a-41eb-8b5f-94bae98a702d",
+      "name": "Prisma 스키마 PostgreSQL 전환",
+      "description": "datasource provider를 sqlite에서 postgresql로 변경, 타입 조정",
+      "notes": "타입 호환성 주의, PostgreSQL 특화 기능 활용",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "6ef5374e-e44f-42d2-b54b-ecac08717fcf"
+        }
+      ],
+      "createdAt": "2025-08-24T05:42:27.475Z",
+      "updatedAt": "2025-08-24T06:03:23.172Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/schema.prisma",
+          "type": "TO_MODIFY",
+          "description": "provider 및 타입 변경",
+          "lineStart": 5,
+          "lineEnd": 8
+        }
+      ],
+      "implementationGuide": "prisma/schema.prisma 수정:\n1. datasource db { provider = \"postgresql\" }\n2. String? → @db.Text 추가 (긴 텍스트)\n3. evidenceJSON String? → Json? 변경\n4. DateTime 필드에 @db.Timestamptz 추가\n5. autoincrement() → @default(cuid()) 검토",
+      "verificationCriteria": "npx prisma validate 성공, npx prisma format 실행",
+      "analysisResult": "PostgreSQL 마이그레이션 및 성능 최적화를 위한 체계적인 작업 계획. SQLite에서 PostgreSQL로 전환하며 동시에 인덱싱, 워커 분리, 캐싱, 모니터링 등을 단계적으로 구현. 48시간 내 긴급 작업 완료 후 1주-4주에 걸쳐 점진적 개선.",
+      "summary": "Prisma 스키마를 PostgreSQL로 완벽하게 전환. provider 변경, evidenceJSON을 Json 타입으로 변경, DateTime 필드에 적절한 PostgreSQL 타입 추가(@db.Timestamptz, @db.Date), 긴 텍스트에 @db.Text 추가. validate와 format 모두 성공",
+      "completedAt": "2025-08-24T06:03:23.170Z"
+    },
+    {
+      "id": "19fa283e-1060-490c-8e0f-6b9b478ded5d",
+      "name": "데이터베이스 마이그레이션 실행",
+      "description": "Prisma migrate로 PostgreSQL 스키마 생성",
+      "notes": "create-only로 먼저 SQL 검토 권장",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "6adca481-618a-41eb-8b5f-94bae98a702d"
+        }
+      ],
+      "createdAt": "2025-08-24T05:42:27.475Z",
+      "updatedAt": "2025-08-24T06:07:51.055Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/migrations",
+          "type": "CREATE",
+          "description": "마이그레이션 파일 생성"
+        }
+      ],
+      "implementationGuide": "1. npx prisma migrate dev --name postgres_init --create-only\n2. 생성된 SQL 검토\n3. npx prisma migrate dev 실행\n4. 마이그레이션 히스토리 확인: npx prisma migrate status",
+      "verificationCriteria": "마이그레이션 성공, 테이블 생성 확인: psql -d saju_naming -c '\\dt'",
+      "analysisResult": "PostgreSQL 마이그레이션 및 성능 최적화를 위한 체계적인 작업 계획. SQLite에서 PostgreSQL로 전환하며 동시에 인덱싱, 워커 분리, 캐싱, 모니터링 등을 단계적으로 구현. 48시간 내 긴급 작업 완료 후 1주-4주에 걸쳐 점진적 개선.",
+      "summary": "PostgreSQL 스키마 마이그레이션 완료. 8개 테이블, 3개 ENUM 타입, 모든 인덱스와 외래키 생성 성공. JSONB, TIMESTAMPTZ, DATE 등 PostgreSQL 네이티브 타입 정확히 적용",
+      "completedAt": "2025-08-24T06:07:51.054Z"
+    }
+  ]
+}

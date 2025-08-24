@@ -1,0 +1,36 @@
+{
+  "tasks": [
+    {
+      "id": "d85943bf-d87c-4f0a-bbb3-8ff451bd070e",
+      "name": "Admin 인증 및 RBAC 시스템 구축",
+      "description": "관리자 인증 시스템과 Role-Based Access Control 구현. admin/operator/viewer 역할 정의 및 세션 관리",
+      "notes": "보안이 가장 중요. httpOnly, secure 쿠키 사용. CSRF 토큰 필수",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-24T07:17:10.735Z",
+      "updatedAt": "2025-08-24T07:31:14.118Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/schema.prisma",
+          "type": "TO_MODIFY",
+          "description": "User, Role, AdminAuditLog 모델 추가"
+        },
+        {
+          "path": "app/utils/auth.server.ts",
+          "type": "CREATE",
+          "description": "인증 유틸리티"
+        },
+        {
+          "path": "app/routes/admin/login.tsx",
+          "type": "CREATE",
+          "description": "관리자 로그인 페이지"
+        }
+      ],
+      "implementationGuide": "1. Prisma 스키마에 User, Role, AdminAuditLog 모델 추가\n2. bcrypt로 비밀번호 해싱\n3. /routes/admin 폴더 구조 생성\n4. requireRole() 미들웨어 구현\n5. 로그인/로그아웃 라우트 구현\n6. 세션 저장소 설정 (cookie-based)",
+      "verificationCriteria": "관리자 로그인 가능, 세션 유지, 권한별 접근 제어 작동",
+      "analysisResult": "Remix 기반 Admin 대시보드 구축 - 운영 모니터링(Grafana 임베드) + 서비스 관리(유저/한자/작명Job) 통합. RBAC 권한 시스템, 감사 로그, 2FA 보안 포함. MVP 우선 개발 후 점진적 확장",
+      "summary": "소셜 인증 기반 Admin 시스템 구축 완료. Google/Kakao/Naver OAuth 통합, RBAC 권한 모델(Admin/Operator/Viewer), 감사 로그, 세션 관리 구현. Prisma 스키마 업데이트 및 기본 Admin 대시보드 페이지 생성 완료",
+      "completedAt": "2025-08-24T07:31:14.117Z"
+    }
+  ]
+}

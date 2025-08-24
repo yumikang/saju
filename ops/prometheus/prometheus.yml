@@ -1,0 +1,52 @@
+# Prometheus configuration for saju_naming monitoring
+global:
+  scrape_interval: 15s     # 기본 메트릭 수집 간격
+  evaluation_interval: 15s # 규칙 평가 간격
+  external_labels:
+    monitor: 'saju-naming-monitor'
+    environment: 'development'
+
+# Alertmanager 설정 (나중에 추가)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+          # - alertmanager:9093
+
+# 규칙 파일 로드 (나중에 추가)
+rule_files:
+  # - "alert-rules.yml"
+
+# 스크레이프 대상 설정
+scrape_configs:
+  # Prometheus 자체 모니터링
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: 'prometheus-server'
+
+  # PostgreSQL Exporter
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['localhost:9187']
+        labels:
+          instance: 'postgresql-primary'
+          database: 'saju_naming'
+    scrape_interval: 30s  # PostgreSQL은 30초마다 수집
+    scrape_timeout: 10s
+
+  # PgBouncer Exporter (나중에 추가 가능)
+  - job_name: 'pgbouncer'
+    static_configs:
+      - targets: ['localhost:9127']
+        labels:
+          instance: 'pgbouncer-pool'
+    scrape_interval: 30s
+
+  # Node Exporter (시스템 메트릭 - 선택사항)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['localhost:9100']
+        labels:
+          instance: 'saju-server'

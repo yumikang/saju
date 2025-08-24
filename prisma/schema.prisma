@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -13,13 +13,23 @@ model User {
   name          String?
   phone         String?
   avatarUrl     String?        @map("avatar_url")
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
+  // Admin fields  
+  role          Role           @default(VIEWER)
+  status        UserStatus     @default(ACTIVE)
+  emailVerified Boolean        @default(false) @map("email_verified")
+  lastLoginAt   DateTime?      @map("last_login_at") @db.Timestamptz(3)
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  // Relations
+  oauthAccounts UserOAuth[]
   favorites     Favorite[]
   namingResults NamingResult[]
   sajuData      SajuData[]
   sessions      UserSession[]
+  auditLogs     AdminAuditLog[] @relation("Actor")
 
+  @@index([email])
+  @@index([role])
   @@map("users")
 }
 
@@ -27,7 +37,7 @@ model SajuData {
   id               String         @id @default(uuid())
   userId           String         @map("user_id")
   name             String
-  birthDate        DateTime       @map("birth_date")
+  birthDate        DateTime       @map("birth_date") @db.Date
   birthTime        String         @map("birth_time")
   isLunar          Boolean        @default(false) @map("is_lunar")
   gender           String
@@ -46,8 +56,8 @@ model SajuData {
   waterCount       Int            @map("water_count")
   primaryYongsin   String?        @map("primary_yongsin")
   secondaryYongsin String?        @map("secondary_yongsin")
-  createdAt        DateTime       @default(now()) @map("created_at")
-  updatedAt        DateTime       @updatedAt @map("updated_at")
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
   namingResults    NamingResult[]
   user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -71,10 +81,10 @@ model NamingResult {
   overallScore     Float      @map("overall_score")
   generationMethod String     @map("generation_method")
   aiModel          String?    @map("ai_model")
-  aiPrompt         String?    @map("ai_prompt")
+  aiPrompt         String?    @map("ai_prompt") @db.Text
   preferredValues  Json?      @map("preferred_values")
-  notes            String?
-  createdAt        DateTime   @default(now()) @map("created_at")
+  notes            String?    @db.Text
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
   favorites        Favorite[]
   sajuData         SajuData   @relation(fields: [sajuDataId], references: [id], onDelete: Cascade)
   user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -89,8 +99,8 @@ model Favorite {
   userId         String       @map("user_id")
   namingResultId String       @map("naming_result_id")
   rating         Int?
-  comment        String?
-  createdAt      DateTime     @default(now()) @map("created_at")
+  comment        String?      @db.Text
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
   namingResult   NamingResult @relation(fields: [namingResultId], references: [id], onDelete: Cascade)
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -106,7 +116,7 @@ model HanjaDict {
   element        Element?
   yinYang        YinYang?     @map("yin_yang")
   review         ReviewStatus @default(ok)
-  evidenceJSON   String?      @map("evidence_json")
+  evidenceJSON   Json?        @map("evidence_json")
   decidedBy      String?      @map("decided_by")
   ruleset        String?
   codepoint      Int?
@@ -117,8 +127,8 @@ model HanjaDict {
   nameFrequency  Int?         @default(0) @map("name_frequency")
   category       String?
   gender         String?
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@index([element])
   @@index([strokes])
@@ -142,8 +152,8 @@ model UserSession {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
   token     String   @unique
-  expiresAt DateTime @map("expires_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -167,4 +177,68 @@ enum YinYang {
 enum ReviewStatus {
   ok
   needs_review
+}
+
+// Admin related enums
+enum AuthProvider {
+  GOOGLE @map("google")
+  KAKAO  @map("kakao")
+  NAVER  @map("naver")
+}
+
+enum Role {
+  ADMIN    @map("admin")
+  OPERATOR @map("operator")
+  VIEWER   @map("viewer")
+}
+
+enum UserStatus {
+  ACTIVE    @map("active")
+  SUSPENDED @map("suspended")
+}
+
+// OAuth Account Linking
+model UserOAuth {
+  id             String       @id @default(uuid())
+  userId         String       @map("user_id")
+  provider       AuthProvider
+  providerUserId String       @map("provider_user_id")
+  email          String?
+  emailVerified  Boolean      @default(false) @map("email_verified")
+  name           String?
+  profileImage   String?      @map("profile_image")
+  profileRaw     Json?        @map("profile_raw") // Store complete profile from provider
+  accessToken    String?      @map("access_token") @db.Text // Encrypted in production
+  refreshToken   String?      @map("refresh_token") @db.Text // Encrypted in production
+  expiresAt      DateTime?    @map("expires_at") @db.Timestamptz(3)
+  linkedAt       DateTime     @default(now()) @map("linked_at") @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+  @@index([email])
+  @@map("user_oauth")
+}
+
+// Admin Audit Log
+model AdminAuditLog {
+  id          String   @id @default(uuid())
+  actorId     String   @map("actor_id")
+  actor       User     @relation("Actor", fields: [actorId], references: [id])
+  action      String   // e.g., "USER_SUSPEND", "JOB_RETRY", "HANJA_REVIEW_TOGGLE"
+  targetType  String?  @map("target_type") // e.g., "User", "HanjaDict", "Job"
+  targetId    String?  @map("target_id")
+  beforeValue Json?    @map("before_value")
+  afterValue  Json?    @map("after_value")
+  metadata    Json?    // Additional context
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@index([actorId])
+  @@index([action])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+  @@map("admin_audit_logs")
 }

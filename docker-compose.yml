@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: saju-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: saju_user
+      POSTGRES_PASSWORD: saju_secure_2024!
+      POSTGRES_DB: saju_naming
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U saju_user -d saju_naming"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - saju-network
+
   redis:
     image: redis:7-alpine
     container_name: saju-redis
@@ -34,6 +54,8 @@ services:
       - saju-network
 
 volumes:
+  postgres-data:
+    driver: local
   redis-data:
     driver: local
 
