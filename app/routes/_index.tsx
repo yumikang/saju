@@ -64,38 +64,9 @@ export default function Index() {
               <h1 className="text-xl font-bold text-orange-500">사주명리</h1>
             </Link>
             
-            {/* 네비게이션 메뉴 */}
+            {/* 네비게이션 메뉴 - 빈 상태로 유지 */}
             <nav className="flex items-center gap-4">
-              {user ? (
-                <>
-                  {/* 로그인된 사용자 메뉴 */}
-                  <Link to="/naming/history" className="text-gray-700 hover:text-orange-500 transition-colors">
-                    작명 이력
-                  </Link>
-                  <Link to="/naming/favorites" className="text-gray-700 hover:text-orange-500 transition-colors">
-                    즐겨찾기
-                  </Link>
-                  <Link to="/account" className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
-                    <UserIcon className="w-5 h-5" />
-                    <span>내 계정</span>
-                  </Link>
-                  <Link to="/logout">
-                    <Button variant="outline" size="sm">
-                      로그아웃
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  {/* 비로그인 사용자 메뉴 */}
-                  <Link to="/login">
-                    <Button className="bg-orange-500 hover:bg-orange-600 flex items-center gap-2">
-                      <LogIn className="w-4 h-4" />
-                      로그인
-                    </Button>
-                  </Link>
-                </>
-              )}
+              {/* 메뉴 제거 */}
             </nav>
           </div>
         </div>
@@ -116,11 +87,20 @@ export default function Index() {
             전문가의 사주 분석으로 최적의 이름을 찾아보세요
           </p>
           
-          <Link to="/naming">
-            <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600">
-              서비스 선택하기
-            </Button>
-          </Link>
+          {!user ? (
+            <Link to="/login">
+              <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600 flex items-center gap-2 mx-auto">
+                <LogIn className="w-5 h-5" />
+                로그인
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/naming">
+              <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600">
+                서비스 선택하기
+              </Button>
+            </Link>
+          )}
         </motion.div>
       </section>
 

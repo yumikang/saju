@@ -1,0 +1,17 @@
+{
+	"ulid": "01K3MYBF80NSR5SKAV94N154G2",
+	"minTime": 1756260004051,
+	"maxTime": 1756267200000,
+	"stats": {
+		"numSamples": 620892,
+		"numSeries": 1772,
+		"numChunks": 5189
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01K3MYBF80NSR5SKAV94N154G2"
+		]
+	},
+	"version": 1
+}
