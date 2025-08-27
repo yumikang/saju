@@ -115,9 +115,10 @@ export default function Index() {
               </Button>
             </Link>
           ) : (
-            <Link to="/naming">
-              <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600">
-                서비스 선택하기
+            <Link to="/account">
+              <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600 flex items-center gap-2 mx-auto">
+                <UserIcon className="w-5 h-5" />
+                마이페이지
               </Button>
             </Link>
           )}

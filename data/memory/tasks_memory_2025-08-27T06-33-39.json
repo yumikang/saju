@@ -1,0 +1,25 @@
+{
+  "tasks": [
+    {
+      "id": "2906257a-415f-46ac-bf64-23a5408b6cf4",
+      "name": "데이터베이스 스키마 확장 - Payment, ServiceOrder 모델",
+      "description": "Prisma 스키마에 Payment와 ServiceOrder 모델을 추가하고 필요한 Enum 타입들을 정의",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-08-27T06:06:58.936Z",
+      "updatedAt": "2025-08-27T06:09:00.187Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/schema.prisma",
+          "type": "TO_MODIFY",
+          "description": "스키마 파일"
+        }
+      ],
+      "implementationGuide": "1. prisma/schema.prisma 파일 수정\n2. PaymentMethod enum: CARD, BANK_TRANSFER, KAKAO_PAY, NAVER_PAY, TOSS\n3. PaymentStatus enum: PENDING, COMPLETED, FAILED, REFUNDED, CANCELLED\n4. ServiceType enum: NAMING, RENAMING, SAJU_COMPATIBILITY\n5. OrderStatus enum: PENDING, PAID, IN_PROGRESS, COMPLETED, CANCELLED\n6. Payment 모델: id, userId, serviceOrderId, amount, method, status, transactionId, paidAt, refundedAt, metadata\n7. ServiceOrder 모델: id, userId, serviceType, status, price, resultData, completedAt\n8. 관계 설정: User 1:N Payment, User 1:N ServiceOrder, ServiceOrder 1:1 Payment",
+      "verificationCriteria": "npx prisma validate 성공, 모든 필드와 관계가 올바르게 정의됨",
+      "analysisResult": "마이페이지에 결제 내역과 서비스 이용 내역 기능을 추가. Payment와 ServiceOrder 테이블 생성, 조회 페이지 구현, 결과 다시보기 기능 포함",
+      "summary": "Prisma 스키마에 Payment와 ServiceOrder 모델 및 관련 Enum 타입들을 성공적으로 추가. 모든 필드, 관계, 인덱스가 올바르게 정의되었으며 npx prisma validate 검증 통과",
+      "completedAt": "2025-08-27T06:09:00.186Z"
+    }
+  ]
+}
