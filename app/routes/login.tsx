@@ -115,6 +115,21 @@ export default function UserLogin() {
               네이버로 시작하기
             </button>
           </Form>
+
+          {/* Test Login Button (Development Only) */}
+          {process.env.NODE_ENV !== "production" && (
+            <Form method="post" action="/auth/test/login">
+              <button
+                type="submit"
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 focus:ring-2 focus:ring-gray-400 transition-all duration-200"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                테스트 계정으로 로그인 (개발용)
+              </button>
+            </Form>
+          )}
         </div>
 
         {/* Information Section */}

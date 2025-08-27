@@ -5,11 +5,31 @@ import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
 import type { LoaderFunctionArgs } from "@remix-run/node"
 import { json } from "@remix-run/node"
-import { getOptionalUser } from "~/utils/user-auth.server"
+import { getOptionalUser } from "~/utils/user-session.server"
+import { db } from "~/utils/db.server"
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await getOptionalUser(request)
-  return json({ user })
+  try {
+    const sessionUser = await getOptionalUser(request)
+    
+    // If we have a session user, get the full user data from DB
+    let user = null
+    if (sessionUser && typeof sessionUser.userId === 'string') {
+      user = await db.user.findUnique({
+        where: { id: sessionUser.userId },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+        }
+      })
+    }
+    
+    return json({ user })
+  } catch (error) {
+    console.error('Error in index loader:', error)
+    return json({ user: null })
+  }
 }
 
 export default function Index() {

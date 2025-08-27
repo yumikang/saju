@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, useFetcher } from "@remix-run/react";
-import { requireUserProfile } from "~/utils/user-auth.server";
+import { requireUser } from "~/utils/user-session.server";
 import { db } from "~/utils/db.server";
 import { Calendar, User, Sparkles, TrendingUp, Hash, FileText, Loader2 } from "lucide-react";
 import { format } from "date-fns";
@@ -16,8 +16,17 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  // 인증된 사용자만 접근 가능 (프로필 및 약관 동의 완료 필수)
-  const user = await requireUserProfile(request);
+  // 인증된 사용자만 접근 가능
+  const sessionUser = await requireUser(request);
+  
+  // Get full user data
+  const user = await db.user.findUnique({
+    where: { id: sessionUser.userId },
+  });
+  
+  if (!user) {
+    throw new Response("User not found", { status: 404 });
+  }
   
   // URL에서 cursor 파라미터 가져오기 (무한 스크롤용)
   const url = new URL(request.url);

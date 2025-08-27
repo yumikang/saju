@@ -1,12 +1,28 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData, Link, Form, useActionData, useNavigation, useFetcher } from "@remix-run/react";
-import { requireUserProfile, logUserAction } from "~/utils/user-auth.server";
+import { requireUser } from "~/utils/user-session.server";
+import { logUserAction } from "~/utils/user-auth.server";
 import { db } from "~/utils/db.server";
 import { useState, useEffect } from "react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await requireUserProfile(request);
+  const sessionUser = await requireUser(request);
+  
+  // Get full user data
+  const user = await db.user.findUnique({
+    where: { id: sessionUser.userId },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      emailVerified: true,
+    }
+  });
+  
+  if (!user) {
+    throw new Response("User not found", { status: 404 });
+  }
   
   // Get user profile and connected OAuth accounts
   const profile = await db.userProfile.findUnique({
@@ -35,7 +51,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const user = await requireUserProfile(request);
+  const sessionUser = await requireUser(request);
+  
+  // Get full user data
+  const user = await db.user.findUnique({
+    where: { id: sessionUser.userId },
+  });
+  
+  if (!user) {
+    throw new Response("User not found", { status: 404 });
+  }
   const formData = await request.formData();
   const action = formData.get("_action");
   
