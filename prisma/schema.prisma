@@ -29,6 +29,8 @@ model User {
   auditLogs     AdminAuditLog[] @relation("Actor")
   profile       UserProfile?
   termsConsents TermsConsent[]
+  payments      Payment[]
+  serviceOrders ServiceOrder[]
 
   @@index([email])
   @@index([role])
@@ -285,4 +287,124 @@ enum Gender {
   MALE   @map("M")
   FEMALE @map("F")
   OTHER  @map("X")
+}
+
+// Payment related enums
+enum PaymentMethod {
+  CARD           @map("card")
+  BANK_TRANSFER  @map("bank_transfer")
+  KAKAO_PAY      @map("kakao_pay")
+  NAVER_PAY      @map("naver_pay")
+  TOSS           @map("toss")
+}
+
+enum PaymentStatus {
+  PENDING    @map("pending")
+  COMPLETED  @map("completed")
+  FAILED     @map("failed")
+  REFUNDED   @map("refunded")
+  CANCELLED  @map("cancelled")
+}
+
+enum Currency {
+  KRW @map("KRW")
+  USD @map("USD")
+}
+
+enum PaymentEventType {
+  REQUESTED         @map("requested")
+  APPROVED          @map("approved")
+  FAILED            @map("failed")
+  CANCELLED         @map("cancelled")
+  REFUNDED          @map("refunded")
+  WEBHOOK_RECEIVED  @map("webhook_received")
+}
+
+// Service related enums
+enum ServiceType {
+  NAMING              @map("naming")
+  RENAMING            @map("renaming")
+  SAJU_COMPATIBILITY  @map("saju_compatibility")
+}
+
+enum OrderStatus {
+  PENDING      @map("pending")
+  PAID         @map("paid")
+  IN_PROGRESS  @map("in_progress")
+  COMPLETED    @map("completed")
+  CANCELLED    @map("cancelled")
+}
+
+// Payment model - 결제 정보
+model Payment {
+  id              String        @id @default(uuid())
+  userId          String        @map("user_id")
+  serviceOrderId  String        @unique @map("service_order_id")
+  provider        String        // PG사: tosspayments, kakaopay, naverpay 등
+  transactionId   String        @map("transaction_id") // 외부 결제 시스템 거래 ID (required for idempotency)
+  method          PaymentMethod // 결제 수단
+  status          PaymentStatus // 결제 상태
+  amount          Int           // 결제 금액 (최소 단위: 원)
+  currency        Currency      @default(KRW) // 통화
+  paidAt          DateTime?     @map("paid_at") @db.Timestamptz(3) // 결제 완료 시각
+  failedAt        DateTime?     @map("failed_at") @db.Timestamptz(3) // 결제 실패 시각
+  refundedAt      DateTime?     @map("refunded_at") @db.Timestamptz(3) // 환불 시각
+  cancelledAt     DateTime?     @map("cancelled_at") @db.Timestamptz(3) // 취소 시각
+  metadata        Json?         // 추가 결제 정보 (PG사 응답, 에러 메시지 등)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serviceOrder    ServiceOrder  @relation(fields: [serviceOrderId], references: [id], onDelete: Cascade)
+  paymentEvents   PaymentEvent[]
+  
+  @@unique([provider, transactionId]) // 멱등성 보장 (중복 결제 방지)
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, status, createdAt(sort: Desc)])
+  @@index([transactionId])
+  @@map("payments")
+}
+
+// PaymentEvent model - 결제 이벤트 로그 (감사 추적)
+model PaymentEvent {
+  id            String            @id @default(uuid())
+  paymentId     String            @map("payment_id")
+  eventType     PaymentEventType  @map("event_type") // 이벤트 종류
+  status        PaymentStatus?    // 이벤트 결과 상태
+  amount        Int?              // 이벤트 관련 금액
+  currency      Currency?         // 통화
+  message       String?           // 이벤트 메시지
+  metadata      Json?             // 추가 이벤트 데이터 (웹훅 응답 등)
+  ipAddress     String?           @map("ip_address") // 요청 IP
+  userAgent     String?           @map("user_agent") // 요청 User-Agent  
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  
+  payment       Payment           @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  
+  @@index([paymentId, createdAt(sort: Desc)])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("payment_events")
+}
+
+// ServiceOrder model - 서비스 주문 정보
+model ServiceOrder {
+  id              String       @id @default(uuid())
+  userId          String       @map("user_id")
+  serviceType     ServiceType  @map("service_type") // 서비스 종류
+  status          OrderStatus  // 주문 상태
+  price           Int          // 서비스 가격 (원 단위)
+  resultData      Json?        @map("result_data") // 서비스 결과 데이터
+  completedAt     DateTime?    @map("completed_at") @db.Timestamptz(3) // 서비스 완료 시각
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment         Payment?     // 1:1 관계
+  
+  @@index([userId])
+  @@index([serviceType])
+  @@index([status])
+  @@index([createdAt])
+  @@map("service_orders")
 }

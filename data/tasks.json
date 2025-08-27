@@ -1,237 +1,188 @@
 {
   "tasks": [
     {
-      "id": "3fb1b9d3-bd50-4f8a-93cf-a91906b8f720",
-      "name": "naming/history 라우트 파일 생성 및 기본 구조 구현",
-      "description": "app/routes/naming.history.tsx 파일을 생성하고 기본 라우트 구조를 설정합니다. requireUserProfile 가드를 적용하여 인증된 사용자만 접근할 수 있도록 합니다.",
+      "id": "2906257a-415f-46ac-bf64-23a5408b6cf4",
+      "name": "데이터베이스 스키마 확장 - Payment, ServiceOrder 모델",
+      "description": "Prisma 스키마에 Payment와 ServiceOrder 모델을 추가하고 필요한 Enum 타입들을 정의",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-08-24T09:14:17.621Z",
-      "updatedAt": "2025-08-24T09:15:12.332Z",
+      "createdAt": "2025-08-27T06:06:58.936Z",
+      "updatedAt": "2025-08-27T06:09:00.187Z",
       "relatedFiles": [
-        {
-          "path": "app/routes/naming.history.tsx",
-          "type": "CREATE",
-          "description": "새로 생성할 라우트 파일"
-        },
-        {
-          "path": "app/utils/user-auth.server.ts",
-          "type": "REFERENCE",
-          "description": "requireUserProfile 함수 참조"
-        }
-      ],
-      "implementationGuide": "1. app/routes/naming.history.tsx 파일 생성\n2. requireUserProfile import 및 loader에서 사용\n3. 기본 컴포넌트 구조 설정\n4. meta 함수로 페이지 제목 설정",
-      "verificationCriteria": "파일이 생성되고 기본 라우트 구조가 설정되어 있으며, 인증되지 않은 사용자는 /onboard로 리디렉션됨",
-      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
-      "summary": "app/routes/naming.history.tsx 파일을 성공적으로 생성했습니다. requireUserProfile 가드를 적용하여 인증된 사용자만 접근 가능하도록 설정했고, 기본 라우트 구조와 UI 골격을 구현했습니다. meta 함수로 페이지 제목도 설정했습니다.",
-      "completedAt": "2025-08-24T09:15:12.332Z"
-    },
-    {
-      "id": "2d33d82a-d975-4872-8abf-cf808167380c",
-      "name": "naming/history loader 함수 구현 - 데이터 조회 로직",
-      "description": "사용자의 작명 이력을 데이터베이스에서 조회하는 loader 함수를 구현합니다. 커서 기반 페이지네이션을 적용하여 최근 20건씩 조회합니다.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "3fb1b9d3-bd50-4f8a-93cf-a91906b8f720"
-        }
-      ],
-      "createdAt": "2025-08-24T09:14:17.621Z",
-      "updatedAt": "2025-08-24T09:16:42.924Z",
-      "relatedFiles": [
-        {
-          "path": "app/routes/naming.history.tsx",
-          "type": "TO_MODIFY",
-          "description": "loader 함수 추가"
-        },
-        {
-          "path": "app/utils/db.server.ts",
-          "type": "REFERENCE",
-          "description": "Prisma client 사용"
-        },
         {
           "path": "prisma/schema.prisma",
-          "type": "REFERENCE",
-          "description": "NamingResult 모델 참조",
-          "lineStart": 69,
-          "lineEnd": 96
+          "type": "TO_MODIFY",
+          "description": "스키마 파일"
         }
       ],
-      "implementationGuide": "1. Prisma를 사용하여 NamingResult 조회\n2. userId 필터링 및 createdAt DESC 정렬\n3. cursor 파라미터 처리 (searchParams에서 가져오기)\n4. take: 20 제한 및 cursor 기반 skip 로직\n5. sajuData와 함께 include하여 관련 정보 포함",
-      "verificationCriteria": "loader가 사용자의 작명 이력을 최근 순으로 20건씩 조회하고, cursor 파라미터가 있을 경우 해당 지점부터 조회함",
-      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
-      "summary": "loader 함수에 커서 기반 페이지네이션 로직을 완전히 구현했습니다. Prisma를 사용하여 사용자의 NamingResult를 최근 순으로 20건씩 조회하고, sajuData 정보도 함께 include합니다. cursor 파라미터 처리와 hasMore/nextCursor 로직도 구현했습니다.",
-      "completedAt": "2025-08-24T09:16:42.923Z"
+      "implementationGuide": "1. prisma/schema.prisma 파일 수정\n2. PaymentMethod enum: CARD, BANK_TRANSFER, KAKAO_PAY, NAVER_PAY, TOSS\n3. PaymentStatus enum: PENDING, COMPLETED, FAILED, REFUNDED, CANCELLED\n4. ServiceType enum: NAMING, RENAMING, SAJU_COMPATIBILITY\n5. OrderStatus enum: PENDING, PAID, IN_PROGRESS, COMPLETED, CANCELLED\n6. Payment 모델: id, userId, serviceOrderId, amount, method, status, transactionId, paidAt, refundedAt, metadata\n7. ServiceOrder 모델: id, userId, serviceType, status, price, resultData, completedAt\n8. 관계 설정: User 1:N Payment, User 1:N ServiceOrder, ServiceOrder 1:1 Payment",
+      "verificationCriteria": "npx prisma validate 성공, 모든 필드와 관계가 올바르게 정의됨",
+      "analysisResult": "마이페이지에 결제 내역과 서비스 이용 내역 기능을 추가. Payment와 ServiceOrder 테이블 생성, 조회 페이지 구현, 결과 다시보기 기능 포함",
+      "summary": "Prisma 스키마에 Payment와 ServiceOrder 모델 및 관련 Enum 타입들을 성공적으로 추가. 모든 필드, 관계, 인덱스가 올바르게 정의되었으며 npx prisma validate 검증 통과",
+      "completedAt": "2025-08-27T06:09:00.186Z"
     },
     {
-      "id": "64a4c411-dcfd-453c-b5f5-253fc528b9e6",
-      "name": "naming/history UI 컴포넌트 구현",
-      "description": "작명 이력을 표시하는 UI 컴포넌트를 구현합니다. 카드형 레이아웃으로 각 작명 결과를 표시하고, 빈 상태일 때 온보딩 가이드를 보여줍니다.",
-      "status": "completed",
+      "id": "3e56675a-6c75-4e6e-80f2-7ab64ae74957",
+      "name": "데이터베이스 스키마 2차 보강 및 마이그레이션",
+      "description": "실운영 안정성을 위한 스키마 보강: 유니크 제약, 머니 정확도, 이벤트 로그, 인덱스 최적화",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "2d33d82a-d975-4872-8abf-cf808167380c"
+          "taskId": "2906257a-415f-46ac-bf64-23a5408b6cf4"
         }
       ],
-      "createdAt": "2025-08-24T09:14:17.621Z",
-      "updatedAt": "2025-08-24T09:18:41.198Z",
+      "createdAt": "2025-08-27T06:06:58.936Z",
+      "updatedAt": "2025-08-27T06:19:59.275Z",
       "relatedFiles": [
         {
-          "path": "app/routes/naming.history.tsx",
-          "type": "TO_MODIFY",
-          "description": "UI 컴포넌트 구현"
-        },
-        {
-          "path": "app/components/realtime/NamingResults.tsx",
-          "type": "REFERENCE",
-          "description": "카드 디자인 참조",
-          "lineStart": 74,
-          "lineEnd": 97
+          "path": "prisma/migrations",
+          "type": "CREATE",
+          "description": "마이그레이션 파일"
         }
       ],
-      "implementationGuide": "1. useLoaderData로 데이터 가져오기\n2. 결과가 없을 때 온보딩 가이드 메시지 표시\n3. 카드 그리드 레이아웃 구현 (반응형)\n4. 각 카드에 fullName, scores, createdAt 표시\n5. lucide-react 아이콘 사용",
-      "verificationCriteria": "작명 이력이 카드 형태로 표시되고, 빈 상태에서 온보딩 가이드가 나타남. 반응형 레이아웃이 적용됨",
-      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
-      "summary": "작명 이력 UI를 완전히 구현했습니다. 카드형 레이아웃으로 각 작명 결과를 표시하며, 한글/한자 이름, 종합점수, 세부 점수(균형/음향/획수), 사주 정보, 생성일을 모두 포함합니다. 반응형 그리드 레이아웃(모바일 1열, 태블릿 2열, 데스크톱 3열)을 적용했고, lucide-react 아이콘으로 시각적 요소를 강화했습니다.",
-      "completedAt": "2025-08-24T09:18:41.197Z"
+      "implementationGuide": "1. Payment 모델 보강:\n   - provider 필드 추가\n   - currency enum 추가 (KRW 기본)\n   - transactionId와 provider 조합 유니크 제약\n   - 복합 인덱스 최적화 (userId + createdAt DESC)\n   \n2. PaymentEvent 모델 추가:\n   - 감사/웹훅 이벤트 추적\n   - append-only 로그\n   - type, rawPayload, signatureValid 필드\n   \n3. ServiceOrder 보강:\n   - paymentId 필드 추가 (nullable, unique)\n   - 양방향 1:1 관계 명확화\n   \n4. 인덱스 최적화:\n   - 조회 패턴별 복합 인덱스\n   - 날짜 기준 DESC 정렬\n\n5. npx prisma migrate dev --name enhance_payment_system",
+      "verificationCriteria": "마이그레이션 성공, 유니크 제약 작동, 복합 인덱스 생성 확인",
+      "analysisResult": "마이페이지에 결제 내역과 서비스 이용 내역 기능을 추가. Payment와 ServiceOrder 테이블 생성, 조회 페이지 구현, 결과 다시보기 기능 포함"
     },
     {
-      "id": "67981b64-977d-4032-96fa-6ab70ff32621",
-      "name": "naming/history 무한 스크롤 구현",
-      "description": "useFetcher를 사용하여 무한 스크롤 기능을 구현합니다. 스크롤이 하단에 도달하면 다음 20건을 자동으로 로드합니다.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "64a4c411-dcfd-453c-b5f5-253fc528b9e6"
-        }
-      ],
-      "createdAt": "2025-08-24T09:14:17.621Z",
-      "updatedAt": "2025-08-24T09:21:25.480Z",
-      "relatedFiles": [
-        {
-          "path": "app/routes/naming.history.tsx",
-          "type": "TO_MODIFY",
-          "description": "무한 스크롤 로직 추가"
-        }
-      ],
-      "implementationGuide": "1. useFetcher 훅 사용\n2. IntersectionObserver로 스크롤 감지\n3. 마지막 항목의 id를 cursor로 사용\n4. fetcher.load로 추가 데이터 요청\n5. 로딩 상태 표시 (스피너)",
-      "verificationCriteria": "스크롤이 하단에 도달하면 자동으로 다음 20건이 로드되고, 로딩 중 스피너가 표시됨",
-      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
-      "summary": "무한 스크롤 기능을 완전히 구현했습니다. useFetcher와 IntersectionObserver를 활용하여 스크롤이 하단에 도달하면 자동으로 다음 20건을 로드합니다. 로딩 중에는 Loader2 아이콘이 회전하는 스피너를 표시하고, cursor 기반 페이지네이션으로 중복 없이 데이터를 가져옵니다.",
-      "completedAt": "2025-08-24T09:21:25.480Z"
-    },
-    {
-      "id": "5421f3bd-662d-426d-a42d-0ca41d0cb968",
-      "name": "naming/favorites 라우트 파일 생성 및 기본 구조 구현",
-      "description": "app/routes/naming.favorites.tsx 파일을 생성하고 기본 라우트 구조를 설정합니다. requireUserProfile 가드를 적용합니다.",
-      "status": "completed",
+      "id": "3cb9b143-c4dc-42f3-8443-c490b9f5adbd",
+      "name": "AccountNav 공통 네비게이션 컴포넌트 생성",
+      "description": "마이페이지 하위 페이지들을 위한 탭 네비게이션 컴포넌트",
+      "status": "pending",
       "dependencies": [],
-      "createdAt": "2025-08-24T09:14:17.621Z",
-      "updatedAt": "2025-08-24T09:22:46.273Z",
+      "createdAt": "2025-08-27T06:06:58.936Z",
+      "updatedAt": "2025-08-27T06:06:58.936Z",
       "relatedFiles": [
         {
-          "path": "app/routes/naming.favorites.tsx",
+          "path": "app/components/account/AccountNav.tsx",
           "type": "CREATE",
-          "description": "새로 생성할 라우트 파일"
-        },
-        {
-          "path": "app/utils/user-auth.server.ts",
-          "type": "REFERENCE",
-          "description": "requireUserProfile 함수 참조"
+          "description": "네비게이션 컴포넌트"
         }
       ],
-      "implementationGuide": "1. app/routes/naming.favorites.tsx 파일 생성\n2. requireUserProfile import 및 loader에서 사용\n3. 기본 컴포넌트 구조 설정\n4. meta 함수로 페이지 제목 설정",
-      "verificationCriteria": "파일이 생성되고 기본 라우트 구조가 설정되어 있으며, 인증되지 않은 사용자는 /onboard로 리디렉션됨",
-      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
-      "summary": "app/routes/naming.favorites.tsx 파일을 성공적으로 생성했습니다. requireUserProfile 가드를 적용하여 인증된 사용자만 접근 가능하도록 설정했고, 기본 라우트 구조와 UI 골격을 구현했습니다. meta 함수로 페이지 제목도 설정했습니다.",
-      "completedAt": "2025-08-24T09:22:46.273Z"
+      "implementationGuide": "1. app/components/account/AccountNav.tsx 생성\n2. Tabs 컴포넌트 사용 (shadcn/ui)\n3. 탭 메뉴: 프로필 | 결제 내역 | 서비스 이용 | 작명 이력 | 즐겨찾기\n4. 현재 경로에 따라 active 상태 표시\n5. Link 컴포넌트로 라우팅 처리",
+      "verificationCriteria": "컴포넌트 렌더링 성공, 탭 클릭시 올바른 페이지로 이동",
+      "analysisResult": "마이페이지에 결제 내역과 서비스 이용 내역 기능을 추가. Payment와 ServiceOrder 테이블 생성, 조회 페이지 구현, 결과 다시보기 기능 포함"
     },
     {
-      "id": "ba80c151-ba53-4522-b00e-0a54f0186be0",
-      "name": "naming/favorites loader 함수 구현 - 즐겨찾기 조회",
-      "description": "사용자의 즐겨찾기 목록을 조회하는 loader 함수를 구현합니다. 정렬 옵션과 페이지네이션을 지원합니다.",
-      "status": "completed",
+      "id": "21134d85-b1c1-4dbe-933a-a8e1cc4681af",
+      "name": "결제 내역 페이지 구현",
+      "description": "/account/payments 라우트 생성 및 결제 내역 조회 기능",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "5421f3bd-662d-426d-a42d-0ca41d0cb968"
-        }
-      ],
-      "createdAt": "2025-08-24T09:14:17.621Z",
-      "updatedAt": "2025-08-24T09:24:34.010Z",
-      "relatedFiles": [
-        {
-          "path": "app/routes/naming.favorites.tsx",
-          "type": "TO_MODIFY",
-          "description": "loader 함수 추가"
+          "taskId": "3e56675a-6c75-4e6e-80f2-7ab64ae74957"
         },
         {
-          "path": "app/utils/db.server.ts",
-          "type": "REFERENCE",
-          "description": "Prisma client 사용"
+          "taskId": "3cb9b143-c4dc-42f3-8443-c490b9f5adbd"
+        }
+      ],
+      "createdAt": "2025-08-27T06:06:58.936Z",
+      "updatedAt": "2025-08-27T06:06:58.936Z",
+      "relatedFiles": [
+        {
+          "path": "app/routes/account.payments.tsx",
+          "type": "CREATE",
+          "description": "결제 내역 페이지"
+        }
+      ],
+      "implementationGuide": "1. app/routes/account.payments.tsx 생성\n2. loader: requireUser로 인증 확인 후 Payment 목록 조회\n3. 페이지네이션: page 파라미터 처리 (20개씩)\n4. 필터: 기간(dateFrom, dateTo), 상태(status), 결제수단(method)\n5. UI: Table 컴포넌트로 목록 표시\n6. 컬럼: 날짜, 서비스명, 결제수단, 금액, 상태\n7. PaymentStatusBadge 컴포넌트로 상태 표시\n8. 빈 상태: '결제 내역이 없습니다' 메시지",
+      "verificationCriteria": "페이지 로드 성공, 결제 내역 표시, 필터링 작동",
+      "analysisResult": "마이페이지에 결제 내역과 서비스 이용 내역 기능을 추가. Payment와 ServiceOrder 테이블 생성, 조회 페이지 구현, 결과 다시보기 기능 포함"
+    },
+    {
+      "id": "84765841-c899-4aeb-855e-f4e16d7bdc93",
+      "name": "서비스 이용 내역 페이지 구현",
+      "description": "/account/orders 라우트 생성 및 서비스 주문 내역 조회",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "3e56675a-6c75-4e6e-80f2-7ab64ae74957"
         },
         {
-          "path": "prisma/schema.prisma",
-          "type": "REFERENCE",
-          "description": "Favorite 모델 참조",
-          "lineStart": 99,
-          "lineEnd": 111
+          "taskId": "3cb9b143-c4dc-42f3-8443-c490b9f5adbd"
         }
       ],
-      "implementationGuide": "1. Prisma로 Favorite 조회 (namingResult include)\n2. URL searchParams에서 sort 파라미터 처리\n3. 정렬 옵션: recent(createdAt), popular(rating), strokes(totalStrokes)\n4. page 파라미터로 페이지네이션 (20개씩)\n5. 전체 개수도 함께 조회 (count)",
-      "verificationCriteria": "즐겨찾기 목록이 정렬 옵션에 따라 조회되고, 페이지네이션이 정상 작동함",
-      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
-      "summary": "loader 함수에 즐겨찾기 조회 로직을 완전히 구현했습니다. URL searchParams로 정렬 옵션(recent/popular/strokes)과 페이지 번호를 처리하고, Prisma로 사용자별 Favorite 데이터를 조회합니다. namingResult와 sajuData를 include하여 관련 정보도 함께 가져오며, 페이지네이션을 위한 totalCount와 totalPages도 계산합니다.",
-      "completedAt": "2025-08-24T09:24:34.009Z"
-    },
-    {
-      "id": "89350bf9-d565-457f-a399-967e8b2c0472",
-      "name": "naming/favorites action 함수 구현 - 즐겨찾기 토글",
-      "description": "즐겨찾기를 추가/제거하는 action 함수를 구현합니다. POST로 추가, DELETE로 제거를 처리합니다.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "ba80c151-ba53-4522-b00e-0a54f0186be0"
-        }
-      ],
-      "createdAt": "2025-08-24T09:14:17.621Z",
-      "updatedAt": "2025-08-24T09:26:38.580Z",
+      "createdAt": "2025-08-27T06:06:58.936Z",
+      "updatedAt": "2025-08-27T06:06:58.936Z",
       "relatedFiles": [
         {
-          "path": "app/routes/naming.favorites.tsx",
-          "type": "TO_MODIFY",
-          "description": "action 함수 추가"
+          "path": "app/routes/account.orders.tsx",
+          "type": "CREATE",
+          "description": "서비스 이용 내역 페이지"
         }
       ],
-      "implementationGuide": "1. action 함수에서 request.method 확인\n2. POST: db.favorite.create() 실행\n3. DELETE: db.favorite.delete() 실행\n4. userId와 namingResultId로 unique 처리\n5. try-catch로 에러 처리 (이미 존재하는 경우 등)",
-      "verificationCriteria": "즐겨찾기 추가/제거가 정상 작동하고, 중복 추가 시 에러가 적절히 처리됨",
-      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
-      "summary": "action 함수를 완전히 구현했습니다. POST 메소드로 즐겨찾기 추가, DELETE 메소드로 제거를 처리합니다. 사용자 소유권 검증, 중복 확인, unique 제약 조건 처리 등 보안과 데이터 무결성을 모두 고려했습니다. try-catch로 에러를 적절히 처리하고 의미 있는 에러 메시지를 반환합니다.",
-      "completedAt": "2025-08-24T09:26:38.580Z"
+      "implementationGuide": "1. app/routes/account.orders.tsx 생성\n2. loader: ServiceOrder 목록 조회 (userId 기준)\n3. 페이지네이션 구현 (20개씩)\n4. 필터: 서비스타입(serviceType), 상태(status), 기간\n5. UI: Card 컴포넌트로 각 주문 표시\n6. 카드 내용: 주문일, 서비스타입, 가격, 상태, 결과보기 버튼\n7. OrderStatusBadge로 상태 표시\n8. 결과보기: /account/orders/{id}로 링크",
+      "verificationCriteria": "페이지 로드 성공, 주문 목록 표시, 필터 작동",
+      "analysisResult": "마이페이지에 결제 내역과 서비스 이용 내역 기능을 추가. Payment와 ServiceOrder 테이블 생성, 조회 페이지 구현, 결과 다시보기 기능 포함"
     },
     {
-      "id": "d32848d9-08af-488d-84c7-38ac1d9709d6",
-      "name": "naming/favorites UI 컴포넌트 구현",
-      "description": "즐겨찾기 목록을 표시하는 UI를 구현합니다. 정렬 옵션 선택, 즐겨찾기 토글 버튼, 페이지네이션을 포함합니다.",
-      "status": "completed",
+      "id": "6b40833e-511c-4e10-be8c-53d1ab979e33",
+      "name": "서비스 결과 상세 페이지 구현",
+      "description": "/account/orders/$id 라우트로 개별 서비스 결과 조회",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "89350bf9-d565-457f-a399-967e8b2c0472"
+          "taskId": "84765841-c899-4aeb-855e-f4e16d7bdc93"
         }
       ],
-      "createdAt": "2025-08-24T09:14:17.621Z",
-      "updatedAt": "2025-08-24T09:29:24.677Z",
+      "createdAt": "2025-08-27T06:06:58.936Z",
+      "updatedAt": "2025-08-27T06:06:58.936Z",
       "relatedFiles": [
         {
-          "path": "app/routes/naming.favorites.tsx",
-          "type": "TO_MODIFY",
-          "description": "UI 컴포넌트 구현"
+          "path": "app/routes/account.orders.$id.tsx",
+          "type": "CREATE",
+          "description": "서비스 결과 상세 페이지"
         }
       ],
-      "implementationGuide": "1. 정렬 옵션 select 드롭다운 구현\n2. 카드 그리드 레이아웃 (history와 동일한 스타일)\n3. 각 카드에 즐겨찾기 토글 버튼 (별 아이콘)\n4. useFetcher로 즐겨찾기 토글 처리\n5. 페이지네이션 버튼 구현",
-      "verificationCriteria": "즐겨찾기 목록이 표시되고, 정렬 옵션 변경과 즐겨찾기 토글이 정상 작동함. 페이지네이션이 작동함",
-      "analysisResult": "Remix 기반 마이페이지의 작명 이력 및 즐겨찾기 페이지 구현. 기존 NamingResult 및 Favorite 모델을 활용하여 사용자별 데이터를 표시하고 관리하는 기능 개발",
-      "summary": "즐겨찾기 UI를 완전히 구현했습니다. 정렬 옵션 드롭다운(최근 추가순/인기순/획수순), 카드형 레이아웃, 즐겨찾기 제거 버튼(노란 별 아이콘), 스마트 페이지네이션(현재 페이지 주변과 첫/마지막 페이지만 표시)을 모두 구현했습니다. useFetcher로 즐겨찾기 제거를 비동기 처리하고, history 페이지와 일관된 카드 디자인을 유지했습니다.",
-      "completedAt": "2025-08-24T09:29:24.677Z"
+      "implementationGuide": "1. app/routes/account.orders.$id.tsx 생성\n2. loader: params.id로 ServiceOrder 조회\n3. 본인 주문인지 확인 (userId 체크)\n4. serviceType별 결과 표시:\n   - NAMING: 추천 이름 목록, 사주 분석\n   - RENAMING: 개명 추천, 변경 효과\n   - SAJU_COMPATIBILITY: 궁합 점수, 분석\n5. resultData JSON 파싱하여 표시\n6. 다운로드, 인쇄 버튼 추가",
+      "verificationCriteria": "상세 페이지 로드, 결과 데이터 올바른 표시",
+      "analysisResult": "마이페이지에 결제 내역과 서비스 이용 내역 기능을 추가. Payment와 ServiceOrder 테이블 생성, 조회 페이지 구현, 결과 다시보기 기능 포함"
+    },
+    {
+      "id": "b19cb130-1f29-412b-ad18-77aa277399aa",
+      "name": "메인 마이페이지 수정",
+      "description": "/account 페이지에 AccountNav 추가 및 대시보드 형태로 개선",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "3cb9b143-c4dc-42f3-8443-c490b9f5adbd"
+        }
+      ],
+      "createdAt": "2025-08-27T06:06:58.936Z",
+      "updatedAt": "2025-08-27T06:06:58.936Z",
+      "relatedFiles": [
+        {
+          "path": "app/routes/account._index.tsx",
+          "type": "TO_MODIFY",
+          "description": "메인 마이페이지"
+        }
+      ],
+      "implementationGuide": "1. app/routes/account._index.tsx 수정\n2. AccountNav 컴포넌트 import 및 추가\n3. 최근 결제 내역 요약 (최근 5건)\n4. 진행중인 서비스 주문 표시\n5. 빠른 링크: 결제 내역, 서비스 이용 내역",
+      "verificationCriteria": "네비게이션 표시, 요약 정보 정확함",
+      "analysisResult": "마이페이지에 결제 내역과 서비스 이용 내역 기능을 추가. Payment와 ServiceOrder 테이블 생성, 조회 페이지 구현, 결과 다시보기 기능 포함"
+    },
+    {
+      "id": "c265e39e-b163-4c6c-8b1b-4447473e4d15",
+      "name": "테스트 데이터 생성 스크립트",
+      "description": "개발/테스트용 결제 및 주문 샘플 데이터 생성",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "3e56675a-6c75-4e6e-80f2-7ab64ae74957"
+        }
+      ],
+      "createdAt": "2025-08-27T06:06:58.936Z",
+      "updatedAt": "2025-08-27T06:06:58.936Z",
+      "relatedFiles": [
+        {
+          "path": "scripts/create-test-payments.ts",
+          "type": "CREATE",
+          "description": "테스트 데이터 스크립트"
+        }
+      ],
+      "implementationGuide": "1. scripts/create-test-payments.ts 생성\n2. 테스트 사용자의 다양한 상태의 결제 생성\n3. 각 결제에 대응하는 ServiceOrder 생성\n4. 완료된 주문은 resultData 포함\n5. 다양한 날짜, 금액, 상태 조합",
+      "verificationCriteria": "스크립트 실행 성공, 테스트 데이터 생성 확인",
+      "analysisResult": "마이페이지에 결제 내역과 서비스 이용 내역 기능을 추가. Payment와 ServiceOrder 테이블 생성, 조회 페이지 구현, 결과 다시보기 기능 포함"
     }
   ]
 }
