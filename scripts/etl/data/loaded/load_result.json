@@ -4,17 +4,9 @@
   "recordsSkipped": 674,
   "recordsFailed": 0,
   "databaseStatsBefore": {
-    "totalRecords": 185,
-    "statusDistribution": {
-      "ok": 185
-    },
-    "elementDistribution": {
-      "EARTH": 27,
-      "WOOD": 43,
-      "WATER": 41,
-      "FIRE": 36,
-      "METAL": 38
-    },
+    "totalRecords": 0,
+    "statusDistribution": {},
+    "elementDistribution": {},
     "yinYangDistribution": {}
   },
   "databaseStatsAfter": {
@@ -23,11 +15,11 @@
       "ok": 8787
     },
     "elementDistribution": {
-      "EARTH": 27,
-      "WOOD": 43,
       "WATER": 41,
       "FIRE": 36,
-      "METAL": 38
+      "METAL": 38,
+      "EARTH": 27,
+      "WOOD": 43
     },
     "yinYangDistribution": {}
   },

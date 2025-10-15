@@ -9,7 +9,7 @@
 
 import { type LoaderFunctionArgs } from '@remix-run/node';
 import { prisma } from '~/lib/db.server';
-import { requireUser } from '~/lib/session.server';
+import { requireUser } from '~/utils/user-session.server';
 import { generateNamingResultPdf, type NamingResultPdfData } from '~/lib/pdf/generator.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -34,7 +34,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     }
 
     // 권한 확인 (본인의 결과만 내보낼 수 있음)
-    if (namingResult.userId !== user.id) {
+    if (namingResult.userId !== user.userId) {
       return new Response('권한이 없습니다.', { status: 403 });
     }
 

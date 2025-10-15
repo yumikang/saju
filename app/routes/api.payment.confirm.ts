@@ -10,7 +10,7 @@
 import { json, type ActionFunctionArgs } from '@remix-run/node';
 import { prisma } from '~/lib/db.server';
 import { approvePayment } from '~/lib/payment/toss.client';
-import { requireUser } from '~/lib/session.server';
+import { requireUser } from '~/utils/user-session.server';
 
 export async function action({ request }: ActionFunctionArgs) {
   // 인증 확인
@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     // 사용자 권한 확인
-    if (payment.userId !== user.id) {
+    if (payment.userId !== user.userId) {
       return json(
         { error: '결제 권한이 없습니다.' },
         { status: 403 }

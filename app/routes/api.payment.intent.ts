@@ -10,7 +10,7 @@
 import { json, type ActionFunctionArgs } from '@remix-run/node';
 import { prisma } from '~/lib/db.server';
 import { generateOrderId } from '~/lib/payment/toss.client';
-import { requireUser } from '~/lib/session.server';
+import { requireUser } from '~/utils/user-session.server';
 
 export async function action({ request }: ActionFunctionArgs) {
   // 인증 확인
@@ -43,7 +43,7 @@ export async function action({ request }: ActionFunctionArgs) {
     // 중복 결제 확인 - 이미 완료된 결제가 있는지 확인
     const existingPayment = await prisma.namingPayment.findFirst({
       where: {
-        userId: user.id,
+        userId: user.userId,
         sajuId: sajuId,
         status: 'DONE',
       },
@@ -65,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
     // NamingPayment 레코드 생성 (PENDING 상태)
     const payment = await prisma.namingPayment.create({
       data: {
-        userId: user.id,
+        userId: user.userId,
         sajuId: sajuId,
         orderId: orderId,
         amount: amount,

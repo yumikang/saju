@@ -9,7 +9,7 @@
 
 import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/node';
 import { prisma } from '~/lib/db.server';
-import { requireUser } from '~/lib/session.server';
+import { requireUser } from '~/utils/user-session.server';
 
 /**
  * GET /api/favorites
@@ -20,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   try {
     const favorites = await prisma.favorite.findMany({
-      where: { userId: user.id },
+      where: { userId: user.userId },
       include: {
         namingResult: {
           select: {
@@ -80,7 +80,7 @@ export async function action({ request }: ActionFunctionArgs) {
       const existing = await prisma.favorite.findUnique({
         where: {
           userId_namingResultId: {
-            userId: user.id,
+            userId: user.userId,
             namingResultId,
           },
         },
@@ -96,7 +96,7 @@ export async function action({ request }: ActionFunctionArgs) {
       // 즐겨찾기 추가
       const favorite = await prisma.favorite.create({
         data: {
-          userId: user.id,
+          userId: user.userId,
           namingResultId,
           rating,
           comment,
@@ -139,7 +139,7 @@ export async function action({ request }: ActionFunctionArgs) {
       await prisma.favorite.delete({
         where: {
           userId_namingResultId: {
-            userId: user.id,
+            userId: user.userId,
             namingResultId,
           },
         },

@@ -1,0 +1,37 @@
+{"timestamp":"2025-10-15T03:46:19.479Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data","outputDir":"scripts/etl/data/reports","logLevel":"info","batchSize":1000,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-10-15T03:46:19.488Z","level":"INFO","message":"🎯 Starting ETL Pipeline Execution"}
+{"timestamp":"2025-10-15T03:46:19.488Z","level":"INFO","message":"📅 Start Time: 2025-10-15T03:46:19.488Z"}
+{"timestamp":"2025-10-15T03:46:19.488Z","level":"INFO","message":"⚙️  Configuration:","meta":{"skipSteps":[],"continueOnError":false,"generateReportOnFailure":true}}
+{"timestamp":"2025-10-15T03:46:19.488Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-10-15T03:46:19.489Z","level":"INFO","message":"🚀 Starting ETL Step: 10_ingest (데이터 수집)"}
+{"timestamp":"2025-10-15T03:46:19.489Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-10-15T03:46:19.495Z","level":"INFO","message":"✅ Step 10_ingest (데이터 수집) completed successfully"}
+{"timestamp":"2025-10-15T03:46:19.495Z","level":"INFO","message":"   Duration: 7ms"}
+{"timestamp":"2025-10-15T03:46:19.495Z","level":"INFO","message":"   Records: 187/187"}
+{"timestamp":"2025-10-15T03:46:19.495Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-10-15T03:46:19.495Z","level":"INFO","message":"🚀 Starting ETL Step: 20_normalize (데이터 정규화)"}
+{"timestamp":"2025-10-15T03:46:19.495Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-10-15T03:46:19.553Z","level":"INFO","message":"✅ Step 20_normalize (데이터 정규화) completed successfully"}
+{"timestamp":"2025-10-15T03:46:19.553Z","level":"INFO","message":"   Duration: 58ms"}
+{"timestamp":"2025-10-15T03:46:19.553Z","level":"INFO","message":"   Records: 10350/11081"}
+{"timestamp":"2025-10-15T03:46:19.553Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-10-15T03:46:19.553Z","level":"INFO","message":"🚀 Starting ETL Step: 30_dedup (중복 제거)"}
+{"timestamp":"2025-10-15T03:46:19.553Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-10-15T03:46:19.596Z","level":"INFO","message":"✅ Step 30_dedup (중복 제거) completed successfully"}
+{"timestamp":"2025-10-15T03:46:19.596Z","level":"INFO","message":"   Duration: 43ms"}
+{"timestamp":"2025-10-15T03:46:19.596Z","level":"INFO","message":"   Records: 9461/9461"}
+{"timestamp":"2025-10-15T03:46:19.596Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-10-15T03:46:19.596Z","level":"INFO","message":"🚀 Starting ETL Step: 40_resolve (충돌 해결)"}
+{"timestamp":"2025-10-15T03:46:19.596Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-10-15T03:46:19.637Z","level":"INFO","message":"✅ Step 40_resolve (충돌 해결) completed successfully"}
+{"timestamp":"2025-10-15T03:46:19.637Z","level":"INFO","message":"   Duration: 41ms"}
+{"timestamp":"2025-10-15T03:46:19.637Z","level":"INFO","message":"   Records: 9461/9461"}
+{"timestamp":"2025-10-15T03:46:19.637Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-10-15T03:46:19.637Z","level":"INFO","message":"🚀 Starting ETL Step: 50_validate (데이터 검증)"}
+{"timestamp":"2025-10-15T03:46:19.637Z","level":"INFO","message":"============================================================"}
+{"timestamp":"2025-10-15T03:46:19.795Z","level":"INFO","message":"✅ Step 50_validate (데이터 검증) completed successfully"}
+{"timestamp":"2025-10-15T03:46:19.795Z","level":"INFO","message":"   Duration: 158ms"}
+{"timestamp":"2025-10-15T03:46:19.795Z","level":"INFO","message":"   Records: 9461/9461"}
+{"timestamp":"2025-10-15T03:46:19.795Z","level":"INFO","message":"\n============================================================"}
+{"timestamp":"2025-10-15T03:46:19.795Z","level":"INFO","message":"🚀 Starting ETL Step: 60_load (데이터베이스 적재)"}
+{"timestamp":"2025-10-15T03:46:19.795Z","level":"INFO","message":"============================================================"}

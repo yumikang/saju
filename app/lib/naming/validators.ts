@@ -17,13 +17,29 @@ import { Element } from '@prisma/client';
  */
 export const BirthDataSchema = z.object({
   birthDate: z.string()
+    .trim() // Remove leading/trailing whitespace
     .regex(/^\d{4}-\d{2}-\d{2}$/, {
       message: 'YYYY-MM-DD 형식이어야 합니다 (예: 1990-05-15)',
+    })
+    .refine((date) => {
+      // Validate that it's a real date
+      const parsed = new Date(date);
+      return !isNaN(parsed.getTime());
+    }, {
+      message: '유효한 날짜가 아닙니다',
     }),
 
   birthTime: z.string()
+    .trim() // Remove leading/trailing whitespace
     .regex(/^\d{2}:\d{2}$/, {
       message: 'HH:MM 형식이어야 합니다 (예: 14:30)',
+    })
+    .refine((time) => {
+      // Validate time range
+      const [hours, minutes] = time.split(':').map(Number);
+      return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
+    }, {
+      message: '유효한 시간이 아닙니다 (00:00 ~ 23:59)',
     }),
 
   isLunar: z.boolean()

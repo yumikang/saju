@@ -1,0 +1,3 @@
+{"timestamp":"2025-10-15T03:46:19.796Z","level":"INFO","message":"ETL Logger initialized","meta":{"config":{"inputDir":"scripts/etl/data/validated","outputDir":"scripts/etl/data/loaded","logLevel":"info","batchSize":50,"errorHandling":"continue","createBackup":true}}}
+{"timestamp":"2025-10-15T03:46:19.796Z","level":"INFO","step":"60_load","message":"=== Starting ETL Step: 60_load ===","meta":{"step":"60_load","startTime":"2025-10-15T03:46:19.796Z"}}
+{"timestamp":"2025-10-15T03:46:19.796Z","level":"INFO","step":"60_load","message":"Loading validated data from: scripts/etl/data/validated/validated_data.json"}
