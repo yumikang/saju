@@ -1,0 +1,305 @@
+/**
+ * 이름 추천 결과 페이지 (Freemium 모델)
+ *
+ * 3-tier 전략:
+ * - 1-4위: 블러 프리뷰
+ * - 5위: 무료 공개
+ * - 6+위: 완전 잠금
+ */
+
+import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { useState, useEffect } from 'react';
+import { PrismaClient } from '@prisma/client';
+import type { ScoredCandidate } from '~/lib/naming/types';
+import { useNamingStore } from '~/store/naming.store';
+import {
+  classifyCandidates,
+  calculatePsychologicalMetrics,
+  hasPremiumAccess,
+  type FreemiumTiers,
+  type PsychologicalMetrics,
+} from '~/lib/freemium/classification';
+import { BlurredNameCard } from '~/components/naming/BlurredNameCard';
+import { PremiumCTA } from '~/components/naming/PremiumCTA';
+import { NameCard } from '~/components/naming/NameCard';
+import { Card } from '~/components/ui/card';
+import { Badge } from '~/components/ui/badge';
+import { Lock, Gift, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const prisma = new PrismaClient();
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: '이름 추천 결과 | 사주 작명' },
+    { name: 'description', content: '사주에 맞는 최적의 이름을 확인하세요' },
+  ];
+};
+
+/**
+ * Loader: 추천 결과 가져오기 및 분류
+ */
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  const { id } = params;
+
+  if (!id) {
+    throw new Response('사주 데이터 ID가 필요합니다', { status: 400 });
+  }
+
+  // 사주 데이터 확인
+  const sajuData = await prisma.sajuData.findUnique({
+    where: { id },
+  });
+
+  if (!sajuData) {
+    throw new Response('사주 데이터를 찾을 수 없습니다', { status: 404 });
+  }
+
+  // URL에서 lastName 추출
+  const url = new URL(request.url);
+  const lastName = url.searchParams.get('lastName') || '';
+
+  // Phase 2 API 호출: POST /api/naming/recommend
+  const response = await fetch(`${url.origin}/api/naming/recommend`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      sajuDataId: id,
+      lastName,
+      preferences: {
+        minScore: 65,
+        maxResults: 50,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Response('이름 추천을 가져올 수 없습니다', { status: response.status });
+  }
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Response(result.message || '이름 추천 실패', { status: 500 });
+  }
+
+  const candidates = result.data.candidates as ScoredCandidate[];
+
+  // 점수순 정렬 (내림차순)
+  const sortedCandidates = [...candidates].sort(
+    (a, b) => b.scores.overall - a.scores.overall
+  );
+
+  // Freemium 분류
+  const tiers = classifyCandidates(sortedCandidates);
+  const metrics = calculatePsychologicalMetrics(tiers);
+
+  return json({
+    sajuId: id,
+    lastName,
+    tiers,
+    metrics,
+    totalCount: sortedCandidates.length,
+  });
+}
+
+/**
+ * 결과 페이지 컴포넌트
+ */
+export default function ResultsPage() {
+  const { sajuId, lastName, tiers, metrics, totalCount } = useLoaderData<typeof loader>();
+
+  // Zustand store
+  const {
+    isPremium,
+    sajuIdPurchased,
+    favorites,
+    toggleFavorite,
+    openPaymentModal,
+    openCharacterDetail,
+    setCurrentSaju,
+  } = useNamingStore();
+
+  // 세션 사주 ID 설정
+  useEffect(() => {
+    setCurrentSaju(sajuId);
+  }, [sajuId, setCurrentSaju]);
+
+  // 프리미엄 접근 확인
+  const isPremiumUser = hasPremiumAccess(isPremium, sajuIdPurchased, sajuId);
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* 헤더 */}
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-3">
+          총 {totalCount}개의 이름을 찾았습니다
+        </h1>
+        <p className="text-lg text-gray-600">
+          성씨 <span className="font-semibold text-orange-600">{lastName}</span>에
+          가장 잘 맞는 이름 순으로 정렬되어 있습니다
+        </p>
+        {isPremiumUser && (
+          <Badge variant="default" className="mt-3 bg-yellow-500">
+            💎 프리미엄 회원 - 전체 이름 열람 가능
+          </Badge>
+        )}
+      </div>
+
+      {/* ─────────────────────────────────────────────────── */}
+      {/* 프리미엄 유저: 전체 공개 */}
+      {/* ─────────────────────────────────────────────────── */}
+      {isPremiumUser ? (
+        <section>
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-yellow-500" />
+              전체 추천 이름
+            </h2>
+            <p className="text-gray-600 mt-2">
+              모든 이름의 상세 정보를 확인하실 수 있습니다
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {[...tiers.blurred, ...tiers.free, ...tiers.locked].map((candidate, idx) => (
+              <NameCard
+                key={candidate.id}
+                candidate={candidate}
+                rank={idx + 1}
+                isFavorite={favorites.includes(candidate.id)}
+                onFavorite={toggleFavorite}
+                onCharacterClick={openCharacterDetail}
+                showFreeBadge={false}
+              />
+            ))}
+          </div>
+        </section>
+      ) : (
+        <>
+          {/* ─────────────────────────────────────────────────── */}
+          {/* 무료 유저: 3-tier 전략 */}
+          {/* ─────────────────────────────────────────────────── */}
+
+          {/* 🔓 블러 프리뷰 1-4위 */}
+          <section>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <Sparkles className="w-6 h-6 text-yellow-500" />
+                최고 점수 이름 TOP 4
+                <Badge variant="outline" className="bg-yellow-50 border-yellow-300">
+                  프리뷰
+                </Badge>
+              </h2>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">최고 점수</p>
+                <p className="text-2xl font-bold text-yellow-600">
+                  {metrics.topScore}점
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              {tiers.blurred.map((candidate, idx) => (
+                <BlurredNameCard
+                  key={candidate.id}
+                  candidate={candidate}
+                  rank={idx + 1}
+                  onClick={openPaymentModal}
+                />
+              ))}
+            </div>
+          </section>
+
+          {/* 💎 CTA: TOP 4 공개 유혹 */}
+          <PremiumCTA metrics={metrics} onPayment={openPaymentModal} />
+
+          {/* 🆓 무료 공개 5위 */}
+          {tiers.free.length > 0 && (
+            <section>
+              <div className="flex items-center gap-2 mb-6">
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <Gift className="w-6 h-6 text-green-500" />
+                  무료 공개 이름
+                  <Badge variant="secondary" className="bg-green-50 border-green-300">
+                    무료
+                  </Badge>
+                </h2>
+              </div>
+
+              <NameCard
+                candidate={tiers.free[0]}
+                rank={5}
+                isFavorite={favorites.includes(tiers.free[0].id)}
+                onFavorite={toggleFavorite}
+                onCharacterClick={openCharacterDetail}
+                showFreeBadge={true}
+              />
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="mt-4 text-center text-sm text-gray-600"
+              >
+                이것도 좋은 이름이지만, 위의 이름들은 더욱 완벽한 조화를 이룹니다
+              </motion.p>
+            </section>
+          )}
+
+          {/* 🔒 잠금 카운트 */}
+          {tiers.locked.length > 0 && (
+            <section>
+              <Card className="p-8 border-dashed border-2 bg-gray-50">
+                <div className="text-center text-gray-600">
+                  <Lock className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg">
+                    <strong className="text-gray-900 text-2xl">
+                      {tiers.locked.length}개
+                    </strong>
+                    의 추가 이름이 잠겨있습니다
+                  </p>
+                  <p className="text-sm mt-2 text-gray-500">
+                    프리미엄으로 업그레이드하여 모든 이름을 확인하세요
+                  </p>
+                </div>
+              </Card>
+            </section>
+          )}
+        </>
+      )}
+
+      {/* 안내 정보 */}
+      <div className="p-6 bg-gray-50 rounded-lg">
+        <h3 className="font-semibold text-gray-900 mb-3">
+          💡 결과 안내
+        </h3>
+        <ul className="space-y-2 text-sm text-gray-600">
+          <li className="flex items-start">
+            <span className="mr-2">•</span>
+            <span>모든 이름은 사주 오행 조화, 음양 균형, 수리 길흉을 종합하여 채점되었습니다</span>
+          </li>
+          <li className="flex items-start">
+            <span className="mr-2">•</span>
+            <span>높은 점수일수록 사주와의 조화가 뛰어난 이름입니다</span>
+          </li>
+          <li className="flex items-start">
+            <span className="mr-2">•</span>
+            <span>한자를 클릭하면 상세한 뜻과 오행 정보를 확인할 수 있습니다</span>
+          </li>
+          {!isPremiumUser && (
+            <li className="flex items-start">
+              <span className="mr-2">•</span>
+              <span className="text-orange-600 font-semibold">
+                프리미엄 업그레이드 시 전체 {totalCount}개 이름을 평생 열람하실 수 있습니다
+              </span>
+            </li>
+          )}
+        </ul>
+      </div>
+    </div>
+  );
+}
