@@ -107,6 +107,19 @@ export async function handleAnalyze(
   const startTime = Date.now();
 
   try {
+    // 0. Resolve user ID (get first user if not provided)
+    let resolvedUserId = userId;
+    if (!resolvedUserId) {
+      const defaultUser = await prisma.user.findFirst();
+      if (!defaultUser) {
+        throw new ValidationError(
+          'No user found in database',
+          '사용자를 찾을 수 없습니다. 먼저 사용자를 생성해주세요.'
+        );
+      }
+      resolvedUserId = defaultUser.id;
+    }
+
     // 1. Calculate Saju using Phase 1 SajuCalculator
     const calculator = new SajuCalculator();
     const birthDateTime = new Date(`${request.birthDate}T${request.birthTime}`);
@@ -120,7 +133,7 @@ export async function handleAnalyze(
     // 2. Save to database for future reference
     const sajuData = await prisma.sajuData.create({
       data: {
-        userId: userId || 'anonymous',
+        userId: resolvedUserId,
         name: '', // To be filled when name is chosen
         birthDate: new Date(request.birthDate),
         birthTime: request.birthTime,
@@ -296,23 +309,34 @@ export async function handleCharacterLookup(
 
   const hanjaDict = await prisma.hanjaDict.findFirst({
     where: whereClause,
-    include: {
-      ...(include === 'readings' || include === 'all'
-        ? {
-            readings: {
-              select: {
-                reading: true,
-                isPrimary: true,
-                soundElem: true,
-              },
-            },
-          }
-        : {}),
-    },
   });
 
   if (!hanjaDict) {
     throw new NotFoundError('Character', '한자를 찾을 수 없습니다');
+  }
+
+  // Fetch readings separately if requested
+  let alternativeReadings: Array<{
+    reading: string;
+    isPrimary: boolean;
+    soundElement: Element | null;
+  }> | undefined;
+
+  if (include === 'readings' || include === 'all') {
+    const readings = await prisma.hanjaReading.findMany({
+      where: { character: hanjaDict.character },
+      select: {
+        reading: true,
+        isPrimary: true,
+        soundElem: true,
+      },
+    });
+
+    alternativeReadings = readings.map((r) => ({
+      reading: r.reading,
+      isPrimary: r.isPrimary,
+      soundElement: r.soundElem,
+    }));
   }
 
   return {
@@ -332,15 +356,7 @@ export async function handleCharacterLookup(
       category: hanjaDict.category,
       gender: hanjaDict.gender,
       isGoodForNaming: hanjaDict.isGoodForNaming,
-      ...(include === 'readings' || include === 'all'
-        ? {
-            alternativeReadings: (hanjaDict as any).readings?.map((r: any) => ({
-              reading: r.reading,
-              isPrimary: r.isPrimary,
-              soundElement: r.soundElem,
-            })),
-          }
-        : {}),
+      ...(alternativeReadings ? { alternativeReadings } : {}),
     },
   };
 }
