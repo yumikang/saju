@@ -244,21 +244,51 @@ export async function searchHanjaFromDB(
   }
 
   // HanjaDict에서 검색
-  // 성씨 모드이고 성씨 목록에 있으면 해당 한자만 검색 (정확도 향상)
-  const results = await prisma.hanjaDict.findMany({
-    where: isSurname && surnameHanjaList
-      ? {
-          character: { in: surnameHanjaList }, // 성씨 한자만
-          isGoodForNaming: true
-        }
-      : {
-          koreanReading: { in: readings }, // 전체 검색 (희귀 성씨 fallback)
+  let results: any[] = [];
+
+  if (isSurname && surnameHanjaList) {
+    // 성씨 모드: 큐레이션된 성씨 목록만
+    results = await prisma.hanjaDict.findMany({
+      where: {
+        character: { in: surnameHanjaList },
+        isGoodForNaming: true
+      },
+      take: actualLimit,
+      ...(cursor && { skip: 1, cursor: { id: cursor } }),
+      orderBy
+    });
+  } else {
+    // 이름 모드: 성씨 한자를 우선적으로 가져오기
+    const surnameCharsForReading = getSurnameHanja(reading);
+    let surnameResults: any[] = [];
+
+    if (surnameCharsForReading) {
+      // 1. 해당 읽기의 성씨 한자 먼저 가져오기
+      surnameResults = await prisma.hanjaDict.findMany({
+        where: {
+          character: { in: surnameCharsForReading },
           isGoodForNaming: true
         },
-    take: actualLimit,
-    ...(cursor && { skip: 1, cursor: { id: cursor } }),
-    orderBy
-  });
+        orderBy
+      });
+    }
+
+    // 2. 나머지 한자 가져오기 (성씨 한자 수만큼 빼기)
+    const remainingLimit = Math.max(actualLimit - surnameResults.length, 5); // 최소 5개
+    const otherResults = await prisma.hanjaDict.findMany({
+      where: {
+        koreanReading: { in: readings },
+        isGoodForNaming: true,
+        ...(surnameCharsForReading && { character: { notIn: surnameCharsForReading } })
+      },
+      take: remainingLimit,
+      ...(cursor && { skip: 1, cursor: { id: cursor } }),
+      orderBy
+    });
+
+    // 3. 성씨 한자 먼저, 그 다음 일반 한자
+    results = [...surnameResults, ...otherResults];
+  }
   
   // NULL/0 값을 가진 레코드를 뒤로 보내는 후처리
   if (sort === 'popularity') {
@@ -360,25 +390,24 @@ export async function searchHanjaFromDB(
     };
   });
   
-  // 성씨 모드일 때 priority로 추가 정렬
-  if (isSurname) {
-    // 먼저 성씨 여부와 priority로 정렬
-    hanjaChars.sort((a, b) => {
-      // 1. 성씨 우선
-      if (a.isSurname && !b.isSurname) return -1;
-      if (!a.isSurname && b.isSurname) return 1;
-      
-      // 2. priority 순 (낮은 값이 높은 우선순위)
+  // 성씨/이름 모드 공통: 성씨 한자를 우선적으로 표시
+  hanjaChars.sort((a, b) => {
+    // 1. 성씨 우선 (이름에 사용하더라도 성씨 한자가 먼저)
+    if (a.isSurname && !b.isSurname) return -1;
+    if (!a.isSurname && b.isSurname) return 1;
+
+    // 2. 성씨끼리는 priority 순 (인구 많은 성씨 우선)
+    if (a.isSurname && b.isSurname) {
       const aPriority = a.priority || 999;
       const bPriority = b.priority || 999;
       if (aPriority !== bPriority) return aPriority - bPriority;
-      
-      // 3. frequency 순
-      const aFreq = (a.nameFrequency || 0) + (a.usageFrequency || 0);
-      const bFreq = (b.nameFrequency || 0) + (b.usageFrequency || 0);
-      return bFreq - aFreq;
-    });
-  }
+    }
+
+    // 3. frequency 순
+    const aFreq = (a.nameFrequency || 0) + (a.usageFrequency || 0);
+    const bFreq = (b.nameFrequency || 0) + (b.usageFrequency || 0);
+    return bFreq - aFreq;
+  });
   
   // 응답 생성
   const response: PaginatedResponse<HanjaChar> = {
