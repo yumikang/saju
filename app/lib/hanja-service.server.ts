@@ -203,6 +203,20 @@ export async function searchHanjaFromDB(
         }
       }
     }
+
+    // 복합 성씨 처리 (예: 남궁 → 南宮을 南, 宮으로 분리)
+    if (surnameHanjaList) {
+      const expandedList: string[] = [];
+      for (const hanja of surnameHanjaList) {
+        if (hanja.length > 1) {
+          // 복합 한자를 개별 문자로 분리
+          expandedList.push(...hanja.split(''));
+        } else {
+          expandedList.push(hanja);
+        }
+      }
+      surnameHanjaList = [...new Set(expandedList)]; // 중복 제거
+    }
   }
 
   // Prisma orderBy를 사용한 Null-safe 정렬
