@@ -113,30 +113,34 @@ model Favorite {
 }
 
 model HanjaDict {
-  id             String       @id @default(uuid())
-  character      String       @unique
-  meaning        String?
-  strokes        Int?
-  element        Element?
-  yinYang        YinYang?     @map("yin_yang")
-  review         ReviewStatus @default(ok)
-  evidenceJSON   Json?        @map("evidence_json")
-  decidedBy      String?      @map("decided_by")
-  ruleset        String?
-  codepoint      Int?
-  koreanReading  String?      @map("korean_reading")
-  chineseReading String?      @map("chinese_reading")
-  radical        String?
-  usageFrequency Int?         @default(0) @map("usage_frequency")
-  nameFrequency  Int?         @default(0) @map("name_frequency")
-  category       String?
-  gender         String?
-  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id               String       @id @default(uuid())
+  character        String       @unique
+  meaning          String?
+  strokes          Int?
+  element          Element?
+  yinYang          YinYang?     @map("yin_yang")
+  review           ReviewStatus @default(ok)
+  evidenceJSON     Json?        @map("evidence_json")
+  decidedBy        String?      @map("decided_by")
+  ruleset          String?
+  codepoint        Int?
+  koreanReading    String?      @map("korean_reading")
+  chineseReading   String?      @map("chinese_reading")
+  radical          String?
+  usageFrequency   Int?         @default(0) @map("usage_frequency")
+  nameFrequency    Int?         @default(0) @map("name_frequency")
+  category         String?
+  gender           String?      // 성별 선호도: 'male', 'female', 'neutral' or null
+  isGoodForNaming  Boolean      @default(true) @map("is_good_for_naming") // 작명 적합성
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@index([element])
   @@index([strokes])
   @@index([usageFrequency], map: "usage_frequency_idx")
+  @@index([element, isGoodForNaming]) // 복합 인덱스 - 오행 기반 필터링 최적화
+  @@index([gender]) // 성별 필터링 최적화
+  @@index([nameFrequency]) // 인기도 정렬 최적화
   @@map("hanja_dict")
 }
 
