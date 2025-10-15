@@ -2,6 +2,7 @@ import { PrismaClient, Element, Prisma } from '@prisma/client';
 import { prisma } from '~/lib/db.server';
 import { redis } from '~/lib/redis.server';
 import { CACHE_CONFIG, getCacheKey, getCacheTTL } from '~/lib/cache-config.server';
+import { SURNAME_MAP, getSurnameHanja, HANJA_TO_SURNAME_MAP } from '~/lib/korean-surnames.data';
 
 // 표준 에러 응답 형식
 export interface ApiError {
@@ -187,7 +188,23 @@ export async function searchHanjaFromDB(
 
   // 페이지네이션 설정
   const actualLimit = Math.min(limit, 50); // 최대 50개
-  
+
+  // 성씨 모드일 때 한국 성씨 데이터 확인
+  let surnameHanjaList: string[] | undefined;
+  if (isSurname) {
+    surnameHanjaList = getSurnameHanja(reading);
+
+    // 두음법칙 적용된 읽기도 확인 (예: 이/리)
+    if (!surnameHanjaList) {
+      for (const altReading of readings) {
+        if (altReading !== reading) {
+          surnameHanjaList = getSurnameHanja(altReading);
+          if (surnameHanjaList) break;
+        }
+      }
+    }
+  }
+
   // Prisma orderBy를 사용한 Null-safe 정렬
   let orderBy: any[] = [];
 
@@ -212,12 +229,18 @@ export async function searchHanjaFromDB(
     ];
   }
 
-  // HanjaDict에서 koreanReading으로 직접 검색
+  // HanjaDict에서 검색
+  // 성씨 모드이고 성씨 목록에 있으면 해당 한자만 검색 (정확도 향상)
   const results = await prisma.hanjaDict.findMany({
-    where: {
-      koreanReading: { in: readings },
-      isGoodForNaming: true // 작명에 적합한 한자만
-    },
+    where: isSurname && surnameHanjaList
+      ? {
+          character: { in: surnameHanjaList }, // 성씨 한자만
+          isGoodForNaming: true
+        }
+      : {
+          koreanReading: { in: readings }, // 전체 검색 (희귀 성씨 fallback)
+          isGoodForNaming: true
+        },
     take: actualLimit,
     ...(cursor && { skip: 1, cursor: { id: cursor } }),
     orderBy
@@ -274,10 +297,17 @@ export async function searchHanjaFromDB(
   }
   
   // HanjaChar 형식으로 변환
-  const hanjaChars: HanjaChar[] = results.map(hanja => {
+  const hanjaChars: HanjaChar[] = results.map((hanja, index) => {
     let alternativeReadings: string[] = [];
     let isSurnameChar = false;
     let priority = 999;
+
+    // 한국 성씨 데이터에서 확인
+    const surnameInfo = HANJA_TO_SURNAME_MAP.get(hanja.character);
+    if (surnameInfo) {
+      isSurnameChar = true;
+      priority = surnameInfo.rank; // 인구순 순위를 priority로 사용
+    }
 
     // evidenceJSON 파싱 (타입이 string인 경우만 파싱)
     if (hanja.evidenceJSON) {
@@ -286,8 +316,16 @@ export async function searchHanjaFromDB(
           ? JSON.parse(hanja.evidenceJSON)
           : hanja.evidenceJSON;
         alternativeReadings = evidence.alternativeReadings || [];
-        isSurnameChar = evidence.isSurname || false;
-        priority = evidence.priority || 999;
+
+        // evidenceJSON에 성씨 정보가 없으면 한국 성씨 데이터 우선
+        if (!isSurnameChar && evidence.isSurname) {
+          isSurnameChar = evidence.isSurname;
+        }
+
+        // priority도 성씨 데이터가 우선
+        if (!surnameInfo && evidence.priority) {
+          priority = evidence.priority;
+        }
       } catch (e) {
         // 파싱 실패 무시
       }
