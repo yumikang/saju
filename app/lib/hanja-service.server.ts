@@ -184,49 +184,13 @@ export async function searchHanjaFromDB(
   
   // 두음법칙 확장
   const readings = expandDueum(reading);
-  
+
   // 페이지네이션 설정
   const actualLimit = Math.min(limit, 50); // 최대 50개
   
-  // HanjaReading 테이블에서 검색
-  const hanjaReadings = await prisma.hanjaReading.findMany({
-    where: {
-      reading: { in: readings }
-    }
-  });
-  
-  // character 목록 추출
-  const characters = [...new Set(hanjaReadings.map(hr => hr.character))];
-  
-  if (characters.length === 0) {
-    // 검색 결과 없음
-    const response: PaginatedResponse<HanjaChar> = {
-      data: [],
-      pagination: {
-        total: 0,
-        limit: actualLimit,
-        cursor: undefined,
-        hasMore: false
-      }
-    };
-    
-    // 캐시 저장 (TTL 구분)
-    if (redis) {
-      const cacheKey = generateCacheKey(options);
-      const ttl = getCacheTTL(cursor);
-      try {
-        await redis.setex(cacheKey, ttl, JSON.stringify(response));
-      } catch (e) {
-        console.warn('Redis cache save error:', e);
-      }
-    }
-    
-    return response;
-  }
-  
   // Prisma orderBy를 사용한 Null-safe 정렬
   let orderBy: any[] = [];
-  
+
   if (sort === 'popularity') {
     // popularity 정렬: nameFrequency와 usageFrequency 우선
     orderBy = [
@@ -247,11 +211,12 @@ export async function searchHanjaFromDB(
       { id: 'asc' }
     ];
   }
-  
-  // 기본 쿼리로 데이터 가져오기
+
+  // HanjaDict에서 koreanReading으로 직접 검색
   const results = await prisma.hanjaDict.findMany({
     where: {
-      character: { in: characters }
+      koreanReading: { in: readings },
+      isGoodForNaming: true // 작명에 적합한 한자만
     },
     take: actualLimit,
     ...(cursor && { skip: 1, cursor: { id: cursor } }),
@@ -313,11 +278,13 @@ export async function searchHanjaFromDB(
     let alternativeReadings: string[] = [];
     let isSurnameChar = false;
     let priority = 999;
-    
-    // evidenceJSON 파싱
+
+    // evidenceJSON 파싱 (타입이 string인 경우만 파싱)
     if (hanja.evidenceJSON) {
       try {
-        const evidence = JSON.parse(hanja.evidenceJSON);
+        const evidence = typeof hanja.evidenceJSON === 'string'
+          ? JSON.parse(hanja.evidenceJSON)
+          : hanja.evidenceJSON;
         alternativeReadings = evidence.alternativeReadings || [];
         isSurnameChar = evidence.isSurname || false;
         priority = evidence.priority || 999;
@@ -325,14 +292,7 @@ export async function searchHanjaFromDB(
         // 파싱 실패 무시
       }
     }
-    
-    // HanjaReading에서 대체 읽기 추가
-    const altReadings = hanjaReadings
-      .filter(hr => hr.character === hanja.character && !hr.isPrimary)
-      .map(hr => hr.reading);
-    
-    alternativeReadings = [...new Set([...alternativeReadings, ...altReadings])];
-    
+
     return {
       id: hanja.id,
       char: hanja.character,
@@ -372,7 +332,7 @@ export async function searchHanjaFromDB(
   const response: PaginatedResponse<HanjaChar> = {
     data: hanjaChars,
     pagination: {
-      total: characters.length,
+      total: results.length,
       limit: actualLimit,
       cursor: results.length > 0 ? results[results.length - 1].id : undefined,
       hasMore: results.length === actualLimit
