@@ -31,6 +31,7 @@ model User {
   termsConsents TermsConsent[]
   payments      Payment[]
   serviceOrders ServiceOrder[]
+  namingPayments NamingPayment[]
 
   @@index([email])
   @@index([role])
@@ -411,4 +412,62 @@ model ServiceOrder {
   @@index([status])
   @@index([createdAt])
   @@map("service_orders")
+}
+
+// ============================================================
+// Freemium Payment System (TossPayments 전용)
+// ============================================================
+
+// TossPaymentStatus - 토스페이먼츠 결제 상태
+enum TossPaymentStatus {
+  PENDING      @map("pending")       // 결제 요청 생성됨
+  READY        @map("ready")         // 결제창 열림 (사용자 대기)
+  IN_PROGRESS  @map("in_progress")   // 결제 진행 중
+  DONE         @map("done")          // 결제 완료
+  CANCELED     @map("canceled")      // 결제 취소
+  FAILED       @map("failed")        // 결제 실패
+  EXPIRED      @map("expired")       // 결제 만료
+}
+
+// NamingPayment - Freemium 작명 결제 (TossPayments)
+model NamingPayment {
+  id              String            @id @default(uuid())
+  userId          String            @map("user_id")
+  sajuId          String            @map("saju_id")  // 구매한 사주 데이터 ID
+
+  // TossPayments 전용 필드
+  orderId         String            @unique @map("order_id")       // 주문 ID (merchantId)
+  paymentKey      String?           @unique @map("payment_key")    // 결제 키 (승인 후 생성)
+
+  // 결제 정보
+  amount          Int                                              // 결제 금액 (원 단위)
+  status          TossPaymentStatus                                // 결제 상태
+  method          String?                                          // 결제 수단 (카드, 계좌이체 등)
+  orderName       String            @default("사주 작명 결과 프리미엄 조회") @map("order_name") // 주문명
+
+  // 타임스탬프
+  requestedAt     DateTime          @default(now()) @map("requested_at") @db.Timestamptz(3)
+  approvedAt      DateTime?         @map("approved_at") @db.Timestamptz(3)
+  cancelledAt     DateTime?         @map("cancelled_at") @db.Timestamptz(3)
+  failedAt        DateTime?         @map("failed_at") @db.Timestamptz(3)
+  expiresAt       DateTime?         @map("expires_at") @db.Timestamptz(3)  // 결제 만료 시각
+
+  // 메타데이터
+  failureCode     String?           @map("failure_code")                   // 실패 코드
+  failureMessage  String?           @map("failure_message")                // 실패 메시지
+  receiptUrl      String?           @map("receipt_url")                    // 영수증 URL
+  cardInfo        Json?             @map("card_info")                      // 카드 정보 (마스킹된 번호 등)
+
+  // Relations
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@unique([userId, sajuId])  // 한 사용자가 같은 사주에 대해 중복 결제 방지
+  @@index([userId, status])
+  @@index([sajuId])
+  @@index([orderId])
+  @@index([paymentKey])
+  @@index([status])
+  @@index([requestedAt(sort: Desc)])
+  @@map("naming_payments")
 }

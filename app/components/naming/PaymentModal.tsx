@@ -1,0 +1,146 @@
+/**
+ * PaymentModal Component
+ *
+ * TossPayments SDK를 사용한 결제 모달
+ * - 결제 Intent 생성 (/api/payment/intent)
+ * - TossPayments 결제창 호출
+ * - 성공/실패 페이지로 리다이렉트
+ */
+
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '~/components/ui/dialog';
+import { Button } from '~/components/ui/button';
+import { formatAmount } from '~/lib/payment/toss.client';
+import { requestPayment } from '~/lib/payment/toss.client';
+import { toast } from 'sonner';
+
+interface PaymentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  sajuId: string;
+  amount: number; // 결제 금액 (원 단위)
+  userName?: string;
+  userEmail?: string;
+}
+
+export function PaymentModal({
+  isOpen,
+  onClose,
+  sajuId,
+  amount,
+  userName,
+  userEmail,
+}: PaymentModalProps) {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  /**
+   * 결제 시작 핸들러
+   */
+  const handlePayment = async () => {
+    setIsProcessing(true);
+
+    try {
+      // Step 1: 결제 Intent 생성 (orderId 발급)
+      const intentResponse = await fetch('/api/payment/intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sajuId,
+          amount,
+        }),
+      });
+
+      if (!intentResponse.ok) {
+        const error = await intentResponse.json();
+        throw new Error(error.error || '결제 요청 생성에 실패했습니다.');
+      }
+
+      const { orderId } = await intentResponse.json();
+
+      // Step 2: TossPayments 결제창 호출
+      const currentUrl = window.location.origin;
+      await requestPayment({
+        amount,
+        orderId,
+        orderName: '사주 작명 결과 프리미엄 조회',
+        customerName: userName,
+        customerEmail: userEmail,
+        successUrl: `${currentUrl}/payment/success`,
+        failUrl: `${currentUrl}/payment/fail`,
+      });
+
+      // 결제창이 열리면 모달 닫기
+      onClose();
+    } catch (error: any) {
+      console.error('Payment error:', error);
+      toast.error(error.message || '결제 요청에 실패했습니다.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>프리미엄 결제</DialogTitle>
+          <DialogDescription>
+            전체 작명 결과와 상세 분석을 확인하려면 결제가 필요합니다.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          {/* 결제 정보 */}
+          <div className="rounded-lg border p-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">상품명</span>
+              <span className="font-medium">사주 작명 결과 프리미엄 조회</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">결제 금액</span>
+              <span className="text-lg font-bold text-primary">
+                {formatAmount(amount)}
+              </span>
+            </div>
+          </div>
+
+          {/* 혜택 안내 */}
+          <div className="rounded-lg bg-muted p-4 space-y-2">
+            <p className="text-sm font-medium">프리미엄 혜택</p>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>✓ 6위 이하 모든 이름 조회 가능</li>
+              <li>✓ 상세 한자 정보 및 획수 분석</li>
+              <li>✓ 심리적 특성 분석 결과</li>
+              <li>✓ PDF 내보내기 기능</li>
+              <li>✓ 영구 보관 및 즐겨찾기</li>
+            </ul>
+          </div>
+
+          {/* 결제 버튼 */}
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              disabled={isProcessing}
+              className="flex-1"
+            >
+              취소
+            </Button>
+            <Button
+              onClick={handlePayment}
+              disabled={isProcessing}
+              className="flex-1"
+            >
+              {isProcessing ? '처리 중...' : `${formatAmount(amount)} 결제하기`}
+            </Button>
+          </div>
+
+          {/* 안내 문구 */}
+          <p className="text-xs text-center text-muted-foreground">
+            결제는 토스페이먼츠를 통해 안전하게 처리됩니다.
+          </p>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
