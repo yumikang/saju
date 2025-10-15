@@ -7,13 +7,15 @@
 
 import { json, redirect, type LoaderFunctionArgs, type ActionFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useLoaderData, useActionData, useNavigation } from '@remix-run/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PrismaClient, Element } from '@prisma/client';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { ElementBadge, ElementDistribution } from '~/components/ui/element-badge';
+import { HanjaSelector } from '~/components/ui/hanja-selector';
+import type { HanjaChar } from '~/lib/hanja-data';
 import { Loader2, ArrowRight } from 'lucide-react';
 
 const prisma = new PrismaClient();
@@ -44,9 +46,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     throw new Response('사주 데이터를 찾을 수 없습니다', { status: 404 });
   }
 
-  // URL에서 lastName 추출 (이전 페이지에서 전달됨)
+  // URL에서 lastName 및 Hanja 데이터 추출 (이전 페이지에서 전달됨)
   const url = new URL(request.url);
   const lastName = url.searchParams.get('lastName') || '';
+  const lastNameChar = url.searchParams.get('lastNameChar') || '';
+  const lastNameStrokes = url.searchParams.get('lastNameStrokes') || '';
 
   // 오행 카운트 재구성
   const elementCounts = {
@@ -85,6 +89,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       },
     },
     lastName,
+    lastNameChar,
+    lastNameStrokes: lastNameStrokes ? parseInt(lastNameStrokes, 10) : null,
   });
 }
 
@@ -95,6 +101,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { id } = params;
   const formData = await request.formData();
   const lastName = formData.get('lastName') as string;
+  const lastNameChar = formData.get('lastNameChar') as string | null;
+  const lastNameStrokes = formData.get('lastNameStrokes') as string | null;
 
   // Validation
   if (!lastName) {
@@ -121,6 +129,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
       body: JSON.stringify({
         sajuDataId: id,
         lastName,
+        lastNameChar: lastNameChar || undefined,
+        lastNameStrokes: lastNameStrokes ? parseInt(lastNameStrokes, 10) : undefined,
         preferences: {
           minScore: 65,
           maxResults: 50,
@@ -152,12 +162,25 @@ export async function action({ request, params }: ActionFunctionArgs) {
  * 사주 분석 페이지 컴포넌트
  */
 export default function AnalysisPage() {
-  const { sajuData, lastName: initialLastName } = useLoaderData<typeof loader>();
+  const { sajuData, lastName: initialLastName, lastNameChar, lastNameStrokes } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
   const [lastName, setLastName] = useState(initialLastName);
+  const [selectedHanja, setSelectedHanja] = useState<HanjaChar | undefined>();
+
+  // 초기 로드 시 URL에서 받은 Hanja 데이터로 selectedHanja 설정
+  useEffect(() => {
+    if (lastNameChar && lastNameStrokes && initialLastName) {
+      setSelectedHanja({
+        char: lastNameChar,
+        reading: initialLastName,
+        meaning: '', // API에서 다시 가져오기 위해 빈 값
+        strokes: lastNameStrokes,
+      });
+    }
+  }, [lastNameChar, lastNameStrokes, initialLastName]);
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -286,9 +309,39 @@ export default function AnalysisPage() {
                 maxLength={2}
               />
               <p className="text-sm text-gray-600">
-                작명할 이름의 성씨를 입력하세요 (1-2자)
+                성씨의 한글 발음을 입력하세요
               </p>
             </div>
+
+            {/* 한자 선택 */}
+            {lastName && (
+              <div className="space-y-2">
+                <Label>한자 선택</Label>
+                <HanjaSelector
+                  reading={lastName}
+                  selectedHanja={selectedHanja}
+                  onSelect={(hanja) => setSelectedHanja(hanja)}
+                  mode="surname"
+                  placeholder="성씨 한자를 선택하세요"
+                />
+                {selectedHanja && (
+                  <p className="text-sm text-gray-600">
+                    선택: {selectedHanja.char} ({selectedHanja.meaning}) - {selectedHanja.strokes}획
+                  </p>
+                )}
+                <p className="text-sm text-amber-600">
+                  💡 한자를 선택하면 더 정확한 81수리 계산이 가능합니다
+                </p>
+              </div>
+            )}
+
+            {/* Hidden inputs for Hanja data */}
+            {selectedHanja && (
+              <>
+                <input type="hidden" name="lastNameChar" value={selectedHanja.char} />
+                <input type="hidden" name="lastNameStrokes" value={selectedHanja.strokes} />
+              </>
+            )}
 
             {/* Error Message */}
             {actionData && !actionData.success && (

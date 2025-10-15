@@ -15,6 +15,8 @@ import { Label } from '~/components/ui/label';
 import { Calendar } from '~/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
+import { HanjaSelector } from '~/components/ui/hanja-selector';
+import type { HanjaChar } from '~/lib/hanja-data';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -39,6 +41,8 @@ export async function action({ request }: ActionFunctionArgs) {
   const isLunar = formData.get('calendarType') === 'lunar';
   const gender = formData.get('gender') as string;
   const lastName = formData.get('lastName') as string;
+  const lastNameChar = formData.get('lastNameChar') as string | null;
+  const lastNameStrokes = formData.get('lastNameStrokes') as string | null;
 
   // Validation
   if (!birthDate || !birthTime || !gender || !lastName) {
@@ -93,8 +97,13 @@ export async function action({ request }: ActionFunctionArgs) {
     // Store lastName in session or pass as query param for next step
     const sajuDataId = result.data.sajuDataId;
 
-    // Redirect to analysis page with lastName as query param
-    return redirect(`/naming/analysis/${sajuDataId}?lastName=${encodeURIComponent(lastName)}`);
+    // Build redirect URL with lastName and optional Hanja data
+    const params = new URLSearchParams({ lastName });
+    if (lastNameChar) params.set('lastNameChar', lastNameChar);
+    if (lastNameStrokes) params.set('lastNameStrokes', lastNameStrokes);
+
+    // Redirect to analysis page with query params
+    return redirect(`/naming/analysis/${sajuDataId}?${params.toString()}`);
   } catch (error) {
     console.error('[naming._index] Error calling analyze API:', error);
     return json({
@@ -115,6 +124,8 @@ export default function NamingInputPage() {
   // Form state
   const [birthDate, setBirthDate] = useState<Date>();
   const [calendarType, setCalendarType] = useState<'solar' | 'lunar'>('solar');
+  const [lastName, setLastName] = useState('');
+  const [selectedHanja, setSelectedHanja] = useState<HanjaChar | undefined>();
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -145,13 +156,45 @@ export default function NamingInputPage() {
                 id="lastName"
                 name="lastName"
                 placeholder="예: 김"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 required
                 maxLength={2}
               />
               <p className="text-sm text-gray-500">
-                이름에 사용할 성씨를 입력하세요
+                성씨의 한글 발음을 입력하세요
               </p>
             </div>
+
+            {/* 한자 선택 */}
+            {lastName && (
+              <div className="space-y-2">
+                <Label>한자 선택</Label>
+                <HanjaSelector
+                  reading={lastName}
+                  selectedHanja={selectedHanja}
+                  onSelect={(hanja) => setSelectedHanja(hanja)}
+                  mode="surname"
+                  placeholder="성씨 한자를 선택하세요"
+                />
+                {selectedHanja && (
+                  <p className="text-sm text-gray-600">
+                    선택: {selectedHanja.char} ({selectedHanja.meaning}) - {selectedHanja.strokes}획
+                  </p>
+                )}
+                <p className="text-sm text-amber-600">
+                  💡 한자를 선택하면 더 정확한 81수리 계산이 가능합니다
+                </p>
+              </div>
+            )}
+
+            {/* Hidden inputs for Hanja data */}
+            {selectedHanja && (
+              <>
+                <input type="hidden" name="lastNameChar" value={selectedHanja.char} />
+                <input type="hidden" name="lastNameStrokes" value={selectedHanja.strokes} />
+              </>
+            )}
 
             {/* Gender */}
             <div className="space-y-2">
