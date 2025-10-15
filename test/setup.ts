@@ -1,5 +1,6 @@
 import { beforeAll, afterAll, afterEach } from 'vitest';
 import { config } from 'dotenv';
+import '@testing-library/jest-dom/vitest';
 
 // 환경 변수 로드
 config({ path: '.env.test' });

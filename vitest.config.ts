@@ -4,7 +4,13 @@ import { resolve } from 'path';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'node',
+    environment: 'happy-dom',
+    environmentMatchGlobs: [
+      // Use happy-dom for component tests
+      ['**/components/**/*.test.{ts,tsx}', 'happy-dom'],
+      // Use node for non-component tests
+      ['**/*.test.ts', 'node'],
+    ],
     setupFiles: ['./test/setup.ts'],
     coverage: {
       reporter: ['text', 'json', 'html'],

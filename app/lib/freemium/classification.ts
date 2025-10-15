@@ -135,7 +135,7 @@ export function hasPremiumAccess(
   sajuIdPurchased: string | null,
   currentSajuId: string | null
 ): boolean {
-  return isPremium && sajuIdPurchased === currentSajuId;
+  return isPremium && sajuIdPurchased !== null && sajuIdPurchased === currentSajuId;
 }
 
 /**
