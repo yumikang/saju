@@ -32,12 +32,10 @@ function Calendar({
         dropdown_month: "px-2 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
         dropdown_year: "px-2 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
         dropdown: "px-2 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
-        nav: "space-x-1 flex items-center",
-        nav_button: cn(
-          "h-7 w-7 bg-white border border-gray-300 p-0 hover:bg-gray-50 hover:text-gray-900 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-        ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
+        nav: "hidden", // 드롭다운 모드에서는 네비게이션 버튼 숨김
+        nav_button: "hidden",
+        nav_button_previous: "hidden",
+        nav_button_next: "hidden",
         table: "w-full border-collapse space-y-1 bg-white",
         head_row: "flex",
         head_cell:
