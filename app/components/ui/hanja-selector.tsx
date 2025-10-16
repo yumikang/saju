@@ -46,6 +46,20 @@ function getDueumHints(reading: string): string[] {
   return DUEUM_MAP[reading] || []
 }
 
+// 오행 영문 -> 한글 변환
+const ELEMENT_MAP: Record<string, string> = {
+  'WOOD': '목',
+  'FIRE': '화',
+  'EARTH': '토',
+  'METAL': '금',
+  'WATER': '수'
+}
+
+function getElementKorean(element: string | undefined | null): string {
+  if (!element) return '오행 준비 중'
+  return ELEMENT_MAP[element.toUpperCase()] || element
+}
+
 interface HanjaSelectorProps {
   reading: string
   selectedHanja?: HanjaChar
@@ -262,7 +276,7 @@ export function HanjaSelector({
         if (highlightedIndex >= 0 && hanjaList[highlightedIndex]) {
           const selected = hanjaList[highlightedIndex]
           // 선택 알림
-          setAnnouncement(`${selected.char}, ${selected.meaning}, ${selected.strokes ? `${selected.strokes}획` : '획수 정보 없음'}, ${selected.element ? `${selected.element}행` : '오행 정보 없음'} 선택됨`)
+          setAnnouncement(`${selected.char}, ${selected.meaning}, ${selected.strokes ? `${selected.strokes}획` : '획수 정보 없음'}, ${getElementKorean(selected.element)}행 선택됨`)
           onSelect(selected)
           setIsOpen(false)
           setHighlightedIndex(-1)
@@ -378,11 +392,11 @@ export function HanjaSelector({
                   id={`${listboxId}-option-${index}`}
                   role="option"
                   aria-selected={selectedHanja?.char === hanja.char}
-                  aria-label={`${hanja.char}, ${hanja.meaning}, ${hanja.strokes ? `${hanja.strokes}획` : '획수 정보 없음'}, ${hanja.element ? `${hanja.element}행` : '오행 정보 없음'}`}
+                  aria-label={`${hanja.char}, ${hanja.meaning}, ${hanja.strokes ? `${hanja.strokes}획` : '획수 정보 없음'}, ${getElementKorean(hanja.element)}행`}
                   data-highlighted={index === highlightedIndex}
                   onClick={() => {
                     // 선택 알림
-                    setAnnouncement(`${hanja.char}, ${hanja.meaning}, ${hanja.strokes ? `${hanja.strokes}획` : '획수 정보 없음'}, ${hanja.element ? `${hanja.element}행` : '오행 정보 없음'} 선택됨`)
+                    setAnnouncement(`${hanja.char}, ${hanja.meaning}, ${hanja.strokes ? `${hanja.strokes}획` : '획수 정보 없음'}, ${getElementKorean(hanja.element)}행 선택됨`)
                     onSelect(hanja)
                     setIsOpen(false)
                     setHighlightedIndex(-1)
@@ -402,7 +416,7 @@ export function HanjaSelector({
                     <div className="flex-1">
                       <div className="text-sm font-medium">{hanja.meaning}</div>
                       <div className="text-xs text-gray-500">
-                        {hanja.strokes ? `${hanja.strokes}획` : '획수 준비 중'} • {hanja.element ? `${hanja.element}행` : '오행 준비 중'}
+                        {hanja.strokes ? `${hanja.strokes}획` : '획수 준비 중'} • {getElementKorean(hanja.element)}행
                       </div>
                     </div>
                   </div>

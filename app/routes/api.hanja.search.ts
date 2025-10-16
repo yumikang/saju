@@ -12,7 +12,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const isSurname = url.searchParams.get("surname") === "true";
   const limit = parseInt(url.searchParams.get("limit") || "20");
   const cursor = url.searchParams.get("cursor") || undefined;
-  const sort = url.searchParams.get("sort") as 'popularity' | 'strokes' | 'element' | undefined;
+  const sort = (url.searchParams.get("sort") || undefined) as 'popularity' | 'strokes' | 'element' | undefined;
   
   // 입력값 검증
   if (!reading) {

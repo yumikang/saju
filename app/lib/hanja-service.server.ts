@@ -224,9 +224,11 @@ export async function searchHanjaFromDB(
 
   if (sort === 'popularity') {
     // popularity 정렬: nameFrequency와 usageFrequency 우선
+    // frequency가 모두 0일 때는 획수 적은 것 우선 (상용한자)
     orderBy = [
       { nameFrequency: 'desc' },
       { usageFrequency: 'desc' },
+      { strokes: 'asc' }, // 획수 적은 것 우선
       { id: 'asc' }
     ];
   } else if (sort === 'strokes') {
@@ -273,8 +275,9 @@ export async function searchHanjaFromDB(
       });
     }
 
-    // 2. 나머지 한자 가져오기 (성씨 한자 수만큼 빼기)
-    const remainingLimit = Math.max(actualLimit - surnameResults.length, 5); // 최소 5개
+    // 2. 나머지 한자 가져오기 (충분한 선택지 제공)
+    const remainingLimit = Math.max(actualLimit * 2, 40); // 상용한자 포함을 위해 여유있게
+
     const otherResults = await prisma.hanjaDict.findMany({
       where: {
         koreanReading: { in: readings },
@@ -296,17 +299,22 @@ export async function searchHanjaFromDB(
       // NULL이나 0인 경우 뒤로
       const aHasValue = (a.nameFrequency && a.nameFrequency > 0) || (a.usageFrequency && a.usageFrequency > 0);
       const bHasValue = (b.nameFrequency && b.nameFrequency > 0) || (b.usageFrequency && b.usageFrequency > 0);
-      
+
       if (aHasValue && !bHasValue) return -1;
       if (!aHasValue && bHasValue) return 1;
-      
+
       // 둘 다 값이 있으면 빈도로 정렬
       if (aHasValue && bHasValue) {
         const aFreq = (a.nameFrequency || 0) + (a.usageFrequency || 0);
         const bFreq = (b.nameFrequency || 0) + (b.usageFrequency || 0);
         return bFreq - aFreq; // 내림차순
       }
-      
+
+      // 둘 다 빈도가 0이면 획수로 정렬 (상용한자 우선)
+      if (!aHasValue && !bHasValue) {
+        return (a.strokes || 999) - (b.strokes || 999);
+      }
+
       return 0;
     });
   } else if (sort === 'strokes') {
@@ -403,7 +411,12 @@ export async function searchHanjaFromDB(
       if (aPriority !== bPriority) return aPriority - bPriority;
     }
 
-    // 3. frequency 순
+    // 3. 일반 한자끼리는 획수 순 (상용한자 우선)
+    if (!a.isSurname && !b.isSurname) {
+      return (a.strokes || 999) - (b.strokes || 999);
+    }
+
+    // 4. 그 외는 frequency 순
     const aFreq = (a.nameFrequency || 0) + (a.usageFrequency || 0);
     const bFreq = (b.nameFrequency || 0) + (b.usageFrequency || 0);
     return bFreq - aFreq;

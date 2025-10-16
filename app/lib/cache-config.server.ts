@@ -8,7 +8,7 @@ export const CACHE_CONFIG = {
   },
   
   // 데이터 버전 (ETL 실행 시 증가)
-  DATA_VERSION: process.env.DATA_VERSION || '1.0.0',
+  DATA_VERSION: process.env.DATA_VERSION || '1.0.1',
   
   // 캐시 키 패턴
   KEY_PATTERNS: {
