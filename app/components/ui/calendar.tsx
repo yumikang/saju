@@ -11,15 +11,27 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  // 생년월일 선택을 위한 기본 연도 범위 설정 (1900년부터 현재까지)
+  const currentYear = new Date().getFullYear()
+  const fromYear = props.fromYear ?? 1900
+  const toYear = props.toYear ?? currentYear
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      captionLayout="dropdown-buttons"
+      fromYear={fromYear}
+      toYear={toYear}
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
-        caption: "flex justify-center pt-1 relative items-center",
+        caption: "flex justify-center pt-1 relative items-center gap-2",
         caption_label: "text-sm font-medium text-gray-900",
+        caption_dropdowns: "flex gap-2",
+        dropdown_month: "px-2 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
+        dropdown_year: "px-2 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
+        dropdown: "px-2 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
         nav: "space-x-1 flex items-center",
         nav_button: cn(
           "h-7 w-7 bg-white border border-gray-300 p-0 hover:bg-gray-50 hover:text-gray-900 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
