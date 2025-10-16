@@ -426,6 +426,7 @@ interface MultiHanjaSelectorProps {
   onSelectionChange: (index: number, hanja: HanjaChar | null) => void
   label: string
   required?: boolean
+  mode?: HanjaSelectorMode  // 모드 prop 추가
 }
 
 export function MultiHanjaSelector({
@@ -433,7 +434,8 @@ export function MultiHanjaSelector({
   selectedHanjas,
   onSelectionChange,
   label,
-  required = false
+  required = false,
+  mode = 'general'  // 기본값을 'general'로 설정 (이름 한자 선택용)
 }: MultiHanjaSelectorProps) {
   return (
     <div className="space-y-3">
@@ -454,6 +456,7 @@ export function MultiHanjaSelector({
                 onSelect={(hanja) => onSelectionChange(index, hanja)}
                 placeholder={`'${syllable}' 한자 선택`}
                 required={required}
+                mode={mode}
               />
             </div>
           </div>

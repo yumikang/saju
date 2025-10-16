@@ -9,7 +9,7 @@ import { useToast } from "~/hooks/use-toast"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { cn } from "~/lib/utils"
-import { MultiHanjaSelector } from "~/components/ui/hanja-selector"
+import { MultiHanjaSelector, HanjaSelector } from "~/components/ui/hanja-selector"
 import { HanjaChar } from "~/lib/hanja-data"
 
 // 개명 정보 입력 컴포넌트
@@ -18,6 +18,7 @@ function RenamingInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
     currentName: '',
     currentNameHanja: [] as (HanjaChar | null)[],
     lastName: '',
+    lastNameHanja: null as HanjaChar | null,
     gender: '',
     birthDate: undefined as Date | undefined,
     birthTime: '',
@@ -69,14 +70,26 @@ function RenamingInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
 
       <div>
         <label className="block text-sm font-medium mb-2">성씨</label>
-        <input
-          type="text"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
-          placeholder="김"
-          value={formData.lastName}
-          onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-          required
-        />
+        <div className="space-y-3">
+          <input
+            type="text"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+            placeholder="김 (한글)"
+            value={formData.lastName}
+            onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+            required
+          />
+          {formData.lastName && (
+            <HanjaSelector
+              reading={formData.lastName}
+              selectedHanja={formData.lastNameHanja || undefined}
+              onSelect={(hanja) => setFormData({...formData, lastNameHanja: hanja})}
+              placeholder="성씨 한자 선택"
+              mode="surname"
+              required
+            />
+          )}
+        </div>
       </div>
 
       <div>
