@@ -27,11 +27,12 @@ function Calendar({
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
         caption: "flex justify-center pt-1 relative items-center gap-2",
-        caption_label: "text-sm font-medium text-gray-900",
+        caption_label: "hidden", // 중복 표시 제거
         caption_dropdowns: "flex gap-2",
-        dropdown_month: "px-2 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
-        dropdown_year: "px-2 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
-        dropdown: "px-2 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
+        dropdown_month: "px-3 py-2 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
+        dropdown_year: "px-3 py-2 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
+        dropdown: "px-3 py-2 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
+        vhidden: "hidden", // "Month:", "Year:" 라벨 숨김
         nav: "hidden", // 드롭다운 모드에서는 네비게이션 버튼 숨김
         nav_button: "hidden",
         nav_button_previous: "hidden",
