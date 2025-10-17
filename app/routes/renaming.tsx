@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
@@ -253,12 +253,14 @@ function CurrentNameAnalysis({ data, onComplete }: { data: any, onComplete: () =
     }
   }
 
-  useState(() => {
-    setTimeout(() => {
+  // 분석 시뮬레이션 (3초 후 분석 완료)
+  useEffect(() => {
+    const timer = setTimeout(() => {
       setIsAnalyzing(false)
-      setTimeout(onComplete, 2000)
     }, 3000)
-  })
+
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -359,6 +361,18 @@ function CurrentNameAnalysis({ data, onComplete }: { data: any, onComplete: () =
               </ul>
             </CardContent>
           </Card>
+
+          {/* 다음 단계 버튼 */}
+          <div className="text-center mt-8">
+            <Button
+              size="lg"
+              onClick={onComplete}
+              className="bg-orange-500 hover:bg-orange-600 px-12"
+            >
+              개명 제안 확인하기
+              <TrendingUp className="ml-2 w-5 h-5" />
+            </Button>
+          </div>
         </motion.div>
       )}
     </div>
