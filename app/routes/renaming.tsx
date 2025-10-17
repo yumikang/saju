@@ -382,14 +382,26 @@ function CurrentNameAnalysis({ data, onComplete }: { data: any, onComplete: () =
 // 개명 제안 결과 컴포넌트
 function RenamingResults({ data, onPayment, onSkip }: { data: any, onPayment: () => void, onSkip: () => void }) {
   const { toast } = useToast()
-  
-  const names = [
+
+  // 성별에 따른 이름 목록
+  const maleNames = [
     { name: `${data.lastName}진우`, hanja: `${data.lastName}振宇`, meaning: "진동하는 우주처럼 웅대한 기운", score: 92, improvement: "+30" },
     { name: `${data.lastName}태영`, hanja: `${data.lastName}泰英`, meaning: "태평하고 영명한 사람", score: 89, improvement: "+27" },
     { name: `${data.lastName}정호`, hanja: `${data.lastName}正浩`, meaning: "정의롭고 호탕한 기운", score: 87, improvement: "+25" },
     { name: `${data.lastName}현석`, hanja: `${data.lastName}賢碩`, meaning: "현명하고 큰 인물", score: 85, improvement: "+23" },
     { name: `${data.lastName}승준`, hanja: `${data.lastName}承俊`, meaning: "이어받은 준수함", score: 83, improvement: "+21" }
   ]
+
+  const femaleNames = [
+    { name: `${data.lastName}서연`, hanja: `${data.lastName}瑞姸`, meaning: "상서롭고 아름다운 모습", score: 92, improvement: "+30" },
+    { name: `${data.lastName}지우`, hanja: `${data.lastName}智優`, meaning: "지혜롭고 우아한 기운", score: 89, improvement: "+27" },
+    { name: `${data.lastName}수빈`, hanja: `${data.lastName}秀彬`, meaning: "빼어나고 빛나는 품성", score: 87, improvement: "+25" },
+    { name: `${data.lastName}민서`, hanja: `${data.lastName}敏書`, meaning: "민첩하고 학식 있는", score: 85, improvement: "+23" },
+    { name: `${data.lastName}하은`, hanja: `${data.lastName}夏恩`, meaning: "여름처럼 따뜻한 은혜", score: 83, improvement: "+21" }
+  ]
+
+  // 성별에 따라 이름 목록 선택
+  const names = data.gender === 'F' ? femaleNames : maleNames
 
   return (
     <div className="max-w-4xl mx-auto">
