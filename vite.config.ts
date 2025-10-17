@@ -38,14 +38,7 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-popover', '@radix-ui/react-toast'],
-          'chart-vendor': ['chart.js', 'react-chartjs-2'],
-          'date-vendor': ['date-fns', 'react-day-picker'],
-          'animation-vendor': ['framer-motion'],
-          'state-vendor': ['zustand'],
-        },
+        // manualChunks removed - Remix handles React bundling as external module
         chunkFileNames: (chunkInfo) => {
           const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : '';
           return `assets/js/${facadeModuleId}-[hash].js`;

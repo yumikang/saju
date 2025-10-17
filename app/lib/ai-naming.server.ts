@@ -9,13 +9,24 @@ import {
   elementRelations 
 } from './hanja-unified';
 
-// OpenAI 클라이언트 - 조건부 초기화
+// OpenAI 클라이언트 - 지연 초기화 (lazy initialization)
 let openai: any = null;
-if (process.env.OPENAI_API_KEY) {
-  const OpenAI = (await import('openai')).default;
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+let openaiInitialized = false;
+
+async function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    return null;
+  }
+
+  if (!openaiInitialized) {
+    const { default: OpenAI } = await import('openai');
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    openaiInitialized = true;
+  }
+
+  return openai;
 }
 
 // 사주 데이터 타입
@@ -145,15 +156,18 @@ ${parentPreferences.avoidCharacters ? `- 피해야 할 글자: ${parentPreferenc
 
 // AI 작명 생성 함수
 export async function generateAINames(request: NamingRequest): Promise<NamingResult[]> {
+  // OpenAI 클라이언트 가져오기
+  const openaiClient = await getOpenAI();
+
   // OpenAI가 설정되지 않은 경우 규칙 기반 작명 사용
-  if (!openai) {
+  if (!openaiClient) {
     console.log('OpenAI API key not configured, using rule-based naming');
     return generateRuleBasedNames(request);
   }
 
   try {
     // 1. GPT-4에 작명 요청
-    const completion = await openai.chat.completions.create({
+    const completion = await openaiClient.chat.completions.create({
       model: "gpt-4-turbo-preview",
       messages: [
         {
