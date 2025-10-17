@@ -40,7 +40,7 @@ model User {
 
 model SajuData {
   id               String         @id @default(uuid())
-  userId           String         @map("user_id")
+  userId           String?        @map("user_id") // Optional for anonymous users
   name             String
   birthDate        DateTime       @map("birth_date") @db.Date
   birthTime        String         @map("birth_time")
@@ -64,7 +64,7 @@ model SajuData {
   createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt        DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
   namingResults    NamingResult[]
-  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("saju_data")
@@ -72,7 +72,7 @@ model SajuData {
 
 model NamingResult {
   id               String     @id @default(uuid())
-  userId           String     @map("user_id")
+  userId           String?    @map("user_id") // Optional for anonymous users
   sajuDataId       String     @map("saju_data_id")
   lastName         String     @map("last_name")
   firstName        String     @map("first_name")
@@ -92,7 +92,7 @@ model NamingResult {
   createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
   favorites        Favorite[]
   sajuData         SajuData   @relation(fields: [sajuDataId], references: [id], onDelete: Cascade)
-  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([sajuDataId])

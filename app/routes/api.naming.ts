@@ -12,9 +12,9 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    // 인증 확인 (선택적)
+    // 인증 확인 (선택적 - anonymous users allowed)
     const session = await getSession(request);
-    const userId = session?.user?.id || "anonymous";
+    const userId = session?.user?.id || null; // Allow null for anonymous users
 
     // 요청 데이터 파싱
     const body = await request.json();
@@ -115,7 +115,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
       // DB에 저장
       const savedName = await namingRepository.create({
-        user: { connect: { id: userId } },
+        user: userId ? { connect: { id: userId } } : undefined,
         sajuData: { connect: { id: sajuDataId } },
         lastName: name.lastName,
         firstName: name.firstName,

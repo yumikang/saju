@@ -107,18 +107,8 @@ export async function handleAnalyze(
   const startTime = Date.now();
 
   try {
-    // 0. Resolve user ID (get first user if not provided)
-    let resolvedUserId = userId;
-    if (!resolvedUserId) {
-      const defaultUser = await prisma.user.findFirst();
-      if (!defaultUser) {
-        throw new ValidationError(
-          'No user found in database',
-          '사용자를 찾을 수 없습니다. 먼저 사용자를 생성해주세요.'
-        );
-      }
-      resolvedUserId = defaultUser.id;
-    }
+    // 0. Resolve user ID (optional for anonymous users)
+    const resolvedUserId = userId || null; // Allow null for anonymous users
 
     // 1. Calculate Saju using Phase 1 SajuCalculator
     const calculator = new SajuCalculator();
@@ -133,7 +123,7 @@ export async function handleAnalyze(
     // 2. Save to database for future reference
     const sajuData = await prisma.sajuData.create({
       data: {
-        userId: resolvedUserId,
+        userId: resolvedUserId, // Can be null for anonymous users
         name: '', // To be filled when name is chosen
         birthDate: new Date(request.birthDate),
         birthTime: request.birthTime,
