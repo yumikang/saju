@@ -11,6 +11,7 @@ import { HanjaMatcher, type MatchingOptions } from './matcher';
 import type { ScoredCandidate } from './types';
 import type {
   AnalyzeRequest,
+  AnalyzeCurrentRequest,
   RecommendRequest,
   CharacterParams,
   CharacterQuery,
@@ -356,9 +357,30 @@ export async function handleCharacterLookup(
 // ============================================================
 
 /**
+ * DB SajuData 타입 정의
+ */
+interface DBSajuData {
+  yearGan: string;
+  yearJi: string;
+  monthGan: string;
+  monthJi: string;
+  dayGan: string;
+  dayJi: string;
+  hourGan: string;
+  hourJi: string;
+  woodCount: number;
+  fireCount: number;
+  earthCount: number;
+  metalCount: number;
+  waterCount: number;
+  primaryYongsin: string;
+  secondaryYongsin: string | null;
+}
+
+/**
  * DB에서 가져온 사주 데이터를 SajuResult로 재구성
  */
-function reconstructSajuFromDB(sajuData: any): SajuResult {
+function reconstructSajuFromDB(sajuData: DBSajuData): SajuResult {
   return {
     pillars: {
       year: { stem: sajuData.yearGan, branch: sajuData.yearJi },
@@ -408,7 +430,7 @@ function determineElement(stem: string): Element {
 /**
  * 부족한 오행 결정 (평균의 50% 미만)
  */
-function determineLackingElements(sajuData: any): Element[] {
+function determineLackingElements(sajuData: DBSajuData): Element[] {
   const counts = {
     [Element.WOOD]: sajuData.woodCount,
     [Element.FIRE]: sajuData.fireCount,
@@ -421,4 +443,250 @@ function determineLackingElements(sajuData: any): Element[] {
   return Object.entries(counts)
     .filter(([_, count]) => count < avg * 0.5)
     .map(([elem, _]) => elem as Element);
+}
+
+// ============================================================
+// Handler: Analyze Current Name for Renaming
+// ============================================================
+
+export interface AnalyzeCurrentResponse {
+  success: true;
+  data: {
+    analysisId: string;
+    currentScore: number;
+    saju: {
+      pillars: SajuResult['pillars'];
+      elementCounts: SajuResult['elementCounts'];
+      lackingElements: Element[];
+      favorableElements: Element[];
+    };
+    currentName: {
+      hanja: string;
+      elements: { first: Element | null; second: Element | null };
+      scores: {
+        element: number;
+        yinyang: number;
+        numerology: number;
+        meaning: number;
+      };
+    };
+    problems: string[];
+    recommendations: {
+      neededElements: Element[];
+      avoidElements: Element[];
+      targetScore: number;
+    };
+    predictions: {
+      career: number;
+      health: number;
+      relationships: number;
+      wealth: number;
+    };
+  };
+  metadata: {
+    calculationTime: number;
+    timestamp: string;
+  };
+}
+
+/**
+ * 현재 이름 분석 핸들러
+ *
+ * POST /api/renaming/analyze-current
+ *
+ * @param request - Validated current name analysis request
+ * @param userId - Optional user ID for tracking
+ */
+export async function handleAnalyzeCurrent(
+  request: AnalyzeCurrentRequest,
+  userId?: string
+): Promise<AnalyzeCurrentResponse> {
+  const startTime = Date.now();
+
+  try {
+    // 1. Calculate Saju
+    const calculator = new SajuCalculator();
+    const birthDateTime = new Date(`${request.birthDate}T${request.birthTime}`);
+
+    const sajuResult = calculator.calculate(
+      birthDateTime,
+      request.birthTime,
+      request.isLunar
+    );
+
+    // 2. Construct full current name in Hanja
+    const fullName = request.currentName.lastName + request.currentName.firstName.join('');
+
+    // 3. Look up Hanja characters for current name
+    const firstChar = request.currentName.firstName[0];
+    const secondChar = request.currentName.firstName[1];
+
+    const [firstHanja, secondHanja] = await Promise.all([
+      prisma.hanjaDict.findFirst({
+        where: { koreanReading: firstChar },
+        orderBy: { nameFrequency: 'desc' }, // Most common reading first
+      }),
+      prisma.hanjaDict.findFirst({
+        where: { koreanReading: secondChar },
+        orderBy: { nameFrequency: 'desc' },
+      }),
+    ]);
+
+    // 4. Score the current name
+    const matcher = new HanjaMatcher();
+
+    // Create a candidate from current name for scoring
+    let currentScore = 0;
+    let elementScore = 0;
+    let yinyangScore = 0;
+    let numerologyScore = 0;
+    let meaningScore = 0;
+    let firstElement: Element | null = null;
+    let secondElement: Element | null = null;
+
+    if (firstHanja && secondHanja) {
+      // Calculate score using matcher's internal scoring
+      // We find the candidate that matches the current name's hanja characters
+      const scoredCandidates = await matcher.findOptimalNames(
+        sajuResult,
+        request.currentName.lastName,
+        {
+          minScore: 0, // Accept any score
+          maxResults: 1000,
+          gender: request.gender as 'male' | 'female' | undefined,
+          enableEarlyTermination: false,
+        }
+      );
+
+      // Find the exact match in scored candidates
+      const matchedCandidate = scoredCandidates.find(
+        (c) =>
+          c.characters[0].id === firstHanja.id &&
+          c.characters[1].id === secondHanja.id
+      );
+
+      if (matchedCandidate) {
+        currentScore = matchedCandidate.scores.overall;
+        elementScore = matchedCandidate.scores.elementHarmony.score;
+        yinyangScore = matchedCandidate.scores.yinYangBalance.score;
+        numerologyScore = matchedCandidate.scores.numerology.score;
+        meaningScore = matchedCandidate.scores.meaningHarmony.score;
+      }
+
+      firstElement = firstHanja.element;
+      secondElement = secondHanja.element;
+    }
+
+    // 5. Analyze problems based on scores
+    const problems: string[] = [];
+    if (elementScore < 60) {
+      problems.push(`${sajuResult.lackingElements.join(', ')} 기운 부족`);
+    }
+    if (yinyangScore < 60) {
+      problems.push('음양 불균형');
+    }
+    if (numerologyScore < 60) {
+      problems.push('81수리 불길');
+    }
+    if (meaningScore < 60) {
+      problems.push('의미 조화 부족');
+    }
+    if (problems.length === 0 && currentScore < 70) {
+      problems.push('전반적인 조화 부족');
+    }
+
+    // 6. Generate recommendations
+    const neededElements = sajuResult.lackingElements;
+    const avoidElements = Object.entries(sajuResult.elementCounts)
+      .filter(([_, count]) => count > 2)
+      .map(([elem, _]) => elem as Element);
+    const targetScore = Math.max(75, currentScore + 15);
+
+    // 7. Calculate predictions based on current score
+    const basePrediction = currentScore * 0.8; // Base off current score
+    const predictions = {
+      career: Math.round(basePrediction + (elementScore - 50) * 0.3),
+      health: Math.round(basePrediction + (yinyangScore - 50) * 0.4),
+      relationships: Math.round(basePrediction + (meaningScore - 50) * 0.4),
+      wealth: Math.round(basePrediction + (numerologyScore - 50) * 0.3),
+    };
+
+    // 8. Save analysis to database
+    const analysis = await prisma.renamingAnalysis.create({
+      data: {
+        birthDate: request.birthDate,
+        birthTime: request.birthTime,
+        isLunar: request.isLunar,
+        currentNameHanja: fullName,
+        currentScore,
+        sajuData: {
+          pillars: sajuResult.pillars,
+          elementCounts: sajuResult.elementCounts,
+          lackingElements: sajuResult.lackingElements,
+          favorableElements: sajuResult.favorableElements,
+        },
+        analysisData: {
+          currentName: {
+            hanja: fullName,
+            elements: { first: firstElement, second: secondElement },
+            scores: {
+              element: elementScore,
+              yinyang: yinyangScore,
+              numerology: numerologyScore,
+              meaning: meaningScore,
+            },
+          },
+          problems,
+          recommendations: {
+            neededElements,
+            avoidElements,
+            targetScore,
+          },
+          predictions,
+        },
+      },
+    });
+
+    const calculationTime = Date.now() - startTime;
+
+    return {
+      success: true,
+      data: {
+        analysisId: analysis.id,
+        currentScore,
+        saju: {
+          pillars: sajuResult.pillars,
+          elementCounts: sajuResult.elementCounts,
+          lackingElements: sajuResult.lackingElements,
+          favorableElements: sajuResult.favorableElements,
+        },
+        currentName: {
+          hanja: fullName,
+          elements: { first: firstElement, second: secondElement },
+          scores: {
+            element: elementScore,
+            yinyang: yinyangScore,
+            numerology: numerologyScore,
+            meaning: meaningScore,
+          },
+        },
+        problems,
+        recommendations: {
+          neededElements,
+          avoidElements,
+          targetScore,
+        },
+        predictions,
+      },
+      metadata: {
+        calculationTime,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    console.error('[handleAnalyzeCurrent] Error:', error);
+    throw new SajuCalculationError(
+      error instanceof Error ? error.message : 'Unknown error'
+    );
+  }
 }

@@ -12,8 +12,50 @@ import { cn } from "~/lib/utils"
 import { MultiHanjaSelector, HanjaSelector } from "~/components/ui/hanja-selector"
 import { HanjaChar } from "~/lib/hanja-data"
 
+// 타입 정의
+interface RenamingFormData {
+  currentName: string
+  currentNameHanja: (HanjaChar | null)[]
+  lastName: string
+  lastNameHanja: HanjaChar | null
+  gender: string
+  birthDate: Date | undefined
+  birthTime: string
+  calendarType: 'solar' | 'lunar'
+  renamingReason: string
+  desiredMeaning: string
+}
+
+interface AnalysisData {
+  analysisId: string
+  currentScore: number
+  elements: {
+    목: number
+    화: number
+    토: number
+    금: number
+    수: number
+  }
+  problems: string[]
+  predictions: {
+    career: number
+    health: number
+    relationships: number
+    wealth: number
+  }
+}
+
+interface RecommendationItem {
+  name: string
+  hanja: string
+  meaning: string
+  score: number
+  improvement: string
+  details?: unknown
+}
+
 // 개명 정보 입력 컴포넌트
-function RenamingInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
+function RenamingInfoForm({ onSubmit }: { onSubmit: (data: RenamingFormData) => void }) {
   const [formData, setFormData] = useState({
     currentName: '',
     currentNameHanja: [] as (HanjaChar | null)[],
@@ -232,35 +274,96 @@ function RenamingInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
 }
 
 // 현재 이름 운세 분석 컴포넌트
-function CurrentNameAnalysis({ data, onComplete }: { data: any, onComplete: () => void }) {
+function CurrentNameAnalysis({ data, onComplete }: { data: RenamingFormData, onComplete: (analysisId: string) => void }) {
   const [isAnalyzing, setIsAnalyzing] = useState(true)
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
-  const analysisData = {
-    currentScore: 62,
-    elements: {
-      목: 1,
-      화: 0,
-      토: 4,
-      금: 2,
-      수: 1
-    },
-    problems: ['화 기운 부족', '토 기운 과다', '음양 불균형'],
-    predictions: {
-      career: 45,
-      health: 70,
-      relationships: 55,
-      wealth: 40
-    }
-  }
-
-  // 분석 시뮬레이션 (3초 후 분석 완료)
+  // API 호출하여 현재 이름 분석
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAnalyzing(false)
-    }, 3000)
+    const analyzeCurrentName = async () => {
+      try {
+        setIsAnalyzing(true)
+        setError(null)
 
-    return () => clearTimeout(timer)
-  }, [])
+        // 현재 이름 한글 추출 (성씨 제거)
+        // currentName이 "철수"처럼 이름만 있거나 "김철수"처럼 성+이름일 수 있음
+        let firstNameStr = data.currentName
+        if (firstNameStr.startsWith(data.lastName)) {
+          firstNameStr = firstNameStr.substring(data.lastName.length)
+        }
+        const firstName = firstNameStr.split('')
+
+        // 음력/양력 변환
+        const isLunar = data.calendarType === 'lunar'
+
+        // 생년월일 포맷 (YYYY-MM-DD)
+        const birthDate = data.birthDate
+          ? new Date(data.birthDate).toISOString().split('T')[0]
+          : ''
+
+        // API 요청
+        const response = await fetch('/api/renaming/analyze-current', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            birthDate,
+            birthTime: data.birthTime,
+            isLunar,
+            currentName: {
+              lastName: data.lastName,
+              firstName: firstName
+            },
+            gender: data.gender === 'M' ? 'male' : 'female'
+          })
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || '분석 중 오류가 발생했습니다')
+        }
+
+        const result = await response.json()
+
+        if (result.success) {
+          // 오행 카운트를 한글로 변환
+          const elementCounts = {
+            목: result.data.saju.elementCounts.WOOD || 0,
+            화: result.data.saju.elementCounts.FIRE || 0,
+            토: result.data.saju.elementCounts.EARTH || 0,
+            금: result.data.saju.elementCounts.METAL || 0,
+            수: result.data.saju.elementCounts.WATER || 0
+          }
+
+          setAnalysisData({
+            analysisId: result.data.analysisId,
+            currentScore: Math.round(result.data.currentScore),
+            elements: elementCounts,
+            problems: result.data.problems,
+            predictions: result.data.predictions
+          })
+
+          toast({
+            title: "분석 완료",
+            description: "현재 이름의 운세 분석이 완료되었습니다.",
+          })
+        }
+      } catch (err) {
+        console.error('Analysis error:', err)
+        setError(err instanceof Error ? err.message : '분석 중 오류가 발생했습니다')
+        toast({
+          title: "오류 발생",
+          description: err instanceof Error ? err.message : '분석 중 오류가 발생했습니다',
+          variant: "destructive"
+        })
+      } finally {
+        setIsAnalyzing(false)
+      }
+    }
+
+    analyzeCurrentName()
+  }, [data, toast])
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -274,7 +377,26 @@ function CurrentNameAnalysis({ data, onComplete }: { data: any, onComplete: () =
           <h3 className="text-xl font-bold">현재 이름 운세 분석 중...</h3>
           <p className="text-gray-600 mt-2">'{data.currentName}'의 오행과 획수를 분석하고 있습니다</p>
         </motion.div>
-      ) : (
+      ) : error ? (
+        <motion.div
+          className="text-center py-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <Card className="border-red-200 bg-red-50">
+            <CardContent className="p-8">
+              <h3 className="text-xl font-bold text-red-600 mb-4">분석 오류</h3>
+              <p className="text-gray-700 mb-6">{error}</p>
+              <Button
+                onClick={() => window.location.reload()}
+                className="bg-orange-500 hover:bg-orange-600"
+              >
+                다시 시도하기
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+      ) : analysisData ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -366,7 +488,7 @@ function CurrentNameAnalysis({ data, onComplete }: { data: any, onComplete: () =
           <div className="text-center mt-8">
             <Button
               size="lg"
-              onClick={onComplete}
+              onClick={() => onComplete(analysisData.analysisId)}
               className="bg-orange-500 hover:bg-orange-600 px-12"
             >
               개명 제안 확인하기
@@ -374,39 +496,197 @@ function CurrentNameAnalysis({ data, onComplete }: { data: any, onComplete: () =
             </Button>
           </div>
         </motion.div>
-      )}
+      ) : null}
     </div>
   )
 }
 
 // 개명 제안 결과 컴포넌트
-function RenamingResults({ data, onPayment, onSkip }: { data: any, onPayment: () => void, onSkip: () => void }) {
+function RenamingResults({ data, analysisId, onPayment, onSkip }: { data: RenamingFormData, analysisId: string, onPayment: () => void, onSkip: () => void }) {
   const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(true)
+  const [recommendations, setRecommendations] = useState<RecommendationItem[]>([])
+  const [currentScore, setCurrentScore] = useState(0)
+  const [error, setError] = useState<string | null>(null)
 
-  // 성별에 따른 이름 목록
-  const maleNames = [
-    { name: `${data.lastName}진우`, hanja: `${data.lastName}振宇`, meaning: "진동하는 우주처럼 웅대한 기운", score: 92, improvement: "+30" },
-    { name: `${data.lastName}태영`, hanja: `${data.lastName}泰英`, meaning: "태평하고 영명한 사람", score: 89, improvement: "+27" },
-    { name: `${data.lastName}정호`, hanja: `${data.lastName}正浩`, meaning: "정의롭고 호탕한 기운", score: 87, improvement: "+25" },
-    { name: `${data.lastName}현석`, hanja: `${data.lastName}賢碩`, meaning: "현명하고 큰 인물", score: 85, improvement: "+23" },
-    { name: `${data.lastName}승준`, hanja: `${data.lastName}承俊`, meaning: "이어받은 준수함", score: 83, improvement: "+21" }
-  ]
+  // API 호출하여 개명 제안 받기
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
 
-  const femaleNames = [
-    { name: `${data.lastName}서연`, hanja: `${data.lastName}瑞姸`, meaning: "상서롭고 아름다운 모습", score: 92, improvement: "+30" },
-    { name: `${data.lastName}지우`, hanja: `${data.lastName}智優`, meaning: "지혜롭고 우아한 기운", score: 89, improvement: "+27" },
-    { name: `${data.lastName}수빈`, hanja: `${data.lastName}秀彬`, meaning: "빼어나고 빛나는 품성", score: 87, improvement: "+25" },
-    { name: `${data.lastName}민서`, hanja: `${data.lastName}敏書`, meaning: "민첩하고 학식 있는", score: 85, improvement: "+23" },
-    { name: `${data.lastName}하은`, hanja: `${data.lastName}夏恩`, meaning: "여름처럼 따뜻한 은혜", score: 83, improvement: "+21" }
-  ]
+        // 분석 데이터 조회하여 currentScore 가져오기
+        const analysisResponse = await fetch(`/api/renaming/analysis/${analysisId}`)
+        let analysisData = null
+        if (analysisResponse.ok) {
+          const analysisResult = await analysisResponse.json()
+          if (analysisResult.success) {
+            analysisData = analysisResult.data
+            setCurrentScore(Math.round(analysisData.currentScore))
+          }
+        }
 
-  // 성별에 따라 이름 목록 선택
-  const names = data.gender === 'F' ? femaleNames : maleNames
+        // 생년월일 포맷 (YYYY-MM-DD)
+        const birthDate = data.birthDate
+          ? new Date(data.birthDate).toISOString().split('T')[0]
+          : ''
+
+        // 음력/양력 변환
+        const isLunar = data.calendarType === 'lunar'
+
+        // 부정적 의미의 한자 블랙리스트 (개명에 부적합)
+        const badCharacters = [
+          '衝', '沖', '病', '死', '亡', '敗', '窮', '困', '苦', '哀',
+          '愁', '悲', '憂', '怒', '恨', '殺', '傷', '害', '災', '禍',
+          '厄', '凶', '惡', '賤', '貧', '疾', '痛', '弱', '破', '敗'
+        ]
+
+        // API 요청 - 기존 /api/naming/recommend 사용
+        const response = await fetch('/api/naming/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            birthData: {
+              birthDate,
+              birthTime: data.birthTime,
+              isLunar,
+              gender: data.gender === 'M' ? 'male' : 'female'
+            },
+            lastName: data.lastName,
+            preferences: {
+              minScore: 80, // 개명은 높은 점수만 (75 → 80)
+              maxResults: 10, // 더 많은 후보 생성 (5 → 10)
+              gender: data.gender === 'M' ? 'male' : 'female',
+              avoidCharacters: badCharacters // 부정적 한자 제외
+            }
+          })
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || '개명 제안을 가져오는 중 오류가 발생했습니다')
+        }
+
+        const result = await response.json()
+
+        if (result.success) {
+          // 결과 데이터 변환
+          const transformedNames = result.data.candidates.slice(0, 5).map((candidate: {
+            firstName: string[]
+            characters: Array<{ character: string; meaning: string | null }>
+            scores: { overall: number }
+          }) => {
+            const firstName = candidate.firstName.join('')
+            const firstHanja = candidate.characters[0].character
+            const secondHanja = candidate.characters[1].character
+            const fullName = data.lastName + firstName
+            const fullHanja = data.lastName + firstHanja + secondHanja
+            const score = Math.round(candidate.scores.overall)
+            const improvement = currentScore > 0 ? `+${score - currentScore}` : `${score}`
+
+            // 의미 조합
+            const meaning = `${candidate.characters[0].meaning || ''} ${candidate.characters[1].meaning || ''}`.trim()
+
+            return {
+              name: fullName,
+              hanja: fullHanja,
+              meaning: meaning || '좋은 의미의 이름',
+              score,
+              improvement,
+              details: candidate
+            }
+          })
+
+          setRecommendations(transformedNames)
+
+          toast({
+            title: "개명 제안 완료",
+            description: `${transformedNames.length}개의 이름을 추천합니다.`,
+          })
+        }
+      } catch (err) {
+        console.error('Recommendation error:', err)
+        setError(err instanceof Error ? err.message : '개명 제안을 가져오는 중 오류가 발생했습니다')
+        toast({
+          title: "오류 발생",
+          description: err instanceof Error ? err.message : '개명 제안을 가져오는 중 오류가 발생했습니다',
+          variant: "destructive"
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchRecommendations()
+  }, [analysisId, data, toast])
+
+  // 로딩 중
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          className="text-center py-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="w-20 h-20 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <h3 className="text-xl font-bold">개명 제안 생성 중...</h3>
+          <p className="text-gray-600 mt-2">사주에 맞는 최적의 이름을 찾고 있습니다</p>
+        </motion.div>
+      </div>
+    )
+  }
+
+  // 에러 발생
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-8 text-center">
+            <h3 className="text-xl font-bold text-red-600 mb-4">개명 제안 오류</h3>
+            <p className="text-gray-700 mb-6">{error}</p>
+            <Button
+              onClick={() => window.location.reload()}
+              className="bg-orange-500 hover:bg-orange-600"
+            >
+              다시 시도하기
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // 성공 - 실제 추천 결과 표시
+  const names = recommendations.length > 0 ? recommendations : []
+
+  // 추천 결과가 없는 경우
+  if (names.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardContent className="p-8 text-center">
+            <h3 className="text-xl font-bold text-yellow-600 mb-4">추천 이름이 없습니다</h3>
+            <p className="text-gray-700 mb-6">
+              현재 조건에 맞는 이름을 찾을 수 없습니다. 전문가 상담을 받아보세요.
+            </p>
+            <Button
+              onClick={onSkip}
+              className="bg-orange-500 hover:bg-orange-600"
+            >
+              전문가 상담받기
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-8">개명 제안 결과</h2>
-      
+
       <div className="grid gap-4 mb-8">
         {names.map((item, index) => (
           <motion.div
@@ -567,14 +847,16 @@ function RenamingExpertProposals() {
 
 export default function Renaming() {
   const [step, setStep] = useState<'input' | 'analysis' | 'result' | 'experts'>('input')
-  const [formData, setFormData] = useState(null)
+  const [formData, setFormData] = useState<RenamingFormData | null>(null)
+  const [analysisId, setAnalysisId] = useState<string | null>(null)
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = (data: RenamingFormData) => {
     setFormData(data)
     setStep('analysis')
   }
 
-  const handleAnalysisComplete = () => {
+  const handleAnalysisComplete = (id: string) => {
+    setAnalysisId(id)
     setStep('result')
   }
 
@@ -626,8 +908,8 @@ export default function Renaming() {
           <CurrentNameAnalysis data={formData} onComplete={handleAnalysisComplete} />
         )}
 
-        {step === 'result' && (
-          <RenamingResults data={formData} onPayment={handlePayment} onSkip={handleSkip} />
+        {step === 'result' && analysisId && (
+          <RenamingResults data={formData} analysisId={analysisId} onPayment={handlePayment} onSkip={handleSkip} />
         )}
 
         {step === 'experts' && (

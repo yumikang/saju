@@ -219,6 +219,54 @@ export const validateLastName = z.string()
   });
 
 // ============================================================
+// Renaming Analyze-Current Request Schema
+// ============================================================
+
+/**
+ * POST /api/renaming/analyze-current 요청 스키마
+ *
+ * 현재 이름 분석 API 요청 데이터
+ */
+export const AnalyzeCurrentRequestSchema = z.object({
+  birthDate: z.string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, {
+      message: 'YYYY-MM-DD 형식이어야 합니다 (예: 1990-05-15)',
+    }),
+
+  birthTime: z.string()
+    .trim()
+    .regex(/^\d{2}:\d{2}$/, {
+      message: 'HH:MM 형식이어야 합니다 (예: 14:30)',
+    }),
+
+  isLunar: z.boolean()
+    .default(false),
+
+  currentName: z.object({
+    lastName: z.string()
+      .min(1, '성은 최소 1자 이상이어야 합니다')
+      .max(2, '성은 최대 2자까지 입력 가능합니다'),
+    firstName: z.array(z.string().min(1, '이름은 최소 1자 이상이어야 합니다'))
+      .length(2, '이름은 2자여야 합니다 (예: ["민", "준"])')
+      .describe('이름 배열 (2자)'),
+  }),
+
+  gender: z.enum(['male', 'female'], {
+    errorMap: () => ({ message: 'male 또는 female이어야 합니다' }),
+  }).optional(),
+});
+
+export type AnalyzeCurrentRequest = z.infer<typeof AnalyzeCurrentRequestSchema>;
+
+/**
+ * AnalyzeCurrent 요청 데이터 검증
+ */
+export function validateAnalyzeCurrentRequest(data: unknown): AnalyzeCurrentRequest {
+  return AnalyzeCurrentRequestSchema.parse(data);
+}
+
+// ============================================================
 // Type Exports for Convenience
 // ============================================================
 

@@ -7,7 +7,7 @@
  * 참고: claudedocs/81-numerology-research.md
  */
 
-import type { FortuneRating } from '../types';
+import type { FortuneRating, NumerologyGridsAnalysis } from '../types';
 
 export interface NumerologyEntry {
   number: number;
@@ -236,7 +236,7 @@ export function getAverageFourGridsScore(grids: FourGrids): number {
 /**
  * 사격의 상세 분석 (NumerologyGridsAnalysis 타입으로 반환)
  */
-export function getDetailedFourGridsAnalysis(grids: FourGrids): any {
+export function getDetailedFourGridsAnalysis(grids: FourGrids): NumerologyGridsAnalysis {
   const 원격Info = getNumerologyInfo(grids.원격);
   const 형격Info = getNumerologyInfo(grids.형격);
   const 이격Info = getNumerologyInfo(grids.이격);

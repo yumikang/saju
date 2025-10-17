@@ -471,3 +471,20 @@ model NamingPayment {
   @@index([requestedAt(sort: Desc)])
   @@map("naming_payments")
 }
+
+// RenamingAnalysis - 개명 서비스 현재 이름 분석 결과
+model RenamingAnalysis {
+  id               String   @id @default(uuid())
+  birthDate        String   @map("birth_date")
+  birthTime        String   @map("birth_time")
+  isLunar          Boolean  @map("is_lunar")
+  currentNameHanja String   @map("current_name_hanja")  // 현재 이름 한자 (성+이름)
+  currentScore     Float    @map("current_score")       // 현재 이름 점수
+  sajuData         Json     @map("saju_data")           // 사주 데이터 (JSON)
+  analysisData     Json     @map("analysis_data")       // 분석 결과 (문제점, 개선사항 등)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([createdAt])
+  @@map("renaming_analyses")
+}

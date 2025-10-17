@@ -12,8 +12,25 @@ import { cn } from "~/lib/utils"
 import { MultiHanjaSelector } from "~/components/ui/hanja-selector"
 import { HanjaChar } from "~/lib/hanja-data"
 
+// 타입 정의
+interface PersonData {
+  name: string;
+  nameHanja: (HanjaChar | null)[];
+  birthDate: Date | undefined;
+  birthTime: string;
+  calendarType: 'solar' | 'lunar';
+}
+
+interface CoupleFormData {
+  maleData: PersonData;
+  femaleData: PersonData;
+  relationshipStatus: string;
+  consultationType: string;
+  concerns: string;
+}
+
 // 커플 정보 입력 컴포넌트
-function CoupleInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
+function CoupleInfoForm({ onSubmit }: { onSubmit: (data: CoupleFormData) => void }) {
   const [formData, setFormData] = useState({
     // 남성 정보
     maleData: {
@@ -358,7 +375,7 @@ function CoupleInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
 }
 
 // 궁합 분석 결과 컴포넌트
-function CompatibilityAnalysis({ data, onComplete }: { data: any, onComplete: () => void }) {
+function CompatibilityAnalysis({ data, onComplete }: { data: CoupleFormData | null, onComplete: () => void }) {
   const [isAnalyzing, setIsAnalyzing] = useState(true)
 
   const compatibility = {
@@ -500,7 +517,7 @@ function CompatibilityAnalysis({ data, onComplete }: { data: any, onComplete: ()
 }
 
 // 상세 궁합 결과 컴포넌트
-function DetailedCompatibilityResults({ data, onPayment, onSkip }: { data: any, onPayment: () => void, onSkip: () => void }) {
+function DetailedCompatibilityResults({ data, onPayment, onSkip }: { data: CoupleFormData | null, onPayment: () => void, onSkip: () => void }) {
   const { toast } = useToast()
 
   const detailedResults = [
@@ -690,9 +707,9 @@ function SajuExpertProposals() {
 
 export default function Saju() {
   const [step, setStep] = useState<'input' | 'analysis' | 'result' | 'experts'>('input')
-  const [formData, setFormData] = useState(null)
+  const [formData, setFormData] = useState<CoupleFormData | null>(null)
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = (data: CoupleFormData) => {
     setFormData(data)
     setStep('analysis')
   }

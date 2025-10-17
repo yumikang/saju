@@ -12,7 +12,7 @@
  * 4. Full Scoring (CPU): 1,000 pairs → scored (1.5-2.5s)
  */
 
-import { PrismaClient, Element } from '@prisma/client';
+import { PrismaClient, Element, YinYang, Prisma } from '@prisma/client';
 import { ScoringPipeline } from './scorers';
 import type {
   NameCandidate,
@@ -41,7 +41,7 @@ interface HanjaFromDB {
   meaning: string | null;
   strokes: number | null;
   element: Element | null;
-  yinYang: any;
+  yinYang: YinYang | null;
   gender: string | null;
   nameFrequency: number | null;
   usageFrequency: number | null;
@@ -77,15 +77,7 @@ export class HanjaMatcher {
       enableEarlyTermination = true,
     } = options;
 
-    console.log('🔍 매칭 시작:', {
-      favorableElements: preferredElements.map(e => e.toString()),
-      lackingElements: saju.lackingElements.map(e => e.toString()),
-      lastName,
-    });
-
-    // ═══════════════════════════════════════
     // Stage 1: Element-based DB filtering
-    // ═══════════════════════════════════════
     const stage1Start = Date.now();
     const pool = await this.filterByElements(
       preferredElements,
@@ -95,27 +87,19 @@ export class HanjaMatcher {
     );
     const stage1Time = Date.now() - stage1Start;
 
-    console.log(`✓ Stage 1 완료: ${pool.length}개 한자 선택 (${stage1Time}ms)`);
-
     if (pool.length < 10) {
       throw new Error(
         '사주에 맞는 한자가 너무 적습니다 (최소 10개 필요). 조건을 완화해주세요.'
       );
     }
 
-    // ═══════════════════════════════════════
     // Stage 2: Stroke-based filtering
-    // ═══════════════════════════════════════
     const stage2Start = Date.now();
     const lastNameStrokes = await this.getStrokeCount(lastName);
     const filteredPool = this.filterByStrokeLuck(pool, lastNameStrokes);
     const stage2Time = Date.now() - stage2Start;
 
-    console.log(`✓ Stage 2 완료: ${filteredPool.length}개 한자 유지 (${stage2Time}ms)`);
-
-    // ═══════════════════════════════════════
     // Stage 3 & 4: Combination generation + scoring
-    // ═══════════════════════════════════════
     const stage3Start = Date.now();
     const candidates = await this.generateAndScoreCombinations(
       filteredPool,
@@ -129,12 +113,8 @@ export class HanjaMatcher {
     const stage3Time = Date.now() - stage3Start;
 
     const totalTime = Date.now() - startTime;
-    console.log(`✓ Stage 3-4 완료: ${candidates.length}개 후보 생성 (${stage3Time}ms)`);
-    console.log(`🎉 전체 완료: ${totalTime}ms`);
 
-    // ═══════════════════════════════════════
     // Final: Sort and return top results
-    // ═══════════════════════════════════════
     return candidates
       .sort((a, b) => b.scores.overall - a.scores.overall)
       .slice(0, maxResults);
@@ -160,29 +140,27 @@ export class HanjaMatcher {
     const popularChars = [...ALL_POPULAR_HANJA];
     const rareChars = [...RARE_HANJA, ...avoidChars];
 
-    // Build where clause
-    const where: any = {
-      AND: [
-        // 1️⃣ 화이트리스트: 인기 한자만 (veryPopular + popular + moderate)
-        { character: { in: popularChars } },
+    // Build where clause with mutable AND array
+    const andConditions: Prisma.HanjaDictWhereInput[] = [
+      // 1️⃣ 화이트리스트: 인기 한자만 (veryPopular + popular + moderate)
+      { character: { in: popularChars } },
 
-        // 2️⃣ Element filter (오행 조화)
-        { element: { in: allTargetElements } },
+      // 2️⃣ Element filter (오행 조화)
+      { element: { in: allTargetElements } },
 
-        // 3️⃣ Only good for naming
-        { isGoodForNaming: true },
+      // 3️⃣ Only good for naming
+      { isGoodForNaming: true },
 
-        // 4️⃣ 인기도 필터 (nameFrequency >= 50)
-        { nameFrequency: { gte: 50 } },
+      // 4️⃣ 인기도 필터 (nameFrequency >= 50)
+      { nameFrequency: { gte: 50 } },
 
-        // 5️⃣ Exclude rare and user-specified characters
-        { character: { notIn: rareChars } },
-      ],
-    };
+      // 5️⃣ Exclude rare and user-specified characters
+      { character: { notIn: rareChars } },
+    ];
 
     // Optional gender filter
     if (gender) {
-      where.AND.push({
+      andConditions.push({
         OR: [
           { gender: gender },
           { gender: 'neutral' },
@@ -190,6 +168,10 @@ export class HanjaMatcher {
         ],
       });
     }
+
+    const where: Prisma.HanjaDictWhereInput = {
+      AND: andConditions,
+    };
 
     // 우선 화이트리스트로 검색
     let results = await prisma.hanjaDict.findMany({
@@ -216,7 +198,6 @@ export class HanjaMatcher {
 
     // 인기 한자가 부족하면 (< 50개) → 화이트리스트 없이 재검색 (폴백)
     if (results.length < 50) {
-      console.log(`⚠️  화이트리스트 한자 부족 (${results.length}개) → 전체 검색으로 폴백`);
 
       results = await prisma.hanjaDict.findMany({
         where: {
@@ -383,7 +364,6 @@ export class HanjaMatcher {
 
           // Early termination check
           if (enableEarlyTermination && highScoreCount >= EARLY_TERMINATION_THRESHOLD) {
-            console.log(`⚡ 조기 종료: ${highScoreCount}개 고득점 후보 확보`);
             break;
           }
         }
@@ -402,8 +382,6 @@ export class HanjaMatcher {
       candidates.push(...qualified);
       processedCount += batchBuffer.length;
     }
-
-    console.log(`📊 총 ${processedCount}개 조합 평가, ${candidates.length}개 적격`);
 
     return candidates;
   }

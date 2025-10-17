@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
@@ -159,28 +159,72 @@ function BirthInfoForm({ onSubmit }: { onSubmit: (data: any) => void }) {
 }
 
 // 사주 분석 결과 컴포넌트
-function SajuAnalysis({ data, onComplete }: { data: any, onComplete: () => void }) {
+function SajuAnalysis({ data, onComplete }: { data: any, onComplete: (sajuDataId: string) => void }) {
   const [isAnalyzing, setIsAnalyzing] = useState(true)
+  const [sajuData, setSajuData] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
-  // 모의 사주 데이터
-  const sajuData = {
-    elements: {
-      목: 2,
-      화: 1,
-      토: 3,
-      금: 1,
-      수: 1
-    },
-    lacking: ['화', '금', '수'],
-    yongsin: '화'
-  }
+  useEffect(() => {
+    async function analyzeSaju() {
+      try {
+        const response = await fetch('/api/naming/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            birthDate: format(data.birthDate, 'yyyy-MM-dd'),
+            birthTime: data.birthTime,
+            isLunar: data.calendarType === 'lunar',
+            gender: data.gender,
+          }),
+        })
 
-  useState(() => {
-    setTimeout(() => {
-      setIsAnalyzing(false)
-      setTimeout(onComplete, 2000)
-    }, 3000)
-  })
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || '사주 분석에 실패했습니다')
+        }
+
+        const result = await response.json()
+
+        // API 응답 구조에 맞게 데이터 변환
+        const elementCounts = result.data.elementCounts
+        const transformedData = {
+          sajuDataId: result.data.sajuDataId,
+          elements: {
+            목: Math.round(elementCounts.WOOD || 0),
+            화: Math.round(elementCounts.FIRE || 0),
+            토: Math.round(elementCounts.EARTH || 0),
+            금: Math.round(elementCounts.METAL || 0),
+            수: Math.round(elementCounts.WATER || 0)
+          },
+          lacking: result.data.lackingElements.map((elem: string) => {
+            const map: Record<string, string> = {
+              'WOOD': '목', 'FIRE': '화', 'EARTH': '토', 'METAL': '금', 'WATER': '수'
+            }
+            return map[elem] || elem
+          }),
+          yongsin: result.data.yongsin?.primary === 'FIRE' ? '화' :
+                   result.data.yongsin?.primary === 'WOOD' ? '목' :
+                   result.data.yongsin?.primary === 'EARTH' ? '토' :
+                   result.data.yongsin?.primary === 'METAL' ? '금' : '수'
+        }
+
+        setSajuData(transformedData)
+        setIsAnalyzing(false)
+      } catch (err) {
+        console.error('Saju analysis error:', err)
+        setError(err instanceof Error ? err.message : '사주 분석 중 오류가 발생했습니다')
+        setIsAnalyzing(false)
+        toast({
+          title: '오류',
+          description: err instanceof Error ? err.message : '사주 분석 중 오류가 발생했습니다',
+          variant: 'destructive',
+        })
+      }
+    }
+
+    analyzeSaju()
+  }, [data, toast])
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -194,14 +238,23 @@ function SajuAnalysis({ data, onComplete }: { data: any, onComplete: () => void 
           <h3 className="text-xl font-bold">사주팔자 분석 중...</h3>
           <p className="text-gray-600 mt-2">천간지지와 오행을 계산하고 있습니다</p>
         </motion.div>
-      ) : (
+      ) : error ? (
+        <motion.div
+          className="text-center py-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="text-red-500 text-xl font-bold mb-4">분석 실패</div>
+          <p className="text-gray-600">{error}</p>
+        </motion.div>
+      ) : sajuData ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
           <h3 className="text-2xl font-bold text-center">사주 분석 결과</h3>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>오행 분포</CardTitle>
@@ -231,28 +284,120 @@ function SajuAnalysis({ data, onComplete }: { data: any, onComplete: () => void 
               </p>
             </CardContent>
           </Card>
+
+          {/* 다음 단계 버튼 */}
+          <div className="text-center mt-8">
+            <Button
+              size="lg"
+              onClick={() => onComplete(sajuData.sajuDataId)}
+              className="bg-orange-500 hover:bg-orange-600 px-12"
+            >
+              이름 추천 확인하기
+              <CalendarIcon className="ml-2 w-5 h-5" />
+            </Button>
+          </div>
         </motion.div>
-      )}
+      ) : null}
     </div>
   )
 }
 
 // 작명 결과 컴포넌트
-function NamingResults({ onPayment, onSkip }: { onPayment: () => void, onSkip: () => void }) {
+function NamingResults({
+  sajuDataId,
+  lastName,
+  gender,
+  parentValue,
+  onPayment,
+  onSkip
+}: {
+  sajuDataId: string
+  lastName: string
+  gender: string
+  parentValue: string
+  onPayment: () => void
+  onSkip: () => void
+}) {
   const { toast } = useToast()
-  
-  const names = [
-    { name: "김도윤", hanja: "金道允", meaning: "도를 따르고 허락받은 아이", score: 95 },
-    { name: "김서준", hanja: "金瑞俊", meaning: "상서롭고 준수한 아이", score: 93 },
-    { name: "김민준", hanja: "金敏俊", meaning: "민첩하고 준수한 아이", score: 91 },
-    { name: "김지호", hanja: "金智浩", meaning: "지혜롭고 호탕한 아이", score: 90 },
-    { name: "김현우", hanja: "金賢宇", meaning: "현명하고 우주같은 아이", score: 88 }
-  ]
+  const [isLoading, setIsLoading] = useState(true)
+  const [names, setNames] = useState<any[]>([])
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchNames() {
+      try {
+        const response = await fetch('/api/naming/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sajuDataId,
+            lastName,
+            preferences: {
+              gender: gender === 'M' ? 'male' : 'female',
+              count: 5,
+              meaning: parentValue
+            }
+          }),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || '이름 추천에 실패했습니다')
+        }
+
+        const result = await response.json()
+        setNames(result.data.candidates || [])
+        setIsLoading(false)
+      } catch (err) {
+        console.error('Name recommendation error:', err)
+        setError(err instanceof Error ? err.message : '이름 추천 중 오류가 발생했습니다')
+        setIsLoading(false)
+        toast({
+          title: '오류',
+          description: err instanceof Error ? err.message : '이름 추천 중 오류가 발생했습니다',
+          variant: 'destructive',
+        })
+      }
+    }
+
+    fetchNames()
+  }, [sajuDataId, lastName, gender, parentValue, toast])
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          className="text-center py-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="w-20 h-20 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <h3 className="text-xl font-bold">이름 추천 중...</h3>
+          <p className="text-gray-600 mt-2">사주에 맞는 최적의 이름을 찾고 있습니다</p>
+        </motion.div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          className="text-center py-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="text-red-500 text-xl font-bold mb-4">추천 실패</div>
+          <p className="text-gray-600">{error}</p>
+        </motion.div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-8">AI 추천 이름</h2>
-      
+
       <div className="grid gap-4 mb-8">
         {names.map((item, index) => (
           <motion.div
@@ -435,14 +580,16 @@ function ExpertProposals() {
 
 export default function QuickNaming() {
   const [step, setStep] = useState<'input' | 'analysis' | 'result' | 'experts'>('input')
-  const [formData, setFormData] = useState(null)
+  const [formData, setFormData] = useState<any>(null)
+  const [sajuDataId, setSajuDataId] = useState<string>('')
 
   const handleFormSubmit = (data: any) => {
     setFormData(data)
     setStep('analysis')
   }
 
-  const handleAnalysisComplete = () => {
+  const handleAnalysisComplete = (id: string) => {
+    setSajuDataId(id)
     setStep('result')
   }
 
@@ -466,7 +613,7 @@ export default function QuickNaming() {
                 <div className={`
                   w-10 h-10 rounded-full flex items-center justify-center
                   ${index <= ['input', 'analysis', 'result', 'experts'].indexOf(step)
-                    ? 'bg-orange-500 text-white' 
+                    ? 'bg-orange-500 text-white'
                     : 'bg-gray-200 text-gray-500'}
                 `}>
                   {index + 1}
@@ -491,12 +638,19 @@ export default function QuickNaming() {
           </motion.div>
         )}
 
-        {step === 'analysis' && (
+        {step === 'analysis' && formData && (
           <SajuAnalysis data={formData} onComplete={handleAnalysisComplete} />
         )}
 
-        {step === 'result' && (
-          <NamingResults onPayment={handlePayment} onSkip={handleSkip} />
+        {step === 'result' && formData && sajuDataId && (
+          <NamingResults
+            sajuDataId={sajuDataId}
+            lastName={formData.lastName}
+            gender={formData.gender}
+            parentValue={formData.parentValue}
+            onPayment={handlePayment}
+            onSkip={handleSkip}
+          />
         )}
 
         {step === 'experts' && (

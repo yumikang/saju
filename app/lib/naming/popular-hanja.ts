@@ -265,23 +265,28 @@ export const ALL_SUITABLE_HANJA = [
 export type PopularityLevel = 'very' | 'popular' | 'moderate' | 'traditional' | 'rare' | 'unknown';
 
 export function getPopularityLevel(char: string): PopularityLevel {
-  if ([...VERY_POPULAR_MALE_HANJA, ...VERY_POPULAR_FEMALE_HANJA].includes(char as any)) {
+  const veryPopular = [...VERY_POPULAR_MALE_HANJA, ...VERY_POPULAR_FEMALE_HANJA];
+  if (veryPopular.includes(char)) {
     return 'very';
   }
 
-  if ([...POPULAR_MALE_HANJA, ...POPULAR_FEMALE_HANJA].includes(char as any)) {
+  const popular = [...POPULAR_MALE_HANJA, ...POPULAR_FEMALE_HANJA];
+  if (popular.includes(char)) {
     return 'popular';
   }
 
-  if (MODERATE_POPULARITY_HANJA.includes(char as any)) {
+  const moderate = [...MODERATE_POPULARITY_HANJA];
+  if (moderate.includes(char)) {
     return 'moderate';
   }
 
-  if (TRADITIONAL_NAMING_HANJA.includes(char as any)) {
+  const traditional = [...TRADITIONAL_NAMING_HANJA];
+  if (traditional.includes(char)) {
     return 'traditional';
   }
 
-  if (RARE_HANJA.includes(char as any)) {
+  const rare = [...RARE_HANJA];
+  if (rare.includes(char)) {
     return 'rare';
   }
 
