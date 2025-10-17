@@ -179,4 +179,123 @@ export class HanjaRepository {
       averageStrokes: strokeStats._avg.strokes || 0,
     };
   }
+
+  /**
+   * 사주에 맞는 한자 추천 (DB 기반) - 핵심 작명 로직
+   *
+   * gender, nameFrequency, isGoodForNaming 필터를 활용하여
+   * 현대적이고 품질 높은 이름 추천
+   *
+   * @param lackingElements - 부족한 오행 (예: ['WOOD', 'FIRE'])
+   * @param gender - 성별 ('M' | 'F' | null)
+   * @param minPopularity - 최소 인기도 (기본: 50점 이상)
+   * @param limit - 최대 결과 수 (기본: 100개)
+   */
+  async recommendForSaju(params: {
+    lackingElements?: string[];
+    gender?: 'M' | 'F' | null;
+    minPopularity?: number;
+    limit?: number;
+  }): Promise<HanjaDict[]> {
+    const {
+      lackingElements = [],
+      gender = null,
+      minPopularity = 50,
+      limit = 100,
+    } = params;
+
+    // WHERE 조건 구성
+    const where: Prisma.HanjaDictWhereInput = {
+      AND: [
+        // 1. 작명에 적합한 한자만 (부정적 의미 제외)
+        { isGoodForNaming: true },
+
+        // 2. 인기도 필터 (nameFrequency >= minPopularity)
+        { nameFrequency: { gte: minPopularity } },
+
+        // 3. 부족한 오행 중 하나 (optional)
+        lackingElements.length > 0
+          ? { element: { in: lackingElements as any } }
+          : {},
+
+        // 4. 성별 필터 (male/female + neutral)
+        gender === 'M'
+          ? {
+              OR: [
+                { gender: 'male' },
+                { gender: 'neutral' },
+              ],
+            }
+          : gender === 'F'
+          ? {
+              OR: [
+                { gender: 'female' },
+                { gender: 'neutral' },
+              ],
+            }
+          : {},
+      ],
+    };
+
+    // DB 쿼리 (인기도 우선 정렬)
+    const results = await this.prisma.hanjaDict.findMany({
+      where,
+      orderBy: [
+        { nameFrequency: 'desc' }, // 인기도 우선
+        { strokes: 'asc' }, // 획수 적은 것 우선
+      ],
+      take: limit,
+    });
+
+    return results;
+  }
+
+  /**
+   * 성별별 인기 한자 가져오기
+   */
+  async getPopularByGender(params: {
+    gender: 'male' | 'female' | 'neutral';
+    limit?: number;
+    minPopularity?: number;
+  }): Promise<HanjaDict[]> {
+    const { gender, limit = 50, minPopularity = 70 } = params;
+
+    return this.prisma.hanjaDict.findMany({
+      where: {
+        gender: gender,
+        isGoodForNaming: true,
+        nameFrequency: { gte: minPopularity },
+      },
+      orderBy: [
+        { nameFrequency: 'desc' },
+        { strokes: 'asc' },
+      ],
+      take: limit,
+    });
+  }
+
+  /**
+   * 오행별 한자 가져오기
+   */
+  async getByElement(params: {
+    element: string;
+    gender?: 'male' | 'female' | 'neutral';
+    limit?: number;
+    minPopularity?: number;
+  }): Promise<HanjaDict[]> {
+    const { element, gender, limit = 50, minPopularity = 50 } = params;
+
+    return this.prisma.hanjaDict.findMany({
+      where: {
+        element: element as any,
+        isGoodForNaming: true,
+        nameFrequency: { gte: minPopularity },
+        ...(gender ? { gender: gender } : {}),
+      },
+      orderBy: [
+        { nameFrequency: 'desc' },
+      ],
+      take: limit,
+    });
+  }
 }

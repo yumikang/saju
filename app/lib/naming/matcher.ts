@@ -21,6 +21,7 @@ import type {
   HanjaCharacter,
 } from './types';
 import type { SajuResult } from '../saju/calculator';
+import { ALL_POPULAR_HANJA, RARE_HANJA } from './popular-hanja';
 
 const prisma = new PrismaClient();
 
@@ -140,7 +141,7 @@ export class HanjaMatcher {
   }
 
   /**
-   * Stage 1: 오행으로 한자 필터링 (DB)
+   * Stage 1: 오행으로 한자 필터링 (DB) + 화이트리스트
    */
   private async filterByElements(
     favorableElements: Element[],
@@ -153,17 +154,29 @@ export class HanjaMatcher {
       ...new Set([...favorableElements, ...lackingElements])
     ];
 
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 🔥 CRITICAL: 인기 한자 화이트리스트 우선 적용
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const popularChars = [...ALL_POPULAR_HANJA];
+    const rareChars = [...RARE_HANJA, ...avoidChars];
+
     // Build where clause
     const where: any = {
       AND: [
-        // Element filter (uses composite index [element, isGoodForNaming])
+        // 1️⃣ 화이트리스트: 인기 한자만 (veryPopular + popular + moderate)
+        { character: { in: popularChars } },
+
+        // 2️⃣ Element filter (오행 조화)
         { element: { in: allTargetElements } },
 
-        // Only good for naming
+        // 3️⃣ Only good for naming
         { isGoodForNaming: true },
 
-        // Exclude specific characters
-        { character: { notIn: avoidChars } },
+        // 4️⃣ 인기도 필터 (nameFrequency >= 50)
+        { nameFrequency: { gte: 50 } },
+
+        // 5️⃣ Exclude rare and user-specified characters
+        { character: { notIn: rareChars } },
       ],
     };
 
@@ -178,7 +191,8 @@ export class HanjaMatcher {
       });
     }
 
-    return await prisma.hanjaDict.findMany({
+    // 우선 화이트리스트로 검색
+    let results = await prisma.hanjaDict.findMany({
       where,
       select: {
         id: true,
@@ -194,11 +208,56 @@ export class HanjaMatcher {
         category: true,
       },
       orderBy: [
-        { nameFrequency: 'desc' },
+        { nameFrequency: 'desc' }, // 인기도 우선 정렬
         { usageFrequency: 'desc' },
       ],
-      take: 1000, // Safety limit
+      take: 300, // 인기 한자 300개로 제한 (500 → 300)
     });
+
+    // 인기 한자가 부족하면 (< 50개) → 화이트리스트 없이 재검색 (폴백)
+    if (results.length < 50) {
+      console.log(`⚠️  화이트리스트 한자 부족 (${results.length}개) → 전체 검색으로 폴백`);
+
+      results = await prisma.hanjaDict.findMany({
+        where: {
+          AND: [
+            { element: { in: allTargetElements } },
+            { isGoodForNaming: true },
+            { nameFrequency: { gte: 50 } },
+            { character: { notIn: rareChars } },
+            ...(gender
+              ? [{
+                  OR: [
+                    { gender: gender },
+                    { gender: 'neutral' },
+                    { gender: null },
+                  ],
+                }]
+              : []),
+          ],
+        },
+        select: {
+          id: true,
+          character: true,
+          koreanReading: true,
+          meaning: true,
+          strokes: true,
+          element: true,
+          yinYang: true,
+          gender: true,
+          nameFrequency: true,
+          usageFrequency: true,
+          category: true,
+        },
+        orderBy: [
+          { nameFrequency: 'desc' },
+          { usageFrequency: 'desc' },
+        ],
+        take: 300,
+      });
+    }
+
+    return results;
   }
 
   /**

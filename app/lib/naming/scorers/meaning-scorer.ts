@@ -11,6 +11,7 @@
 
 import { BaseScorer } from './base-scorer';
 import type { NameCandidate, ScoringContext, HanjaCharacter } from '../types';
+import { getPopularityLevel, getPopularityScore } from '../popular-hanja';
 
 export class MeaningScorer extends BaseScorer {
   readonly name = 'meaning-harmony';
@@ -107,11 +108,34 @@ export class MeaningScorer extends BaseScorer {
       }
     }
 
-    // Popularity contribution (0-20 points)
-    // Higher nameFrequency = more commonly used in names = more appropriate
-    const nameFreq = char.nameFrequency || 0;
-    const popularityScore = Math.min(20, nameFreq / 50);
-    score += popularityScore;
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 🔥 CRITICAL: 현대 인기도 기반 점수 (0-30 points)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const popularityLevel = getPopularityLevel(char.character);
+
+    switch (popularityLevel) {
+      case 'very':
+        score += 30; // TOP 10 이름: 매우 인기 많음
+        break;
+      case 'popular':
+        score += 25; // TOP 50 이름: 인기 많음
+        break;
+      case 'moderate':
+        score += 20; // TOP 100 이름: 인기 있음
+        break;
+      case 'traditional':
+        score += 15; // 전통 작명용: 보통
+        break;
+      case 'rare':
+        score -= 30; // ❌ 드문 한자: 큰 페널티 (燠, 蹈 같은 문제 한자)
+        break;
+      case 'unknown':
+        // nameFrequency 값으로 보정
+        const nameFreq = char.nameFrequency || 0;
+        const nameFreqScore = Math.min(10, nameFreq / 100);
+        score += nameFreqScore;
+        break;
+    }
 
     return this.clamp(score, 0, 100);
   }

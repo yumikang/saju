@@ -22,39 +22,39 @@ function Calendar({
       captionLayout="dropdown-buttons"
       fromYear={fromYear}
       toYear={toYear}
-      className={cn("p-3", className)}
+      className={cn("p-3 bg-white rounded-lg border border-gray-200 shadow-sm", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
-        caption: "flex justify-center pt-1 relative items-center gap-2",
-        caption_label: "hidden", // 중복 표시 제거
-        caption_dropdowns: "flex gap-2",
-        dropdown_month: "px-3 py-2 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
-        dropdown_year: "px-3 py-2 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
-        dropdown: "px-3 py-2 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50",
-        vhidden: "hidden", // "Month:", "Year:" 라벨 숨김
-        nav: "hidden", // 드롭다운 모드에서는 네비게이션 버튼 숨김
+        caption: "flex justify-center pt-1 relative items-center gap-3 mb-4",
+        caption_label: "hidden",
+        caption_dropdowns: "flex gap-3 items-center",
+        dropdown_month: "flex-1 min-w-[100px]",
+        dropdown_year: "flex-1 min-w-[100px]",
+        dropdown: "h-11 w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium leading-tight shadow-sm transition-all hover:border-orange-300 hover:shadow-md focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-between",
+        vhidden: "hidden",
+        nav: "hidden",
         nav_button: "hidden",
         nav_button_previous: "hidden",
         nav_button_next: "hidden",
-        table: "w-full border-collapse space-y-1 bg-white",
+        table: "w-full border-collapse",
         head_row: "flex",
         head_cell:
-          "text-gray-600 rounded-md w-9 font-normal text-[0.8rem] bg-white",
-        row: "flex w-full mt-2",
-        cell: "h-9 w-9 text-center text-sm p-0 relative bg-white [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-orange-50 [&:has([aria-selected])]:bg-orange-50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+          "text-gray-500 rounded-md w-10 font-semibold text-xs uppercase tracking-wide",
+        row: "flex w-full mt-1",
+        cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-orange-50/50 first:[&:has([aria-selected])]:rounded-l-lg last:[&:has([aria-selected])]:rounded-r-lg",
         day: cn(
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100 inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-gray-900 hover:bg-orange-50 hover:text-orange-700"
+          "h-10 w-10 p-0 font-normal inline-flex items-center justify-center rounded-lg text-sm transition-all hover:bg-orange-50 hover:text-orange-600 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40 aria-selected:opacity-100"
         ),
         day_range_end: "day-range-end",
         day_selected:
-          "bg-orange-500 text-white hover:bg-orange-600 hover:text-white focus:bg-orange-600 focus:text-white",
-        day_today: "bg-orange-100 text-orange-900 font-medium",
+          "bg-orange-500 text-white font-semibold shadow-md hover:bg-orange-600 hover:text-white hover:shadow-lg focus:bg-orange-600 focus:text-white",
+        day_today: "bg-orange-50 text-orange-600 font-semibold border border-orange-200",
         day_outside:
-          "day-outside text-gray-400 opacity-50 aria-selected:bg-orange-50 aria-selected:text-gray-400 aria-selected:opacity-30",
-        day_disabled: "text-gray-400 opacity-50",
+          "day-outside text-gray-300 aria-selected:bg-orange-50/30 aria-selected:text-gray-300",
+        day_disabled: "text-gray-300 line-through",
         day_range_middle:
-          "aria-selected:bg-orange-50 aria-selected:text-orange-700",
+          "aria-selected:bg-orange-50/50 aria-selected:text-orange-600",
         day_hidden: "invisible",
         ...classNames,
       }}

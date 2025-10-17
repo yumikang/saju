@@ -1,17 +1,18 @@
 import { Socket } from 'socket.io';
-import type { 
-  NamingStartRequest, 
-  NamingProgressEvent, 
+import type {
+  NamingStartRequest,
+  NamingProgressEvent,
   NamingCompleteEvent,
   NamingErrorEvent,
   NamingResult,
-  SocketData 
+  SocketData
 } from '../types';
 import { generateAINames } from '../../lib/ai-naming.server';
 import { calculateSaju } from '../../lib/saju-calculator';
 import { evaluateName } from '../../lib/naming-evaluator';
-import { recommendHanjaForSaju, calculateBalance, coreHanjaDatabase } from '../../lib/hanja-unified';
+import { calculateBalance } from '../../lib/hanja-unified';
 import { prisma } from '../../lib/prisma.server';
+import { HanjaRepository } from '../../repositories/hanja.repository';
 
 // 진행 단계 정의
 const NAMING_STEPS = [
@@ -98,29 +99,28 @@ export async function handleNamingStart(
       water: sajuData.waterCount || 0
     };
     
-    // 부족한 오행 찾기
+    // 부족한 오행 찾기 (Prisma Element enum 형식으로)
     const lackingElements = Object.entries(elementCounts)
       .filter(([_, count]) => count < 2)
-      .map(([element]) => element === 'wood' ? '목' : 
-                         element === 'fire' ? '화' :
-                         element === 'earth' ? '토' :
-                         element === 'metal' ? '금' : '수');
-    
+      .map(([element]) => element === 'wood' ? 'WOOD' :
+                         element === 'fire' ? 'FIRE' :
+                         element === 'earth' ? 'EARTH' :
+                         element === 'metal' ? 'METAL' : 'WATER');
+
     currentProgress += NAMING_STEPS[1].weight;
 
     // Step 3: 용신 분석
     await emitProgress(socket, data.requestId, 3, currentProgress, '용신과 기신을 파악하고 있습니다...');
-    
-    const yongsin = sajuData.primaryYongsin || lackingElements[0] || '목';
-    
-    // 한자 추천
-    const recommendedHanja = recommendHanjaForSaju(
+
+    // DB 기반 한자 추천 (gender, nameFrequency, isGoodForNaming 필터 적용)
+    const hanjaRepo = new HanjaRepository(prisma);
+    const recommendedHanja = await hanjaRepo.recommendForSaju({
       lackingElements,
-      yongsin,
-      data.gender,
-      data.preferences?.values || []
-    );
-    
+      gender: data.gender,
+      minPopularity: 50, // 인기도 50점 이상
+      limit: 100
+    });
+
     currentProgress += NAMING_STEPS[2].weight;
 
     // 취소 체크
