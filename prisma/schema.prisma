@@ -488,3 +488,103 @@ model RenamingAnalysis {
   @@index([createdAt])
   @@map("renaming_analyses")
 }
+
+// ============================================================
+// Korean Lunar Calendar Data Model (만세력)
+// ============================================================
+// Source: MySQL databases converted to PostgreSQL
+// - Schema 1: 1900-2100 (detailed data with moon phases, lunar mansions)
+// - Schema 2: 1841-2110 (extended date range with basic data)
+// ============================================================
+
+// CalendarData - 음양력 변환 및 만세력 데이터
+model CalendarData {
+  id                Int       @id @default(autoincrement()) @map("cd_no")
+
+  // Year information
+  dangiYear         Int       @map("cd_sgi")                    // 단기년도
+  solarYear         Int       @map("cd_sy")                     // 양력 년
+  solarMonth        Int       @map("cd_sm")                     // 양력 월 (1-12)
+  solarDay          Int       @map("cd_sd")                     // 양력 일 (1-31)
+  lunarYear         Int       @map("cd_ly")                     // 음력 년
+  lunarMonth        Int       @map("cd_lm")                     // 음력 월 (1-12)
+  lunarDay          Int       @map("cd_ld")                     // 음력 일 (1-30)
+
+  // Stem-Branch (간지) - Year
+  yearGanjiHanja    String?   @map("cd_hyganjee") @db.VarChar(6)   // 년주 간지 한문
+  yearGanjiKorean   String?   @map("cd_kyganjee") @db.VarChar(6)   // 년주 간지 한글
+
+  // Stem-Branch (간지) - Month (Schema 1 only)
+  monthGanjiHanja   String?   @map("cd_hmganjee") @db.VarChar(6)   // 월주 간지 한문
+  monthGanjiKorean  String?   @map("cd_kmganjee") @db.VarChar(6)   // 월주 간지 한글
+
+  // Stem-Branch (간지) - Day
+  dayGanjiHanja     String?   @map("cd_hdganjee") @db.VarChar(6)   // 일주 간지 한문
+  dayGanjiKorean    String?   @map("cd_kdganjee") @db.VarChar(6)   // 일주 간지 한글
+
+  // Day of week
+  weekdayHanja      String?   @map("cd_hweek") @db.Char(3)         // 요일 한문 (Schema 1)
+  weekdayKorean     String?   @map("cd_kweek") @db.Char(3)         // 요일 한글 (Schema 1)
+  weekday           String?   @map("cd_week") @db.Char(3)          // 요일 (Schema 2 combined)
+
+  // Lunar mansions and moon data (Schema 1 only)
+  lunarMansion      String?   @map("cd_stars") @db.Char(3)         // 28수
+  moonState         String?   @map("cd_moon_state") @db.Char(3)    // 달 상태 (삭/망 등)
+  moonTime          String?   @map("cd_moon_time") @db.VarChar(12) // 달 시간
+
+  // Lunar month information (Schema 1 only)
+  isLeapMonth       Boolean   @default(false) @map("cd_leap_month") // 윤달 여부
+  monthSize         Int       @default(0) @map("cd_month_size")    // 월 크기 (대월/소월)
+
+  // Solar terms (24절기)
+  solarTermHanja    String?   @map("cd_hterms") @db.VarChar(6)     // 절기 한문
+  solarTermKorean   String?   @map("cd_kterms") @db.VarChar(6)     // 절기 한글
+  solarTermTime     String?   @map("cd_terms_time") @db.VarChar(12) // 절기 시간
+
+  // Special days
+  specialDayKorean  String?   @map("cd_keventday") @db.VarChar(6)  // 특수일 한글 (Schema 1)
+  dogDay            String?   @map("cd_dogday") @db.VarChar(6)     // 복날 표시 (Schema 2)
+
+  // Zodiac animal
+  zodiacAnimal      ZodiacAnimal @map("cd_ddi")                    // 띠
+
+  // Holidays and events
+  solarHoliday      String?   @map("cd_sol_plan") @db.VarChar(50)  // 양력 기념일
+  lunarHoliday      String?   @map("cd_lun_plan") @db.VarChar(50)  // 음력 기념일
+  holidayType       Int       @default(0) @map("holiday")          // 공휴일 구분 (0=평일, 1=공휴일, 2=법정공휴일)
+
+  // Metadata
+  isLunarDate       Boolean   @default(false) @map("cd_kk")        // 음력 여부 (Schema 2)
+  dataSource        String?   @map("data_source") @db.VarChar(20)  // Track which source (schema1/schema2/merged)
+
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  // Indexes for efficient querying
+  @@unique([solarYear, solarMonth, solarDay], name: "solar_date_unique")
+  @@index([solarYear, solarMonth, solarDay], name: "solar_date_idx")
+  @@index([lunarYear, lunarMonth, lunarDay], name: "lunar_date_idx")
+  @@index([solarYear])
+  @@index([lunarYear])
+  @@index([holidayType])
+  @@index([zodiacAnimal])
+  @@index([solarTermKorean])
+  @@index([isLeapMonth])
+  @@map("calendar_data")
+}
+
+// Zodiac Animal Enum (12지지)
+enum ZodiacAnimal {
+  RAT      @map("쥐")
+  OX       @map("소")
+  TIGER    @map("호랑이")
+  RABBIT   @map("토끼")
+  DRAGON   @map("용")
+  SNAKE    @map("뱀")
+  HORSE    @map("말")
+  SHEEP    @map("양")
+  MONKEY   @map("원숭이")
+  ROOSTER  @map("닭")
+  DOG      @map("개")
+  PIG      @map("돼지")
+}

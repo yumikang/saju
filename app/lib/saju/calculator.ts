@@ -10,6 +10,7 @@
  */
 
 import { Element } from '@prisma/client';
+import { getCalendarDataService } from '~/lib/calendar/calendar-data.service';
 
 export interface Pillar {
   stem: string;    // 천간
@@ -82,16 +83,16 @@ export class SajuCalculator {
   /**
    * 메인 계산 함수
    */
-  calculate(
+  async calculate(
     birthDate: Date,
     birthTime: string, // "HH:mm" 형식
     isLunar: boolean = false
-  ): SajuResult {
+  ): Promise<SajuResult> {
     // 1. 음력 변환 (필요시)
-    const solarDate = isLunar ? this.convertToSolar(birthDate) : birthDate;
+    const solarDate = isLunar ? await this.convertToSolar(birthDate) : birthDate;
 
     // 2. 절기 계산 (입춘)
-    const lichun = this.calculateLichun(solarDate.getFullYear());
+    const lichun = await this.calculateLichun(solarDate.getFullYear());
 
     // 3. 사주 팔자 추출
     const pillars = {
@@ -306,22 +307,43 @@ export class SajuCalculator {
   }
 
   /**
-   * 입춘 계산 (간략 버전)
+   * 입춘 계산 (CalendarData DB 사용)
    */
-  private calculateLichun(year: number): Date {
+  private async calculateLichun(year: number): Promise<Date> {
+    const calendarService = getCalendarDataService();
+    const lichun = await calendarService.getLichun(year);
+
+    if (lichun) {
+      return lichun;
+    }
+
+    // Fallback: approximate calculation if data not available
     // 입춘은 대략 2월 3-5일
-    // 정확한 계산은 천문학 공식 필요
-    // TODO: 정밀 계산 구현
+    console.warn(`⚠️  입춘 데이터 없음 (${year}년) - 근사값 사용`);
     return new Date(year, 1, 4, 0, 0, 0);
   }
 
   /**
-   * 음력→양력 변환 (간략 버전)
+   * 음력→양력 변환 (CalendarData DB 사용)
    */
-  private convertToSolar(lunarDate: Date): Date {
-    // TODO: 정확한 음력 변환 라이브러리 사용
-    // 임시: 그대로 반환
-    console.warn('⚠️  음력 변환 미구현 - 양력으로 간주');
+  private async convertToSolar(lunarDate: Date): Promise<Date> {
+    const calendarService = getCalendarDataService();
+
+    const solarDate = await calendarService.lunarToSolar(
+      lunarDate.getFullYear(),
+      lunarDate.getMonth() + 1,
+      lunarDate.getDate(),
+      false // isLeapMonth - could be parameter if needed
+    );
+
+    if (solarDate) {
+      return new Date(solarDate.year, solarDate.month - 1, solarDate.day);
+    }
+
+    // Fallback: return as-is with warning
+    console.warn(
+      `⚠️  음력 변환 실패 (${lunarDate.getFullYear()}-${lunarDate.getMonth() + 1}-${lunarDate.getDate()}) - 양력으로 간주`
+    );
     return lunarDate;
   }
 }

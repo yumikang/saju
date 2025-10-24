@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "calendar:migrate": "npx prisma migrate dev --name add_calendar_data_model",
+    "calendar:import:schema1": "npx tsx scripts/calendar-migration/01-import-schema1.ts",
+    "calendar:import:schema2": "npx tsx scripts/calendar-migration/02-import-schema2.ts",
+    "calendar:validate": "npx tsx scripts/calendar-migration/03-validate-data.ts",
+    "calendar:indexes": "psql $DATABASE_URL -f scripts/calendar-migration/04-create-indexes.sql",
+    "calendar:import:all": "npm run calendar:migrate && npm run calendar:import:schema1 && npm run calendar:import:schema2 && npm run calendar:validate && npm run calendar:indexes",
+    "calendar:reset": "npx prisma migrate reset && npm run calendar:import:all"
+  }
+}
