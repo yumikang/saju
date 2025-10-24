@@ -10,7 +10,14 @@
 import { json, type ActionFunctionArgs } from '@remix-run/node';
 import { z } from 'zod';
 import { prisma } from '~/lib/prisma.server';
-import { createNamingPipeline, DatabaseHanjaService, InMemoryCacheService } from '~/lib/naming/pipeline';
+import { getRedisClient } from '~/lib/redis.server';
+import {
+  createNamingPipeline,
+  DatabaseHanjaService,
+  RedisCacheService,
+  InMemoryCacheService,
+  NullCacheService,
+} from '~/lib/naming/pipeline';
 
 /**
  * Request validation schema
@@ -74,9 +81,17 @@ export async function action({ request }: ActionFunctionArgs) {
     const body = await request.json();
     const validatedData: GenerateNameRequest = GenerateNameRequestSchema.parse(body);
 
-    // 2. Initialize services
+    // 2. Initialize services with Redis cache if available
     const hanjaService = new DatabaseHanjaService(prisma);
-    const cacheService = new InMemoryCacheService();
+
+    // Try to use Redis cache, fallback to in-memory cache
+    const redisClient = await getRedisClient();
+    const cacheService = redisClient
+      ? new RedisCacheService(redisClient)
+      : new InMemoryCacheService();
+
+    console.log(`Using cache: ${redisClient ? 'Redis' : 'In-Memory'}`);
+
     const pipeline = createNamingPipeline(hanjaService, cacheService);
 
     // 3. Execute pipeline

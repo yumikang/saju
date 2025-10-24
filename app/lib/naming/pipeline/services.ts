@@ -287,7 +287,7 @@ export class MockHanjaService implements HanjaService {
 /**
  * Redis-backed CacheService
  *
- * Production implementation using Redis
+ * Production implementation using Redis for distributed caching
  */
 export class RedisCacheService implements CacheService {
   constructor(private redis: RedisClient) {}
@@ -306,7 +306,8 @@ export class RedisCacheService implements CacheService {
   async set<T>(key: string, value: T, ttl: number): Promise<void> {
     try {
       const serialized = JSON.stringify(value);
-      await this.redis.setex(key, ttl, serialized);
+      // Redis v4+ uses setEx instead of setex
+      await this.redis.setEx(key, ttl, serialized);
     } catch (error) {
       console.error(`Redis set error for key ${key}:`, error);
     }
@@ -317,6 +318,39 @@ export class RedisCacheService implements CacheService {
       await this.redis.del(key);
     } catch (error) {
       console.error(`Redis delete error for key ${key}:`, error);
+    }
+  }
+
+  /**
+   * Clear all naming-related cache entries
+   */
+  async clear(): Promise<void> {
+    try {
+      const keys = await this.redis.keys('naming:*');
+      if (keys.length > 0) {
+        await this.redis.del(keys);
+        console.log(`Redis: Cleared ${keys.length} naming cache entries`);
+      }
+    } catch (error) {
+      console.error('Redis clear error:', error);
+    }
+  }
+
+  /**
+   * Get cache statistics
+   */
+  async stats(): Promise<{ keys: number; memory: string }> {
+    try {
+      const keys = await this.redis.keys('naming:*');
+      const info = await this.redis.info('memory');
+      const memoryMatch = info.match(/used_memory_human:([^\r\n]+)/);
+      return {
+        keys: keys.length,
+        memory: memoryMatch ? memoryMatch[1] : 'unknown',
+      };
+    } catch (error) {
+      console.error('Redis stats error:', error);
+      return { keys: 0, memory: 'error' };
     }
   }
 }
@@ -402,12 +436,15 @@ export class NullCacheService implements CacheService {
 // ============================================================
 
 /**
- * Redis client interface (compatible with node-redis)
+ * Redis client interface (compatible with node-redis v4+)
  */
 interface RedisClient {
   get(key: string): Promise<string | null>;
-  setex(key: string, seconds: number, value: string): Promise<void>;
-  del(key: string): Promise<number>;
+  setEx(key: string, seconds: number, value: string): Promise<void>; // v4+ 사용
+  del(key: string | string[]): Promise<number>;
+  keys(pattern: string): Promise<string[]>;
+  info(section?: string): Promise<string>;
+  isOpen?: boolean;
 }
 
 // ============================================================
