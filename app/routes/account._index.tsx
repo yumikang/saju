@@ -247,26 +247,7 @@ export default function AccountIndex() {
                         <p className="mt-1 text-xs text-red-600">{actionData.errors.phone}</p>
                       )}
                     </div>
-                    
-                    <div>
-                      <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
-                        자기소개
-                      </label>
-                      <textarea
-                        id="bio"
-                        name="bio"
-                        rows={3}
-                        defaultValue={profile?.bio || ""}
-                        maxLength={200}
-                        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
-                          actionData?.errors?.bio ? 'border-red-300' : 'border-gray-300'
-                        }`}
-                      />
-                      {actionData?.errors?.bio && (
-                        <p className="mt-1 text-xs text-red-600">{actionData.errors.bio}</p>
-                      )}
-                    </div>
-                    
+
                     <div className="flex gap-3">
                       <button
                         type="submit"
@@ -297,10 +278,6 @@ export default function AccountIndex() {
                     <div>
                       <p className="text-sm text-gray-500">전화번호</p>
                       <p className="font-medium">{profile?.phone || "설정되지 않음"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">자기소개</p>
-                      <p className="font-medium">{profile?.bio || "설정되지 않음"}</p>
                     </div>
                     {profile?.gender && (
                       <div>
