@@ -288,42 +288,6 @@ export default function PaymentHistory() {
         </div>
       </div>
       
-      {/* 필터 버튼들 */}
-      <div className="flex gap-2 mb-6 flex-wrap">
-        <a href="/account/payments">
-          <Button 
-            variant={!initialData.currentFilter ? "default" : "outline"}
-            size="sm"
-          >
-            전체
-          </Button>
-        </a>
-        <a href="/account/payments?status=COMPLETED">
-          <Button 
-            variant={initialData.currentFilter === PaymentStatus.COMPLETED ? "default" : "outline"}
-            size="sm"
-          >
-            결제 완료
-          </Button>
-        </a>
-        <a href="/account/payments?status=PENDING">
-          <Button 
-            variant={initialData.currentFilter === PaymentStatus.PENDING ? "default" : "outline"}
-            size="sm"
-          >
-            대기 중
-          </Button>
-        </a>
-        <a href="/account/payments?status=REFUNDED">
-          <Button 
-            variant={initialData.currentFilter === PaymentStatus.REFUNDED ? "default" : "outline"}
-            size="sm"
-          >
-            환불
-          </Button>
-        </a>
-      </div>
-      
       {/* 결제 내역 리스트 */}
       <div className="space-y-4">
         {payments.length === 0 ? (
