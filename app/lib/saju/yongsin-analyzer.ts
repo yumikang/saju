@@ -287,7 +287,7 @@ export class YongsinAnalyzer {
     if (season === '겨울') {
       return {
         method: '調候法',
-        element: Element.FIRE,
+        element: 'FIRE' as Element,
         confidence: 90,
         reasoning: `겨울 출생으로 한기(寒氣)가 강함. 온기를 제공하는 火 오행이 필수적.`,
         applicable: true,
@@ -298,7 +298,7 @@ export class YongsinAnalyzer {
     if (season === '여름') {
       return {
         method: '調候法',
-        element: Element.WATER,
+        element: 'WATER' as Element,
         confidence: 90,
         reasoning: `여름 출생으로 열기(熱氣)가 강함. 냉각을 제공하는 水 오행이 필수적.`,
         applicable: true,
@@ -308,10 +308,10 @@ export class YongsinAnalyzer {
     // Spring/Fall - depends on day master
     if (season === '봄') {
       // Spring: Wood is strong, need Metal to control
-      if (dayMaster.element === Element.WOOD) {
+      if (dayMaster.element === 'WOOD') {
         return {
           method: '調候法',
-          element: Element.METAL,
+          element: 'METAL' as Element,
           confidence: 70,
           reasoning: `봄 출생 목일간. 木기운이 과다하므로 金으로 제어 필요.`,
           applicable: true,
@@ -321,10 +321,10 @@ export class YongsinAnalyzer {
 
     if (season === '가을') {
       // Fall: Metal is strong, need Fire to control
-      if (dayMaster.element === Element.METAL) {
+      if (dayMaster.element === 'METAL') {
         return {
           method: '調候法',
-          element: Element.FIRE,
+          element: 'FIRE' as Element,
           confidence: 70,
           reasoning: `가을 출생 금일간. 金기운이 과다하므로 火로 단련 필요.`,
           applicable: true,
@@ -347,11 +347,11 @@ export class YongsinAnalyzer {
   private applyTongguanMethod(elementCounts: Record<Element, number>): MethodResult {
     // Find conflicting pairs (상극 관계)
     const conflicts: Array<{ elem1: Element; elem2: Element; mediator: Element }> = [
-      { elem1: Element.WOOD, elem2: Element.METAL, mediator: Element.WATER }, // Water produces Wood, weakens Metal
-      { elem1: Element.FIRE, elem2: Element.WATER, mediator: Element.WOOD }, // Wood produces Fire, absorbs Water
-      { elem1: Element.EARTH, elem2: Element.WOOD, mediator: Element.FIRE }, // Fire produces Earth, burns Wood
-      { elem1: Element.METAL, elem2: Element.FIRE, mediator: Element.EARTH }, // Earth produces Metal, absorbs Fire
-      { elem1: Element.WATER, elem2: Element.EARTH, mediator: Element.METAL }, // Metal produces Water, weakens Earth
+      { elem1: 'WOOD' as Element, elem2: 'METAL' as Element, mediator: 'WATER' as Element }, // Water produces Wood, weakens Metal
+      { elem1: 'FIRE' as Element, elem2: 'WATER' as Element, mediator: 'WOOD' as Element }, // Wood produces Fire, absorbs Water
+      { elem1: 'EARTH' as Element, elem2: 'WOOD' as Element, mediator: 'FIRE' as Element }, // Fire produces Earth, burns Wood
+      { elem1: 'METAL' as Element, elem2: 'FIRE' as Element, mediator: 'EARTH' as Element }, // Earth produces Metal, absorbs Fire
+      { elem1: 'WATER' as Element, elem2: 'EARTH' as Element, mediator: 'METAL' as Element }, // Metal produces Water, weakens Earth
     ];
 
     for (const conflict of conflicts) {
@@ -372,7 +372,7 @@ export class YongsinAnalyzer {
 
     return {
       method: '通關法',
-      element: Element.EARTH,
+      element: 'EARTH' as Element,
       confidence: 40,
       reasoning: `뚜렷한 상극 관계가 없음. 통관법 적용 불필요.`,
       applicable: false,
@@ -434,11 +434,11 @@ export class YongsinAnalyzer {
   private applyHuaqiMethod(pillars: { year: Pillar; month: Pillar; day: Pillar; hour: Pillar }): MethodResult {
     // 5 transformation patterns (천간합화)
     const transformations: Record<string, { result: Element; condition: string }> = {
-      '갑기': { result: Element.EARTH, condition: '甲己合化土' },
-      '을경': { result: Element.METAL, condition: '乙庚合化金' },
-      '병신': { result: Element.WATER, condition: '丙辛合化水' },
-      '정임': { result: Element.WOOD, condition: '丁壬合化木' },
-      '무계': { result: Element.FIRE, condition: '戊癸合化火' },
+      '갑기': { result: 'EARTH' as Element, condition: '甲己合化土' },
+      '을경': { result: 'METAL' as Element, condition: '乙庚合化金' },
+      '병신': { result: 'WATER' as Element, condition: '丙辛合化水' },
+      '정임': { result: 'WOOD' as Element, condition: '丁壬合化木' },
+      '무계': { result: 'FIRE' as Element, condition: '戊癸合化火' },
     };
 
     // Check day + hour combination
@@ -475,7 +475,7 @@ export class YongsinAnalyzer {
 
     return {
       method: '化氣法',
-      element: Element.EARTH,
+      element: 'EARTH' as Element,
       confidence: 10,
       reasoning: `천간합화 조건 미충족.`,
       applicable: false,
@@ -608,11 +608,11 @@ ${data.selected.reasoning}`;
    */
   private getProducingElement(element: Element): Element {
     const map: Record<Element, Element> = {
-      [Element.WOOD]: Element.WATER,
-      [Element.FIRE]: Element.WOOD,
-      [Element.EARTH]: Element.FIRE,
-      [Element.METAL]: Element.EARTH,
-      [Element.WATER]: Element.METAL,
+      WOOD: 'WATER' as Element,
+      FIRE: 'WOOD' as Element,
+      EARTH: 'FIRE' as Element,
+      METAL: 'EARTH' as Element,
+      WATER: 'METAL' as Element,
     };
     return map[element];
   }
@@ -622,11 +622,11 @@ ${data.selected.reasoning}`;
    */
   private getWeakeningElement(element: Element): Element {
     const map: Record<Element, Element> = {
-      [Element.WOOD]: Element.FIRE,
-      [Element.FIRE]: Element.EARTH,
-      [Element.EARTH]: Element.METAL,
-      [Element.METAL]: Element.WATER,
-      [Element.WATER]: Element.WOOD,
+      WOOD: 'FIRE' as Element,
+      FIRE: 'EARTH' as Element,
+      EARTH: 'METAL' as Element,
+      METAL: 'WATER' as Element,
+      WATER: 'WOOD' as Element,
     };
     return map[element];
   }
@@ -665,11 +665,11 @@ ${data.selected.reasoning}`;
   private getAvoidElements(yongsin: Element): Element[] {
     // Avoid elements that conflict with yongsin (상극)
     const conflicts: Record<Element, Element[]> = {
-      [Element.WOOD]: [Element.METAL], // Metal cuts Wood
-      [Element.FIRE]: [Element.WATER], // Water extinguishes Fire
-      [Element.EARTH]: [Element.WOOD], // Wood covers Earth
-      [Element.METAL]: [Element.FIRE], // Fire melts Metal
-      [Element.WATER]: [Element.EARTH], // Earth blocks Water
+      WOOD: ['METAL' as Element], // Metal cuts Wood
+      FIRE: ['WATER' as Element], // Water extinguishes Fire
+      EARTH: ['WOOD' as Element], // Wood covers Earth
+      METAL: ['FIRE' as Element], // Fire melts Metal
+      WATER: ['EARTH' as Element], // Earth blocks Water
     };
 
     return conflicts[yongsin] || [];
