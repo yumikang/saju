@@ -49,13 +49,17 @@ export class DatabaseHanjaService implements HanjaService {
       where.isGoodForNaming = true;
     }
 
-    // Gender filter (assuming there's a gender field or category)
-    // TODO: Implement gender filtering based on actual schema
-    // if (options.gender) {
-    //   where.gender = { in: [options.gender, 'NEUTRAL'] };
-    // }
+    // Gender filter
+    if (options.gender) {
+      const genderFilter = options.gender === 'M' ? 'male' : 'female';
+      where.OR = [
+        { gender: genderFilter },
+        { gender: 'neutral' },
+        { gender: null }
+      ];
+    }
 
-    const results = await this.prisma.hanja.findMany({
+    const results = await this.prisma.hanjaDict.findMany({
       where,
       take: 500, // Reasonable limit
       orderBy: [
@@ -68,20 +72,20 @@ export class DatabaseHanjaService implements HanjaService {
   }
 
   /**
-   * Map Prisma Hanja to HanjaCharacter
+   * Map Prisma HanjaDict to HanjaCharacter
    */
   private mapToHanjaCharacter(hanja: any): HanjaCharacter {
     return {
-      id: hanja.id,
+      id: parseInt(hanja.id) || 0, // HanjaDict uses string UUID, convert or use hash
       character: hanja.character,
-      strokes: hanja.strokes,
+      strokes: hanja.strokes || 0,
       element: hanja.element,
       yinYang: hanja.yinYang,
       meaning: hanja.meaning || '',
-      koreanReading: hanja.koreanReading || hanja.reading || '',
-      fortune: hanja.fortune,
-      nameFrequency: hanja.nameFrequency,
-      usageFrequency: hanja.usageFrequency,
+      koreanReading: hanja.koreanReading || '',
+      fortune: '길', // Default fortune value (not stored in DB)
+      nameFrequency: hanja.nameFrequency || 0,
+      usageFrequency: hanja.usageFrequency || 0,
       category: hanja.category ? [hanja.category] : [],
       review: hanja.review,
       isGoodForNaming: hanja.isGoodForNaming,
