@@ -195,9 +195,7 @@ export default function PaymentHistory() {
   const [payments, setPayments] = useState(initialData.payments);
   const [hasMore, setHasMore] = useState(initialData.hasMore);
   const [nextCursor, setNextCursor] = useState(initialData.nextCursor);
-  const [selectedPayment, setSelectedPayment] = useState<typeof payments[0] | null>(null);
-  const [showReceiptModal, setShowReceiptModal] = useState(false);
-  
+
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -240,13 +238,7 @@ export default function PaymentHistory() {
     
     return () => observer.disconnect();
   }, [hasMore, isLoading, nextCursor, fetcher, initialData.currentFilter]);
-  
-  // 영수증 모달 열기
-  const openReceipt = (payment: typeof payments[0]) => {
-    setSelectedPayment(payment);
-    setShowReceiptModal(true);
-  };
-  
+
   return (
     <div className="p-6">
       {/* 헤더 */}
@@ -348,13 +340,6 @@ export default function PaymentHistory() {
                 }).format(payment.amount)}
                       </div>
                       <div className="flex gap-2 mt-2 justify-end">
-                        <button
-                          onClick={() => openReceipt(payment)}
-                          className="text-sm text-blue-600 hover:text-blue-800"
-                        >
-                          영수증
-                        </button>
-                        <span className="text-muted-foreground">·</span>
                         <Link
                           to={`/account/payments/${payment.id}`}
                           className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
@@ -388,81 +373,6 @@ export default function PaymentHistory() {
           </>
         )}
       </div>
-      
-      {/* 영수증 모달 */}
-      {showReceiptModal && selectedPayment && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-          onClick={() => setShowReceiptModal(false)}
-        >
-          <div 
-            className="bg-white rounded-lg max-w-lg w-full max-h-[80vh] overflow-y-auto p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">전자 영수증</h3>
-              <button
-                onClick={() => setShowReceiptModal(false)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground">거래 ID</p>
-                <p className="font-mono text-sm">{selectedPayment.transactionId}</p>
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground">서비스</p>
-                <p className="font-medium">
-                  {getServiceTypeLabel(selectedPayment.serviceOrder.serviceType)}
-                </p>
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground">결제 금액</p>
-                <p className="text-2xl font-bold">
-                  {new Intl.NumberFormat('ko-KR', { 
-                    style: 'currency', 
-                    currency: 'KRW',
-                    maximumFractionDigits: 0,
-                  }).format(selectedPayment.amount)}
-                </p>
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground">결제 수단</p>
-                <p>{getPaymentMethodLabel(selectedPayment.method)}</p>
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground">결제 일시</p>
-                <p>
-                  {selectedPayment.paidAt
-                    ? format(new Date(selectedPayment.paidAt), 'yyyy년 M월 d일 HH:mm:ss', { locale: ko })
-                    : '-'}
-                </p>
-              </div>
-              
-              {selectedPayment.paymentEvents.length > 0 && (
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">처리 내역</p>
-                  <div className="space-y-1">
-                    {selectedPayment.paymentEvents.map((event) => (
-                      <div key={event.id} className="text-xs text-muted-foreground">
-                        {format(new Date(event.createdAt), 'MM/dd HH:mm', { locale: ko })} - {event.message || event.eventType}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
