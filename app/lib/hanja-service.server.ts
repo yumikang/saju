@@ -286,15 +286,16 @@ export async function searchHanjaFromDB(
   let results: HanjaDictRecord[] = [];
 
   if (isSurname && surnameHanjaList) {
-    // 성씨 모드: 큐레이션된 성씨 목록만
+    // 성씨 모드: 큐레이션된 성씨 목록만 (빈도수 필터 없음)
+    // korean-surnames.data에 정의된 성씨는 모두 유효하므로 nameFrequency 관계없이 표시
     results = await prisma.hanjaDict.findMany({
       where: {
         character: {
           in: surnameHanjaList,
           notIn: BAD_CHARACTERS  // 부정적 한자 제외
         },
-        isGoodForNaming: true,
-        nameFrequency: { gte: 50 }  // 인기도 필터 (50 이상)
+        isGoodForNaming: true
+        // 성씨 모드에서는 nameFrequency 필터 제거
       },
       take: actualLimit,
       ...(cursor && { skip: 1, cursor: { id: cursor } }),
@@ -341,10 +342,13 @@ export async function searchHanjaFromDB(
   }
   
   // 후처리: nameFrequency < 50인 한자 제거 (캐시 이슈 방지)
-  results = results.filter(hanja => {
-    const freq = hanja.nameFrequency || 0;
-    return freq >= 50;
-  });
+  // 단, 성씨 모드에서는 이 필터를 적용하지 않음
+  if (!isSurname) {
+    results = results.filter(hanja => {
+      const freq = hanja.nameFrequency || 0;
+      return freq >= 50;
+    });
+  }
 
   // NULL/0 값을 가진 레코드를 뒤로 보내는 후처리
   if (sort === 'popularity') {

@@ -7,7 +7,7 @@
 
 import { Link, Outlet, useRouteError, isRouteErrorResponse } from '@remix-run/react';
 import { Button } from '~/components/ui/button';
-import { HomeIcon, Sparkles } from 'lucide-react';
+import { HomeIcon } from 'lucide-react';
 
 /**
  * Layout component with AI branding
@@ -15,49 +15,11 @@ import { HomeIcon, Sparkles } from 'lucide-react';
 export default function AINamingLayout() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-blue-50 to-white">
-      <AINamingHeader />
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <Outlet />
       </main>
       <AINamingFooter />
     </div>
-  );
-}
-
-/**
- * Header with AI branding
- */
-function AINamingHeader() {
-  return (
-    <header className="bg-white shadow-sm border-b border-purple-100">
-      <div className="container mx-auto px-4 py-4 max-w-6xl">
-        <div className="flex items-center justify-between">
-          <Link to="/ai-naming" className="flex items-center gap-3">
-            <Sparkles className="w-7 h-7 text-purple-600" />
-            <div>
-              <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                AI 사주 작명
-              </div>
-              <div className="text-xs text-gray-500">8단계 지능형 작명 시스템</div>
-            </div>
-          </Link>
-          <nav className="flex items-center gap-4">
-            <Link
-              to="/"
-              className="text-sm text-gray-600 hover:text-purple-600 transition-colors"
-            >
-              홈
-            </Link>
-            <Link
-              to="/naming"
-              className="text-sm text-gray-600 hover:text-purple-600 transition-colors"
-            >
-              기존 작명
-            </Link>
-          </nav>
-        </div>
-      </div>
-    </header>
   );
 }
 
@@ -96,7 +58,6 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
-        <AINamingHeader />
         <main className="container mx-auto px-4 py-16 max-w-2xl">
           <div className="text-center space-y-6">
             <div className="text-6xl font-bold text-purple-600">
@@ -125,7 +86,6 @@ export function ErrorBoundary() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
-      <AINamingHeader />
       <main className="container mx-auto px-4 py-16 max-w-2xl">
         <div className="text-center space-y-6">
           <div className="text-6xl">⚠️</div>

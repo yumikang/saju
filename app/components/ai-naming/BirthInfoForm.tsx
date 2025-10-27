@@ -68,14 +68,14 @@ export function BirthInfoForm({ isSubmitting, error }: BirthInfoFormProps) {
           {lastName && (
             <div className="space-y-2">
               <Label className="text-base font-semibold">
-                성씨 한자 선택 (선택사항)
+                성씨 한자 선택 <span className="text-red-500">*</span>
               </Label>
               <HanjaSelector
                 reading={lastName}
                 selectedHanja={selectedHanja}
                 onSelect={(hanja) => setSelectedHanja(hanja)}
                 mode="surname"
-                placeholder="성씨 한자를 선택하세요"
+                placeholder="성씨 한자를 선택하세요 (필수)"
               />
               {selectedHanja && (
                 <div className="p-3 bg-purple-50 rounded-md border border-purple-200">
@@ -84,8 +84,8 @@ export function BirthInfoForm({ isSubmitting, error }: BirthInfoFormProps) {
                   </p>
                 </div>
               )}
-              <p className="text-sm text-purple-600">
-                💡 한자를 선택하면 더 정확한 81수리 계산이 가능합니다
+              <p className="text-sm text-red-600 font-medium">
+                ⚠️ 정확한 81수리 계산을 위해 반드시 성씨 한자를 선택해주세요
               </p>
             </div>
           )}
@@ -223,7 +223,7 @@ export function BirthInfoForm({ isSubmitting, error }: BirthInfoFormProps) {
             type="submit"
             className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
             size="lg"
-            disabled={isSubmitting || !birthDate}
+            disabled={isSubmitting || !birthDate || !selectedHanja}
           >
             {isSubmitting ? (
               <>

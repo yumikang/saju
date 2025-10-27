@@ -40,16 +40,17 @@ export async function action({ request }: ActionFunctionArgs) {
   const gender = formData.get('gender') as 'M' | 'F';
   const lastName = formData.get('lastName') as string;
   const lastNameChar = formData.get('lastNameChar') as string | null;
-  const lastNameStrokes = formData.get('lastNameStrokes') as string | null;
+  const lastNameStrokesStr = formData.get('lastNameStrokes') as string | null;
+  const lastNameStrokes = lastNameStrokesStr ? parseInt(lastNameStrokesStr, 10) : null;
 
   // Validation
-  if (!birthDate || !birthTime || !gender || !lastName) {
+  if (!birthDate || !birthTime || !gender || !lastName || !lastNameStrokes) {
     return json<AINamingResponse>(
       {
         success: false,
         error: {
           code: 'VALIDATION_ERROR',
-          message: '모든 필수 필드를 입력해주세요',
+          message: '모든 필수 필드를 입력해주세요 (성씨 한자 선택 포함)',
         },
       },
       { status: 400 }
@@ -108,9 +109,7 @@ export async function action({ request }: ActionFunctionArgs) {
           gender,
         },
         lastName,
-        preferences: {
-          nameLength: 2, // Default to 2-character names
-        },
+        lastNameStrokes,
         config: {
           maxCandidates: 10,
           minScore: 60,

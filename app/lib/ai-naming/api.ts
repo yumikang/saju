@@ -77,9 +77,10 @@ export function parseBirthInfo(
  */
 export function formatNameDisplay(
   lastName: string,
-  firstName: string
+  firstName: string | [string, string]
 ): string {
-  return `${lastName}${firstName}`;
+  const firstNameStr = Array.isArray(firstName) ? firstName.join('') : firstName;
+  return `${lastName}${firstNameStr}`;
 }
 
 /**

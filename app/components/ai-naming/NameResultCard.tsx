@@ -81,64 +81,75 @@ export function NameResultCard({
 
         <CardContent className="space-y-4">
           {/* Score Breakdown */}
-          <div className="grid grid-cols-2 gap-3">
-            <ScoreItem
-              label="오행 조화"
-              score={Math.round(candidate.scores.elementHarmony.score)}
-              weight={candidate.scores.elementHarmony.weight}
-            />
-            <ScoreItem
-              label="음양 균형"
-              score={Math.round(candidate.scores.yinYangBalance.score)}
-              weight={candidate.scores.yinYangBalance.weight}
-            />
-            <ScoreItem
-              label="수리 운세"
-              score={Math.round(candidate.scores.numerology.score)}
-              weight={candidate.scores.numerology.weight}
-            />
-            <ScoreItem
-              label="의미 조화"
-              score={Math.round(candidate.scores.meaningHarmony.score)}
-              weight={candidate.scores.meaningHarmony.weight}
-            />
-          </div>
+          {candidate.breakdown && (
+            <div className="grid grid-cols-2 gap-3">
+              <ScoreItem
+                label="오행 조화"
+                score={Math.round(candidate.breakdown.element)}
+              />
+              <ScoreItem
+                label="음양 균형"
+                score={Math.round(candidate.breakdown.yinyang)}
+              />
+              <ScoreItem
+                label="수리 운세"
+                score={Math.round(candidate.breakdown.numerology)}
+              />
+              <ScoreItem
+                label="의미 조화"
+                score={Math.round(candidate.breakdown.meaning)}
+              />
+            </div>
+          )}
 
           {/* Numerology Preview */}
-          <div className="pt-3 border-t border-gray-200">
-            <div className="text-sm font-semibold text-gray-700 mb-2">
-              81수리 운세
+          {candidate.analysis?.numerologyGrids && (
+            <div className="pt-3 border-t border-gray-200">
+              <div className="text-sm font-semibold text-gray-700 mb-2">
+                81수리 운세
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { name: '원격', key: '원격' as const },
+                  { name: '형격', key: '형격' as const },
+                  { name: '이격', key: '이격' as const },
+                  { name: '정격', key: '정격' as const },
+                ].map((grid) => {
+                  const gridData = candidate.analysis.numerologyGrids[grid.key];
+                  return gridData ? (
+                    <div key={grid.name} className="text-center">
+                      <div className="text-xs text-gray-500 mb-1">{grid.name}</div>
+                      <div className="text-xs font-semibold text-gray-700">
+                        {gridData.strokes}획
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          'text-xs mt-1',
+                          gridData.fortune === '대길' && 'bg-green-100 text-green-800',
+                          gridData.fortune === '길' && 'bg-blue-100 text-blue-800',
+                          gridData.fortune === '평' && 'bg-gray-100 text-gray-800',
+                          gridData.fortune === '흉' && 'bg-orange-100 text-orange-800',
+                          gridData.fortune === '대흉' && 'bg-red-100 text-red-800'
+                        )}
+                      >
+                        {gridData.fortune}
+                      </Badge>
+                    </div>
+                  ) : null;
+                })}
+              </div>
             </div>
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { name: '원격', data: candidate.analysis.numerologyGrids.원격 },
-                { name: '형격', data: candidate.analysis.numerologyGrids.형격 },
-                { name: '이격', data: candidate.analysis.numerologyGrids.이격 },
-                { name: '정격', data: candidate.analysis.numerologyGrids.정격 },
-              ].map((grid) => (
-                <div key={grid.name} className="text-center">
-                  <div className="text-xs text-gray-500 mb-1">{grid.name}</div>
-                  <Badge
-                    className={cn(
-                      'text-xs font-semibold',
-                      getFortuneColor(grid.data.fortune)
-                    )}
-                  >
-                    {grid.data.fortune}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
 
           {/* Key Analysis Points */}
-          {candidate.analysis.reasoning.length > 0 && (
+          {candidate.analysis?.reasoning && candidate.analysis.reasoning.length > 0 && (
             <div className="pt-3 border-t border-gray-200">
               <div className="text-sm font-semibold text-gray-700 mb-2">
                 주요 분석 포인트
               </div>
               <ul className="space-y-1">
-                {candidate.analysis.reasoning.slice(0, 2).map((reason, idx) => (
+                {candidate.analysis.reasoning.slice(0, 2).map((reason: string, idx: number) => (
                   <li key={idx} className="text-sm text-gray-600 flex items-start">
                     <span className="text-purple-600 mr-2">•</span>
                     <span>{reason}</span>
@@ -168,18 +179,16 @@ export function NameResultCard({
 function ScoreItem({
   label,
   score,
-  weight,
 }: {
   label: string;
   score: number;
-  weight: number;
 }) {
   const scoreColor = getScoreColor(score);
 
   return (
     <div className="bg-gray-50 rounded-lg p-3">
       <div className="text-xs text-gray-600 mb-1">
-        {label} ({Math.round(weight * 100)}%)
+        {label}
       </div>
       <div className={cn('text-lg font-bold', scoreColor)}>
         {score}점

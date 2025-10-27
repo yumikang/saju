@@ -12,6 +12,7 @@ export function Header() {
   const navItems = [
     { label: "홈", href: "/" },
     { label: "신생아 작명", href: "/naming" },
+    { label: "AI 사주 작명", href: "/ai-naming" },
     { label: "개명 서비스", href: "/renaming" },
     { label: "사주 궁합", href: "/saju" },
   ]

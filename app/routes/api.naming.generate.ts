@@ -9,7 +9,7 @@
 
 import { json, type ActionFunctionArgs } from '@remix-run/node';
 import { z } from 'zod';
-import { prisma } from '~/lib/prisma.server';
+import { prisma } from '~/lib/db.server';
 import { getRedisClient } from '~/lib/redis.server';
 import {
   createNamingPipeline,
