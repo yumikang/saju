@@ -108,6 +108,9 @@
     "etl:load": "npx tsx scripts/etl/60_load.ts",
     "etl:report": "npx tsx scripts/etl/70_report.ts",
     "etl:continue": "npx tsx scripts/etl/run-pipeline.ts --continue-on-error",
-    "etl:skip": "npx tsx scripts/etl/run-pipeline.ts --skip="
+    "etl:skip": "npx tsx scripts/etl/run-pipeline.ts --skip=",
+    "check-env": "npx tsx scripts/check-env.ts",
+    "check-env:dev": "npx tsx scripts/check-env.ts development",
+    "check-env:prod": "npx tsx scripts/check-env.ts production"
   }
 }

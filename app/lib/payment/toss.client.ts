@@ -57,11 +57,16 @@ export interface TossPaymentResponse {
 // Configuration
 // ============================================================
 
-const TOSS_CLIENT_KEY = process.env.TOSS_PAYMENTS_CLIENT_KEY ||'';
-const TOSS_SECRET_KEY = process.env.TOSS_PAYMENTS_SECRET_KEY || '';
+const TOSS_CLIENT_KEY = process.env.TOSS_CLIENT_KEY || '';
+const TOSS_SECRET_KEY = process.env.TOSS_SECRET_KEY || '';
 
 if (!TOSS_CLIENT_KEY) {
-  console.warn('⚠️  TOSS_PAYMENTS_CLIENT_KEY not configured');
+  console.warn('⚠️  TOSS_CLIENT_KEY not configured');
+}
+
+if (!TOSS_SECRET_KEY && typeof window === 'undefined') {
+  // Only warn on server-side
+  console.warn('⚠️  TOSS_SECRET_KEY not configured');
 }
 
 // ============================================================
