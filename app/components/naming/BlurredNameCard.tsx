@@ -25,6 +25,8 @@ export function BlurredNameCard({
 }: BlurredNameCardProps) {
   return (
     <motion.div
+      data-testid="name-card"
+      data-locked="true"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: rank * 0.1, duration: 0.3 }}
@@ -42,7 +44,7 @@ export function BlurredNameCard({
         {/* 잠금 아이콘 */}
         <div className="absolute top-4 right-4 z-20">
           <div className="bg-yellow-500 text-white p-2 rounded-full shadow-lg">
-            <Lock className="w-5 h-5" />
+            <Lock className="w-5 h-5" data-icon="lock" />
           </div>
         </div>
 

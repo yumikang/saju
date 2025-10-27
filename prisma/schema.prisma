@@ -432,8 +432,13 @@ enum TossPaymentStatus {
 // NamingPayment - Freemium 작명 결제 (TossPayments)
 model NamingPayment {
   id              String            @id @default(uuid())
-  userId          String            @map("user_id")
-  sajuId          String            @map("saju_id")  // 구매한 사주 데이터 ID
+
+  // 기존 서비스용 (optional)
+  userId          String?           @map("user_id")
+  sajuId          String?           @map("saju_id")  // 구매한 사주 데이터 ID
+
+  // Freemium 서비스용 (optional)
+  sessionId       String?           @unique @map("session_id")  // NamingSession ID
 
   // TossPayments 전용 필드
   orderId         String            @unique @map("order_id")       // 주문 ID (merchantId)
@@ -441,9 +446,22 @@ model NamingPayment {
 
   // 결제 정보
   amount          Int                                              // 결제 금액 (원 단위)
+  currency        String            @default("KRW")                // 통화
   status          TossPaymentStatus                                // 결제 상태
   method          String?                                          // 결제 수단 (카드, 계좌이체 등)
   orderName       String            @default("사주 작명 결과 프리미엄 조회") @map("order_name") // 주문명
+
+  // 고객 정보 (Freemium용)
+  customerName    String?           @map("customer_name")
+  customerEmail   String?           @map("customer_email")
+  customerPhone   String?           @map("customer_phone")
+
+  // TossPayments 추가 필드
+  tossCheckoutUrl String?           @map("toss_checkout_url")      // 결제 페이지 URL
+  tossPaymentKey  String?           @map("toss_payment_key")       // 결제 키 (승인 후)
+  tossApprovedAt  DateTime?         @map("toss_approved_at") @db.Timestamptz(3)
+  tossErrorCode   String?           @map("toss_error_code")
+  tossErrorMessage String?          @map("toss_error_message")
 
   // 타임스탬프
   requestedAt     DateTime          @default(now()) @map("requested_at") @db.Timestamptz(3)
@@ -452,23 +470,23 @@ model NamingPayment {
   failedAt        DateTime?         @map("failed_at") @db.Timestamptz(3)
   expiresAt       DateTime?         @map("expires_at") @db.Timestamptz(3)  // 결제 만료 시각
 
-  // 메타데이터
+  // 메타데이터 (기존)
   failureCode     String?           @map("failure_code")                   // 실패 코드
   failureMessage  String?           @map("failure_message")                // 실패 메시지
   receiptUrl      String?           @map("receipt_url")                    // 영수증 URL
   cardInfo        Json?             @map("card_info")                      // 카드 정보 (마스킹된 번호 등)
 
-  // Freemium fields - 추가됨 (2025-10-27)
-  unlocked        Boolean           @default(false)                    // 20개 이름 잠금 해제 여부
+  // Freemium fields
+  unlocked        Boolean           @default(false)                    // 이름 잠금 해제 여부
   unlockedAt      DateTime?         @map("unlocked_at") @db.Timestamptz(3)  // 잠금 해제 시각
 
   // Relations
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  session         NamingSession?    // 연결된 작명 세션
+  user            User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session         NamingSession?    @relation(fields: [sessionId], references: [id], onDelete: SetNull)
 
   // Indexes
-  @@unique([userId, sajuId])  // 한 사용자가 같은 사주에 대해 중복 결제 방지
   @@index([userId, status])
+  @@index([sessionId])
   @@index([sajuId])
   @@index([orderId])
   @@index([paymentKey])
@@ -503,13 +521,11 @@ model NamingSession {
   allCandidates   Json                                 // 전체 50개
 
   // 결제 연동
-  paymentId       String?   @unique @map("payment_id")
-  payment         NamingPayment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  payment         NamingPayment?
 
   // Indexes
   @@index([createdAt])
   @@index([expiresAt])
-  @@index([paymentId])
   @@map("naming_sessions")
 }
 

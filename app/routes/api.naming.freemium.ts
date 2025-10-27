@@ -219,6 +219,13 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
   // Ensure birthDate is a Date object
   const birthDate = new Date(session.birthDate);
 
+  // Calculate Saju
+  const sajuResult = await sajuCalculator.calculate(
+    birthDate,
+    session.birthTime,
+    session.isLunar
+  );
+
   // Parse birth info for Yongsin analysis
   const [hour, minute] = session.birthTime.split(':').map(Number);
   const birthInfo = {
@@ -231,15 +238,27 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
     gender: session.gender as 'M' | 'F',
   };
 
-  // Calculate Saju
-  const sajuResult = await sajuCalculator.calculate(
-    birthDate,
-    session.birthTime,
-    session.isLunar
-  );
-
   // Analyze Yongsin (requires both sajuResult AND birthInfo)
-  const yongsinResult = await yongsinAnalyzer.analyze(sajuResult, birthInfo);
+  let yongsinResult;
+  try {
+    yongsinResult = await yongsinAnalyzer.analyze(sajuResult, birthInfo);
+  } catch (error) {
+    console.error('[Stage 2] Yongsin analysis failed, using fallback:', error);
+    // Fallback to simple yongsin based on lacking elements
+    const lackingElements = Object.entries(sajuResult.elementCounts)
+      .filter(([, count]) => count < 1.5)
+      .map(([element]) => element);
+    yongsinResult = {
+      primary: lackingElements[0] || 'WOOD',
+      secondary: lackingElements[1],
+      avoid: [],
+      methods: {} as any,
+      dayMasterStrength: { score: 0, category: '중화', explanation: '분석 실패' },
+      seasonalContext: { season: '봄', temperatureNeed: '중화', adjustment: '' },
+      fullAnalysis: '용신 분석에 실패했습니다. 기본값을 사용합니다.',
+      aiEnhanced: false,
+    };
+  }
 
   // Update session with Saju data
   await prisma.namingSession.update({

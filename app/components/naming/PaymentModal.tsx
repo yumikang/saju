@@ -17,19 +17,23 @@ import { toast } from 'sonner';
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  sajuId: string;
+  sajuId?: string; // Legacy flow (optional)
+  sessionId?: string; // Freemium flow (optional)
   amount: number; // 결제 금액 (원 단위)
   userName?: string;
   userEmail?: string;
+  onSuccess?: (paymentId: string) => void; // Callback for success
 }
 
 export function PaymentModal({
   isOpen,
   onClose,
   sajuId,
+  sessionId,
   amount,
   userName,
   userEmail,
+  onSuccess,
 }: PaymentModalProps) {
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -40,36 +44,51 @@ export function PaymentModal({
     setIsProcessing(true);
 
     try {
-      // Step 1: 결제 Intent 생성 (orderId 발급)
-      const intentResponse = await fetch('/api/payment/intent', {
+      // Determine which payment API to use
+      const isFreemiumFlow = !!sessionId;
+      const apiEndpoint = isFreemiumFlow ? '/api/payment/naming' : '/api/payment/intent';
+
+      // Step 1: Create payment request
+      const requestBody = isFreemiumFlow
+        ? { sessionId, amount, customerName: userName, customerEmail: userEmail }
+        : { sajuId, amount };
+
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sajuId,
-          amount,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
-      if (!intentResponse.ok) {
-        const error = await intentResponse.json();
-        throw new Error(error.error || '결제 요청 생성에 실패했습니다.');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || error.error || '결제 요청 생성에 실패했습니다.');
       }
 
-      const { orderId } = await intentResponse.json();
+      const result = await response.json();
 
-      // Step 2: TossPayments 결제창 호출
-      const currentUrl = window.location.origin;
-      await requestPayment({
-        amount,
-        orderId,
-        orderName: '사주 작명 결과 프리미엄 조회',
-        customerName: userName,
-        customerEmail: userEmail,
-        successUrl: `${currentUrl}/payment/success`,
-        failUrl: `${currentUrl}/payment/fail`,
-      });
+      if (!result.success) {
+        throw new Error(result.message || '결제 요청에 실패했습니다.');
+      }
 
-      // 결제창이 열리면 모달 닫기
+      // Step 2: Redirect to TossPayments checkout page
+      if (isFreemiumFlow && result.checkoutUrl) {
+        // Freemium flow: Redirect to TossPayments checkout
+        window.location.href = result.checkoutUrl;
+      } else {
+        // Legacy flow: Use TossPayments SDK
+        const currentUrl = window.location.origin;
+        await requestPayment({
+          amount,
+          orderId: result.orderId,
+          orderName: '사주 작명 결과 프리미엄 조회',
+          customerName: userName,
+          customerEmail: userEmail,
+          successUrl: `${currentUrl}/payment/success`,
+          failUrl: `${currentUrl}/payment/fail`,
+        });
+      }
+
+      // Close modal
       onClose();
     } catch (error: any) {
       console.error('Payment error:', error);

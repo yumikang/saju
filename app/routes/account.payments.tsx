@@ -3,9 +3,9 @@ import { json } from "@remix-run/node";
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
 import { requireUser } from "~/utils/user-session.server";
 import { db } from "~/utils/db.server";
-import { 
-  Calendar, 
-  CreditCard, 
+import {
+  Calendar,
+  CreditCard,
   Receipt,
   Filter,
   ChevronRight,
@@ -19,7 +19,7 @@ import { ko } from "date-fns/locale";
 import { useEffect, useRef, useState } from "react";
 import { PaymentStatusBadge } from "~/components/payment/PaymentStatusBadge";
 import { Button } from "~/components/ui/button";
-import { PaymentStatus, PaymentMethod } from "@prisma/client";
+import { TossPaymentStatus } from "@prisma/client";
 
 export const meta: MetaFunction = () => {
   return [
@@ -29,13 +29,13 @@ export const meta: MetaFunction = () => {
 };
 
 // Helper function to serialize cursor for safer pagination
-function encodeCursor(payment: { id: string; createdAt: Date }): string {
+function encodeCursor(payment: { id: string; requestedAt: Date }): string {
   return Buffer.from(
-    JSON.stringify({ id: payment.id, createdAt: payment.createdAt.toISOString() })
+    JSON.stringify({ id: payment.id, requestedAt: payment.requestedAt.toISOString() })
   ).toString('base64');
 }
 
-function decodeCursor(cursor: string): { id: string; createdAt: string } | null {
+function decodeCursor(cursor: string): { id: string; requestedAt: string } | null {
   try {
     return JSON.parse(Buffer.from(cursor, 'base64').toString('utf-8'));
   } catch {
@@ -57,54 +57,51 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // URL에서 필터와 cursor 파라미터 가져오기
   const url = new URL(request.url);
   const cursorParam = url.searchParams.get("cursor");
-  const statusFilter = url.searchParams.get("status") as PaymentStatus | null;
-  
+  const statusFilter = url.searchParams.get("status") as TossPaymentStatus | null;
+
   // 기간 필터 (기본값: 최근 90일)
   const fromDate = url.searchParams.get("from");
   const toDate = url.searchParams.get("to");
   const defaultFromDate = new Date();
   defaultFromDate.setDate(defaultFromDate.getDate() - 90);
-  
+
   const pageSize = 20;
-  
+
   // Decode cursor if provided
   const decodedCursor = cursorParam ? decodeCursor(cursorParam) : null;
-  
-  // 결제 내역 조회 - 보조 정렬키 추가로 안정성 확보
-  const payments = await db.payment.findMany({
+
+  // Freemium 결제 내역 조회 - 보조 정렬키 추가로 안정성 확보
+  const payments = await db.namingPayment.findMany({
     where: {
       userId: user.id,
       ...(statusFilter && { status: statusFilter }),
-      createdAt: {
+      requestedAt: {
         gte: fromDate ? new Date(fromDate) : defaultFromDate,
         ...(toDate && { lte: new Date(toDate) }),
       },
       // Add cursor-based filtering for stable pagination
       ...(decodedCursor && {
         OR: [
-          { createdAt: { lt: new Date(decodedCursor.createdAt) } },
+          { requestedAt: { lt: new Date(decodedCursor.requestedAt) } },
           {
-            createdAt: new Date(decodedCursor.createdAt),
+            requestedAt: new Date(decodedCursor.requestedAt),
             id: { lt: decodedCursor.id },
           },
         ],
       }),
     },
     include: {
-      serviceOrder: {
+      session: {
         select: {
           id: true,
-          serviceType: true,
-          status: true,
+          lastName: true,
+          gender: true,
+          birthDate: true,
         },
-      },
-      paymentEvents: {
-        orderBy: { createdAt: "desc" },
-        take: 5, // 최근 5개 이벤트만
       },
     },
     orderBy: [
-      { createdAt: "desc" },
+      { requestedAt: "desc" },
       { id: "desc" }, // 보조 정렬키로 순서 보장
     ],
     take: pageSize + 1,
@@ -114,10 +111,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const paymentsToReturn = hasMore ? payments.slice(0, pageSize) : payments;
   
   // 통계 정보 계산
-  const stats = await db.payment.aggregate({
+  const stats = await db.namingPayment.aggregate({
     where: {
       userId: user.id,
-      status: PaymentStatus.COMPLETED,
+      status: TossPaymentStatus.DONE,
     },
     _sum: {
       amount: true,
@@ -151,41 +148,31 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 // 결제 수단 아이콘 반환
-function getPaymentMethodIcon(method: PaymentMethod) {
-  switch (method) {
-    case PaymentMethod.CARD:
-      return CreditCard;
-    case PaymentMethod.BANK_TRANSFER:
-      return Building;
-    case PaymentMethod.KAKAO_PAY:
-    case PaymentMethod.NAVER_PAY:
-    case PaymentMethod.TOSS:
-      return Smartphone;
-    default:
-      return Banknote;
+function getPaymentMethodIcon(method: string | null) {
+  if (!method) return Banknote;
+
+  if (method.includes("카드") || method.toLowerCase().includes("card")) {
+    return CreditCard;
   }
+  if (method.includes("계좌") || method.includes("이체")) {
+    return Building;
+  }
+  if (method.includes("카카오") || method.includes("네이버") || method.includes("토스")) {
+    return Smartphone;
+  }
+  return Banknote;
 }
 
 // 결제 수단 라벨 반환
-function getPaymentMethodLabel(method: PaymentMethod) {
-  const labels: Record<PaymentMethod, string> = {
-    [PaymentMethod.CARD]: "신용/체크카드",
-    [PaymentMethod.BANK_TRANSFER]: "계좌이체",
-    [PaymentMethod.KAKAO_PAY]: "카카오페이",
-    [PaymentMethod.NAVER_PAY]: "네이버페이",
-    [PaymentMethod.TOSS]: "토스",
-  };
-  return labels[method];
+function getPaymentMethodLabel(method: string | null) {
+  if (!method) return "결제 수단 정보 없음";
+  return method;
 }
 
-// 서비스 타입 라벨 반환
-function getServiceTypeLabel(type: string) {
-  const labels: Record<string, string> = {
-    NAMING: "작명 서비스",
-    RENAMING: "개명 서비스",
-    SAJU_COMPATIBILITY: "사주 궁합",
-  };
-  return labels[type] || type;
+// 서비스명 생성 (세션 정보 기반)
+function getServiceName(session: { lastName: string; gender: string } | null) {
+  if (!session) return "작명 서비스";
+  return `${session.lastName}${session.gender === "M" ? "남아" : "여아"} 작명`;
 }
 
 export default function PaymentHistory() {
@@ -294,7 +281,7 @@ export default function PaymentHistory() {
           <>
             {payments.map((payment) => {
               const MethodIcon = getPaymentMethodIcon(payment.method);
-              
+
               return (
                 <div
                   key={payment.id}
@@ -305,17 +292,17 @@ export default function PaymentHistory() {
                       <div className="flex items-center gap-3 mb-2">
                         <PaymentStatusBadge status={payment.status} />
                         <span className="text-sm font-medium">
-                          {getServiceTypeLabel(payment.serviceOrder.serviceType)}
+                          {getServiceName(payment.session)}
                         </span>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
                           <span>
-                            {payment.paidAt
-                              ? format(new Date(payment.paidAt), 'yyyy년 M월 d일 HH:mm', { locale: ko })
-                              : format(new Date(payment.createdAt), 'yyyy년 M월 d일 HH:mm', { locale: ko })}
+                            {payment.approvedAt
+                              ? format(new Date(payment.approvedAt), 'yyyy년 M월 d일 HH:mm', { locale: ko })
+                              : format(new Date(payment.requestedAt), 'yyyy년 M월 d일 HH:mm', { locale: ko })}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -323,29 +310,31 @@ export default function PaymentHistory() {
                           <span>{getPaymentMethodLabel(payment.method)}</span>
                         </div>
                       </div>
-                      
-                      {payment.status === PaymentStatus.REFUNDED && payment.refundedAt && (
+
+                      {payment.status === TossPaymentStatus.CANCELED && payment.cancelledAt && (
                         <div className="mt-2 text-sm text-blue-600">
-                          환불일: {format(new Date(payment.refundedAt), 'yyyy년 M월 d일', { locale: ko })}
+                          취소일: {format(new Date(payment.cancelledAt), 'yyyy년 M월 d일', { locale: ko })}
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="text-right">
                       <div className="text-lg font-bold">
-                        {new Intl.NumberFormat('ko-KR', { 
-                  style: 'currency', 
+                        {new Intl.NumberFormat('ko-KR', {
+                  style: 'currency',
                   currency: 'KRW',
                   maximumFractionDigits: 0,
                 }).format(payment.amount)}
                       </div>
                       <div className="flex gap-2 mt-2 justify-end">
-                        <Link
-                          to={`/account/payments/${payment.id}`}
-                          className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                        >
-                          상세 <ChevronRight className="h-3 w-3" />
-                        </Link>
+                        {payment.sessionId && (
+                          <Link
+                            to={`/naming/freemium/result?sessionId=${payment.sessionId}`}
+                            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                          >
+                            상세 <ChevronRight className="h-3 w-3" />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>
