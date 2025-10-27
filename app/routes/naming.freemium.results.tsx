@@ -3,9 +3,9 @@
  *
  * GET /naming/freemium/results?sessionId=xxx
  *
- * Displays name recommendations with freemium structure:
- * - 1-4위: Blurred premium names (require payment)
- * - 5위: Free name (fully accessible)
+ * Displays name recommendations with freemium structure (2+8):
+ * - 1-2위: Free names (fully accessible)
+ * - 3-10위: Locked premium names (require payment)
  * - Premium CTA for payment
  */
 
@@ -249,7 +249,7 @@ export default function FreemiumResultsPage() {
           </div>
         </motion.div>
 
-        {/* Blurred Names (1-4위) */}
+        {/* Free Names (1-2위) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -257,15 +257,15 @@ export default function FreemiumResultsPage() {
           className="mb-8"
         >
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
-            🔒 프리미엄 이름 (1-4위)
+            🎁 무료 체험 이름 (1-2위)
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {tiers.blurred.map((candidate, index) => (
-              <BlurredNameCard
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {tiers.free.map((candidate, index) => (
+              <NameCard
                 key={candidate.id}
                 candidate={candidate}
                 rank={index + 1}
-                onClick={handlePayment}
+                showFreeBadge={true}
               />
             ))}
           </div>
@@ -275,30 +275,32 @@ export default function FreemiumResultsPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.2 }}
           className="mb-8"
         >
           <PremiumCTA metrics={metrics} onPayment={handlePayment} />
         </motion.div>
 
-        {/* Free Name (5위) */}
+        {/* Locked Names (3-10위) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.3 }}
           className="mb-8"
         >
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
-            🎁 무료 체험 이름
+            🔒 프리미엄 이름 (3-10위)
           </h2>
-          {tiers.free.map((candidate) => (
-            <NameCard
-              key={candidate.id}
-              candidate={candidate}
-              rank={5}
-              showFreeBadge={true}
-            />
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {tiers.blurred.map((candidate, index) => (
+              <BlurredNameCard
+                key={candidate.id}
+                candidate={candidate}
+                rank={index + 3}
+                onClick={handlePayment}
+              />
+            ))}
+          </div>
         </motion.div>
 
         {/* Information Card */}
@@ -331,7 +333,7 @@ export default function FreemiumResultsPage() {
               <li className="flex items-start gap-2">
                 <span>✓</span>
                 <span>
-                  결제 후 <strong>상위 4개 이름</strong>과 <strong>나머지 모든 이름</strong>을
+                  결제 후 <strong>3-10위 프리미엄 이름 8개</strong>를 모두
                   확인하실 수 있습니다
                 </span>
               </li>
@@ -345,7 +347,7 @@ export default function FreemiumResultsPage() {
             isOpen={isPaymentModalOpen}
             onClose={() => setIsPaymentModalOpen(false)}
             sessionId={sessionId!}
-            amount={9900}
+            amount={69000}
             onSuccess={handlePaymentSuccess}
           />
         )}

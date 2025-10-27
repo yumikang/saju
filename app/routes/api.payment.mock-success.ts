@@ -45,9 +45,9 @@ export async function action({ request }: ActionFunctionArgs) {
       await prisma.namingPayment.update({
         where: { id: session.payment.id },
         data: {
-          status: 'COMPLETED',
+          status: 'DONE',
           unlocked: true,
-          paymentKey: data.paymentKey,
+          tossPaymentKey: data.paymentKey,
           unlockedAt: new Date(),
         },
       });
@@ -55,12 +55,13 @@ export async function action({ request }: ActionFunctionArgs) {
       // Create new payment
       await prisma.namingPayment.create({
         data: {
+          orderId: data.orderId,
           sessionId: data.sessionId,
           amount: data.amount,
-          status: 'COMPLETED',
+          currency: 'KRW',
+          status: 'DONE',
           unlocked: true,
-          paymentKey: data.paymentKey,
-          orderId: data.orderId,
+          tossPaymentKey: data.paymentKey,
           unlockedAt: new Date(),
         },
       });

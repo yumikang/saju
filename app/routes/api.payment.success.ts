@@ -103,7 +103,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       // Update payment status to failed
       await prisma.namingPayment.update({
         where: { id: orderId },
-        data: { status: 'failed' },
+        data: { status: 'FAILED' },
       });
 
       return redirect(
@@ -118,7 +118,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     await prisma.namingPayment.update({
       where: { id: orderId },
       data: {
-        status: 'completed',
+        status: 'DONE',
         unlocked: true,
         unlockedAt: new Date(),
         tossPaymentKey: paymentKey,

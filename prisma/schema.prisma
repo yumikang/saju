@@ -515,9 +515,9 @@ model NamingSession {
   saju            Json                                 // SajuResult
   yongsin         Json                                 // YongsinResult
 
-  // 추천 이름
-  top5            Json                                 // 무료 제공 (5개)
-  remaining15     Json                                 // 결제 후 제공 (15개)
+  // 추천 이름 (2+8 구조)
+  top2            Json      @default("{}")             // 무료 제공 (2개)
+  locked8         Json      @default("{}")             // 결제 후 제공 (8개)
   allCandidates   Json                                 // 전체 50개
 
   // 결제 연동

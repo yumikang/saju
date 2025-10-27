@@ -3,10 +3,9 @@
  *
  * GET /naming/freemium/result?sessionId=xxx&payment=success
  *
- * Shows all unlocked names after payment:
- * - 1-4위: Previously blurred, now unlocked
- * - 5위: Was free
- * - 6-10위: Previously locked, now unlocked
+ * Shows all unlocked names after payment (2+8 structure):
+ * - 1-2위: Were free (still accessible)
+ * - 3-10위: Previously locked, now unlocked
  */
 
 import { json, type LoaderFunctionArgs } from '@remix-run/node';
@@ -62,10 +61,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     );
   }
 
-  // 5. Extract top 10 names from session data
-  const top5 = (session.top5 as any[]) || [];
-  const remaining15 = (session.remaining15 as any[]) || [];
-  const top10Names = [...top5, ...remaining15.slice(0, 5)];
+  // 5. Extract top 10 names from session data (2 free + 8 locked)
+  const top2 = (session.top2 as any[]) || [];
+  const locked8 = (session.locked8 as any[]) || [];
+  const top10Names = [...top2, ...locked8];
 
   // 6. Return data
   return json({
@@ -187,7 +186,7 @@ export default function PaymentSuccessPage() {
                 <NameCard
                   candidate={candidate}
                   rank={index + 1}
-                  showFreeBadge={index === 4} // 5위만 무료 배지 표시
+                  showFreeBadge={index < 2} // 1-2위 무료 배지 표시
                 />
               </motion.div>
             ))}

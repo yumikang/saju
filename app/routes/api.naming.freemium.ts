@@ -176,8 +176,8 @@ async function handleStage1(data: z.infer<typeof Stage1Schema>['data']): Promise
       // Placeholder data (will be filled in stage 2 & 3)
       saju: {},
       yongsin: {},
-      top5: [],
-      remaining15: [],
+      top2: [],
+      locked8: [],
       allCandidates: [],
     },
   });
@@ -299,7 +299,7 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
 }
 
 /**
- * Stage 3: Generate name recommendations (5 free + 15 paid)
+ * Stage 3: Generate name recommendations (2 free + 8 paid)
  */
 async function handleStage3(sessionId: string): Promise<Stage3Response> {
   console.log(`[Stage 3] Generating names for session: ${sessionId}`);
@@ -355,23 +355,23 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
 
   console.log(`[Stage 3] Generated ${result.candidates.length} names in ${executionTime}ms`);
 
-  // Split results: top 5 free, next 15 paid, rest stored
+  // Split results: top 2 free, next 8 paid, rest stored
   const allCandidates = result.candidates;
-  const top5 = allCandidates.slice(0, 5);
-  const remaining15 = allCandidates.slice(5, 20);
+  const top2 = allCandidates.slice(0, 2);
+  const locked8 = allCandidates.slice(2, 10);
 
   // Update session with all candidates
   await prisma.namingSession.update({
     where: { id: sessionId },
     data: {
-      top5: top5 as any,
-      remaining15: remaining15 as any,
+      top2: top2 as any,
+      locked8: locked8 as any,
       allCandidates: allCandidates as any,
     },
   });
 
-  // Format top 5 for response
-  const recommendations: NameRecommendation[] = top5.map((candidate, index) => ({
+  // Format top 2 for response
+  const recommendations: NameRecommendation[] = top2.map((candidate, index) => ({
     rank: index + 1,
     fullName: `${session.lastName}${candidate.firstName.join('')}`,
     characters: candidate.characters.map((char) => ({
@@ -390,7 +390,7 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
     aiExplanation: `이 이름은 ${session.selectedValues.join(', ')} 가치를 반영하여 선택되었습니다.`,
   }));
 
-  console.log(`[Stage 3] Returning top 5 names for session: ${sessionId}`);
+  console.log(`[Stage 3] Returning top 2 names for session: ${sessionId}`);
 
   return {
     success: true,

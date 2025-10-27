@@ -115,7 +115,7 @@ export async function handleAnalyze(
     const calculator = new SajuCalculator();
     const birthDateTime = new Date(`${request.birthDate}T${request.birthTime}`);
 
-    const sajuResult = calculator.calculate(
+    const sajuResult = await calculator.calculate(
       birthDateTime,
       request.birthTime,
       request.isLunar

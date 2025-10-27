@@ -23,7 +23,7 @@ test.describe('Freemium Flow E2E', () => {
       // Wait for page to be fully loaded
       await page.waitForLoadState('networkidle');
       // Verify we're on the correct page by checking for form elements
-      await expect(page.locator('text=/기본 정보 입력|정보 입력/')).toBeVisible();
+      await expect(page.getByRole('heading', { name: '기본 정보 입력' })).toBeVisible();
     });
 
     await test.step('Fill input form', async () => {
@@ -115,7 +115,7 @@ test.describe('Freemium Flow E2E', () => {
       await expect(page.locator('[role="dialog"]')).toBeVisible();
 
       // Verify pricing displayed
-      await expect(page.locator('text=/70,000원/')).toBeVisible();
+      await expect(page.locator('text=/69,000원/')).toBeVisible();
 
       // Verify payment benefits listed
       await expect(page.locator('text=/1-10위|전체 이름 공개/')).toBeVisible();
@@ -133,7 +133,7 @@ test.describe('Freemium Flow E2E', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             sessionId: sid,
-            amount: 70000,
+            amount: 69000,
             paymentKey: 'test_payment_key_' + Date.now(),
             orderId: 'test_order_' + Date.now(),
           }),
@@ -156,7 +156,7 @@ test.describe('Freemium Flow E2E', () => {
       await expect(page.locator('text=/결제 완료/')).toBeVisible();
 
       // Verify payment amount displayed
-      await expect(page.locator('text=/70,000원/')).toBeVisible();
+      await expect(page.locator('text=/69,000원/')).toBeVisible();
 
       // Verify all 10 names now visible
       const unlockedNames = await page.locator('[data-testid="name-card"]').count();

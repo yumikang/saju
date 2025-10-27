@@ -103,7 +103,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const existingPayment = await prisma.namingPayment.findFirst({
       where: {
         sessionId: session.id,
-        status: { in: ['pending', 'completed'] },
+        status: { in: ['PENDING', 'DONE'] },
       },
     });
 
@@ -131,13 +131,18 @@ export async function action({ request }: ActionFunctionArgs) {
       }
     }
 
-    // 5. Create payment record
+    // 5. Generate orderId
+    const orderId = crypto.randomUUID();
+    const orderName = `프리미엄 작명 서비스 (${session.lastName}씨 자녀)`;
+
+    // 6. Create payment record
     const payment = await prisma.namingPayment.create({
       data: {
+        orderId,
         sessionId: session.id,
         amount,
         currency: 'KRW',
-        status: 'pending',
+        status: 'PENDING',
         customerName,
         customerEmail,
         customerPhone,
@@ -145,11 +150,7 @@ export async function action({ request }: ActionFunctionArgs) {
       },
     });
 
-    console.log(`[Payment] Created payment record: ${payment.id}`);
-
-    // 6. Create TossPayments checkout
-    const orderName = `프리미엄 작명 서비스 (${session.lastName}씨 자녀)`;
-    const orderId = payment.id;
+    console.log(`[Payment] Created payment record: ${payment.id} with orderId: ${orderId}`);
 
     const tossResponse = await fetch('https://api.tosspayments.com/v1/payments', {
       method: 'POST',
@@ -176,7 +177,7 @@ export async function action({ request }: ActionFunctionArgs) {
       // Update payment status to failed
       await prisma.namingPayment.update({
         where: { id: payment.id },
-        data: { status: 'failed' },
+        data: { status: 'FAILED' },
       });
 
       return json<PaymentErrorResponse>(
@@ -209,7 +210,6 @@ export async function action({ request }: ActionFunctionArgs) {
     await prisma.namingPayment.update({
       where: { id: payment.id },
       data: {
-        tossOrderId: orderId,
         tossCheckoutUrl: checkoutUrl,
       },
     });
