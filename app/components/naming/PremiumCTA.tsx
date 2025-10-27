@@ -71,18 +71,19 @@ export function PremiumCTA({ metrics, onPayment }: PremiumCTAProps) {
           {/* 메인 메시지 */}
           <div className="text-center mb-6">
             <h3 className="text-3xl font-bold mb-3 text-gray-900">
-              최고 점수{' '}
-              <span className="text-yellow-600">{metrics.topScore}점</span>부터
-              시작합니다!
+              1위 최고 점수{' '}
+              <span className="text-yellow-600">{metrics.topScore}점</span>
+              입니다!
             </h3>
             <p className="text-lg text-gray-700 mb-2">
-              3-10위 프리미엄 이름은{' '}
+              1-10위 프리미엄 이름은{' '}
               <strong className="text-orange-600">
-                평균 {metrics.lockedTopScore}점 이상
-              </strong>의 완벽한 조화
+                무료 이름보다 평균 {metrics.scoreDifference}점 더 높은
+              </strong>{' '}
+              완벽한 조화
             </p>
             <p className="text-sm text-gray-600">
-              평생 사용할 이름, 8개 중에서 선택하세요
+              평생 사용할 이름, 10개 중에서 선택하세요
             </p>
           </div>
 
@@ -115,10 +116,10 @@ export function PremiumCTA({ metrics, onPayment }: PremiumCTAProps) {
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900">
                     <Sparkles className="w-4 h-4 inline mr-1 text-yellow-500" />
-                    프리미엄 8개 이름 (3-10위) 공개
+                    프리미엄 10개 이름 (1-10위) 공개
                   </p>
                   <p className="text-sm text-gray-600">
-                    사주 조화 최적 이름 8개
+                    최고 점수 이름 10개 + 상세 분석
                   </p>
                 </div>
               </div>
@@ -187,7 +188,7 @@ export function PremiumCTA({ metrics, onPayment }: PremiumCTAProps) {
           {/* 가치 제안 */}
           <div className="mt-4 text-center">
             <p className="text-xs text-gray-500">
-              💡 이름 하나당 약 {Math.round(69000 / 8).toLocaleString()}원,
+              💡 이름 하나당 약 {Math.round(69000 / 10).toLocaleString()}원,
               평생 사용할 소중한 이름을 위한 투자
             </p>
           </div>

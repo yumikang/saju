@@ -3,9 +3,9 @@
  *
  * GET /naming/freemium/results?sessionId=xxx
  *
- * Displays name recommendations with freemium structure (2+8):
- * - 1-2위: Free names (fully accessible)
- * - 3-10위: Locked premium names (require payment)
+ * Displays name recommendations with strategic freemium structure:
+ * - 11-12위: Free preview names (lower tier, fully accessible)
+ * - 1-10위: Locked premium names (top tier, require payment)
  * - Premium CTA for payment
  */
 
@@ -249,7 +249,7 @@ export default function FreemiumResultsPage() {
           </div>
         </motion.div>
 
-        {/* Free Names (1-2위) */}
+        {/* Free Names (11-12위) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -257,14 +257,17 @@ export default function FreemiumResultsPage() {
           className="mb-8"
         >
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
-            🎁 무료 체험 이름 (1-2위)
+            🎁 무료 체험 이름 (11-12위)
           </h2>
+          <p className="text-sm text-gray-600 mb-4">
+            1위 최고 점수는 <strong className="text-orange-600">{metrics.topScore}점</strong>입니다!
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {tiers.free.map((candidate, index) => (
               <NameCard
                 key={candidate.id}
                 candidate={candidate}
-                rank={index + 1}
+                rank={index + 11}
                 showFreeBadge={true}
               />
             ))}
@@ -281,7 +284,7 @@ export default function FreemiumResultsPage() {
           <PremiumCTA metrics={metrics} onPayment={handlePayment} />
         </motion.div>
 
-        {/* Locked Names (3-10위) - Show locked names if available */}
+        {/* Locked Names (1-10위) - Show locked names if available */}
         {tiers.locked.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -290,14 +293,14 @@ export default function FreemiumResultsPage() {
             className="mb-8"
           >
             <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              🔒 프리미엄 이름 (3-10위)
+              🔒 프리미엄 이름 (1-10위)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               {tiers.locked.map((candidate, index) => (
                 <BlurredNameCard
                   key={candidate.id}
                   candidate={candidate}
-                  rank={index + 3}
+                  rank={index + 1}
                   onClick={handlePayment}
                 />
               ))}
@@ -335,7 +338,7 @@ export default function FreemiumResultsPage() {
               <li className="flex items-start gap-2">
                 <span>✓</span>
                 <span>
-                  결제 후 <strong>3-10위 프리미엄 이름 8개</strong>를 모두
+                  결제 후 <strong>1-10위 최고 점수 이름 10개</strong>를 모두
                   확인하실 수 있습니다
                 </span>
               </li>

@@ -1,9 +1,9 @@
 /**
- * 이름 추천 결과 페이지 (Freemium 2+8 모델)
+ * 이름 추천 결과 페이지 (Strategic Freemium 모델)
  *
- * 2+8 freemium 전략:
- * - 1-2위: 무료 공개 (Free names)
- * - 3-10위: 프리미엄 잠금 (8 premium names, 결제 필요)
+ * 전략적 freemium 구조:
+ * - 11-12위: 무료 공개 (Free preview names)
+ * - 1-10위: 프리미엄 잠금 (Top 10 premium names, 결제 필요)
  */
 
 import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
@@ -180,23 +180,23 @@ export default function ResultsPage() {
       ) : (
         <>
           {/* ─────────────────────────────────────────────────── */}
-          {/* 무료 유저: 2+8 freemium 전략 */}
+          {/* 무료 유저: 전략적 freemium 구조 */}
           {/* ─────────────────────────────────────────────────── */}
 
-          {/* 🆓 무료 공개 1-2위 */}
+          {/* 🆓 무료 공개 11-12위 */}
           {tiers.free.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold flex items-center gap-2">
                   <Gift className="w-6 h-6 text-green-500" />
-                  무료 체험 이름 (1-2위)
+                  무료 체험 이름 (11-12위)
                   <Badge variant="secondary" className="bg-green-50 border-green-300">
                     무료
                   </Badge>
                 </h2>
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">최고 점수</p>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-sm text-gray-500">1위 최고 점수</p>
+                  <p className="text-2xl font-bold text-orange-600">
                     {metrics.topScore}점
                   </p>
                 </div>
@@ -207,7 +207,7 @@ export default function ResultsPage() {
                   <NameCard
                     key={candidate.id}
                     candidate={candidate}
-                    rank={idx + 1}
+                    rank={idx + 11}
                     isFavorite={favorites.includes(candidate.id)}
                     onFavorite={toggleFavorite}
                     onCharacterClick={openCharacterDetail}
@@ -222,7 +222,7 @@ export default function ResultsPage() {
                 transition={{ delay: 0.5 }}
                 className="mt-4 text-center text-sm text-gray-600"
               >
-                이 이름들도 훌륭하지만, 아래 프리미엄 이름들은 더욱 다양한 선택지를 제공합니다
+                이 이름들도 좋지만, 1-10위 프리미엄 이름은 평균 {metrics.scoreDifference}점 더 높습니다
               </motion.p>
             </section>
           )}
@@ -230,13 +230,13 @@ export default function ResultsPage() {
           {/* 💎 CTA: 프리미엄 이름 업그레이드 */}
           <PremiumCTA metrics={metrics} onPayment={openPaymentModal} />
 
-          {/* 🔒 프리미엄 잠금 3-10위 */}
+          {/* 🔒 프리미엄 잠금 1-10위 */}
           {tiers.locked.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold flex items-center gap-2">
                   <Lock className="w-6 h-6 text-orange-500" />
-                  프리미엄 이름 (3-10위)
+                  프리미엄 이름 (1-10위)
                   <Badge variant="outline" className="bg-orange-50 border-orange-300">
                     프리미엄
                   </Badge>
@@ -248,7 +248,7 @@ export default function ResultsPage() {
                   <BlurredNameCard
                     key={candidate.id}
                     candidate={candidate}
-                    rank={idx + 3}
+                    rank={idx + 1}
                     onClick={openPaymentModal}
                   />
                 ))}
@@ -260,10 +260,10 @@ export default function ResultsPage() {
                     <strong className="text-orange-600 text-2xl">
                       {tiers.locked.length}개
                     </strong>
-                    의 프리미엄 이름을 69,000원에 모두 확인하세요
+                    의 최고 점수 프리미엄 이름을 69,000원에 모두 확인하세요
                   </p>
                   <p className="text-sm mt-2 text-gray-600">
-                    이름 하나당 약 {Math.round(69000 / 8).toLocaleString()}원, 평생 사용할 이름을 지금 선택하세요
+                    이름 하나당 약 {Math.round(69000 / 10).toLocaleString()}원, 평생 사용할 이름을 지금 선택하세요
                   </p>
                 </div>
               </Card>
@@ -295,13 +295,13 @@ export default function ResultsPage() {
               <li className="flex items-start">
                 <span className="mr-2">•</span>
                 <span className="text-green-600 font-semibold">
-                  1-2위 무료 이름을 지금 바로 확인하실 수 있습니다
+                  11-12위 무료 이름을 지금 바로 확인하실 수 있습니다
                 </span>
               </li>
               <li className="flex items-start">
                 <span className="mr-2">•</span>
                 <span className="text-orange-600 font-semibold">
-                  프리미엄 업그레이드 시 3-10위 이름 8개를 추가로 확인하실 수 있습니다 (69,000원)
+                  프리미엄 업그레이드 시 1-10위 최고 점수 이름 10개를 확인하실 수 있습니다 (69,000원)
                 </span>
               </li>
             </>
