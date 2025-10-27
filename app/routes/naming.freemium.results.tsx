@@ -281,27 +281,29 @@ export default function FreemiumResultsPage() {
           <PremiumCTA metrics={metrics} onPayment={handlePayment} />
         </motion.div>
 
-        {/* Locked Names (3-10위) */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mb-8"
-        >
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">
-            🔒 프리미엄 이름 (3-10위)
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {tiers.blurred.map((candidate, index) => (
-              <BlurredNameCard
-                key={candidate.id}
-                candidate={candidate}
-                rank={index + 3}
-                onClick={handlePayment}
-              />
-            ))}
-          </div>
-        </motion.div>
+        {/* Locked Names (3-10위) - Show locked names if available */}
+        {tiers.locked.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mb-8"
+          >
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+              🔒 프리미엄 이름 (3-10위)
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {tiers.locked.map((candidate, index) => (
+                <BlurredNameCard
+                  key={candidate.id}
+                  candidate={candidate}
+                  rank={index + 3}
+                  onClick={handlePayment}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Information Card */}
         <motion.div

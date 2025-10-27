@@ -1,10 +1,9 @@
 /**
- * 이름 추천 결과 페이지 (Freemium 모델)
+ * 이름 추천 결과 페이지 (Freemium 2+8 모델)
  *
- * 3-tier 전략:
- * - 1-4위: 블러 프리뷰
- * - 5위: 무료 공개
- * - 6+위: 완전 잠금
+ * 2+8 freemium 전략:
+ * - 1-2위: 무료 공개 (Free names)
+ * - 3-10위: 프리미엄 잠금 (8 premium names, 결제 필요)
  */
 
 import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
@@ -157,7 +156,7 @@ export default function ResultsPage() {
           <div className="mb-6">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-yellow-500" />
-              전체 추천 이름
+              전체 추천 이름 (1-10위)
             </h2>
             <p className="text-gray-600 mt-2">
               모든 이름의 상세 정보를 확인하실 수 있습니다
@@ -165,7 +164,7 @@ export default function ResultsPage() {
           </div>
 
           <div className="space-y-4">
-            {[...tiers.blurred, ...tiers.free, ...tiers.locked].map((candidate, idx) => (
+            {[...tiers.free, ...tiers.locked].map((candidate, idx) => (
               <NameCard
                 key={candidate.id}
                 candidate={candidate}
@@ -173,7 +172,7 @@ export default function ResultsPage() {
                 isFavorite={favorites.includes(candidate.id)}
                 onFavorite={toggleFavorite}
                 onCharacterClick={openCharacterDetail}
-                showFreeBadge={false}
+                showFreeBadge={idx < 2}
               />
             ))}
           </div>
@@ -181,63 +180,41 @@ export default function ResultsPage() {
       ) : (
         <>
           {/* ─────────────────────────────────────────────────── */}
-          {/* 무료 유저: 3-tier 전략 */}
+          {/* 무료 유저: 2+8 freemium 전략 */}
           {/* ─────────────────────────────────────────────────── */}
 
-          {/* 🔓 블러 프리뷰 1-4위 */}
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-yellow-500" />
-                최고 점수 이름 TOP 4
-                <Badge variant="outline" className="bg-yellow-50 border-yellow-300">
-                  프리뷰
-                </Badge>
-              </h2>
-              <div className="text-right">
-                <p className="text-sm text-gray-500">최고 점수</p>
-                <p className="text-2xl font-bold text-yellow-600">
-                  {metrics.topScore}점
-                </p>
-              </div>
-            </div>
-
-            <div className="grid gap-4">
-              {tiers.blurred.map((candidate, idx) => (
-                <BlurredNameCard
-                  key={candidate.id}
-                  candidate={candidate}
-                  rank={idx + 1}
-                  onClick={openPaymentModal}
-                />
-              ))}
-            </div>
-          </section>
-
-          {/* 💎 CTA: TOP 4 공개 유혹 */}
-          <PremiumCTA metrics={metrics} onPayment={openPaymentModal} />
-
-          {/* 🆓 무료 공개 5위 */}
+          {/* 🆓 무료 공개 1-2위 */}
           {tiers.free.length > 0 && (
             <section>
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold flex items-center gap-2">
                   <Gift className="w-6 h-6 text-green-500" />
-                  무료 공개 이름
+                  무료 체험 이름 (1-2위)
                   <Badge variant="secondary" className="bg-green-50 border-green-300">
                     무료
                   </Badge>
                 </h2>
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">최고 점수</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {metrics.topScore}점
+                  </p>
+                </div>
               </div>
 
-              <NameCard
-                candidate={tiers.free[0]}
-                rank={5}
-                isFavorite={favorites.includes(tiers.free[0].id)}
-                onFavorite={toggleFavorite}
-                onCharacterClick={openCharacterDetail}
-                showFreeBadge={true}
-              />
+              <div className="space-y-4">
+                {tiers.free.map((candidate, idx) => (
+                  <NameCard
+                    key={candidate.id}
+                    candidate={candidate}
+                    rank={idx + 1}
+                    isFavorite={favorites.includes(candidate.id)}
+                    onFavorite={toggleFavorite}
+                    onCharacterClick={openCharacterDetail}
+                    showFreeBadge={true}
+                  />
+                ))}
+              </div>
 
               <motion.p
                 initial={{ opacity: 0 }}
@@ -245,25 +222,48 @@ export default function ResultsPage() {
                 transition={{ delay: 0.5 }}
                 className="mt-4 text-center text-sm text-gray-600"
               >
-                이것도 좋은 이름이지만, 위의 이름들은 더욱 완벽한 조화를 이룹니다
+                이 이름들도 훌륭하지만, 아래 프리미엄 이름들은 더욱 다양한 선택지를 제공합니다
               </motion.p>
             </section>
           )}
 
-          {/* 🔒 잠금 카운트 */}
+          {/* 💎 CTA: 프리미엄 이름 업그레이드 */}
+          <PremiumCTA metrics={metrics} onPayment={openPaymentModal} />
+
+          {/* 🔒 프리미엄 잠금 3-10위 */}
           {tiers.locked.length > 0 && (
             <section>
-              <Card className="p-8 border-dashed border-2 bg-gray-50">
-                <div className="text-center text-gray-600">
-                  <Lock className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <Lock className="w-6 h-6 text-orange-500" />
+                  프리미엄 이름 (3-10위)
+                  <Badge variant="outline" className="bg-orange-50 border-orange-300">
+                    프리미엄
+                  </Badge>
+                </h2>
+              </div>
+
+              <div className="grid gap-4">
+                {tiers.locked.map((candidate, idx) => (
+                  <BlurredNameCard
+                    key={candidate.id}
+                    candidate={candidate}
+                    rank={idx + 3}
+                    onClick={openPaymentModal}
+                  />
+                ))}
+              </div>
+
+              <Card className="p-6 border-dashed border-2 bg-orange-50 mt-4">
+                <div className="text-center text-gray-700">
                   <p className="text-lg">
-                    <strong className="text-gray-900 text-2xl">
+                    <strong className="text-orange-600 text-2xl">
                       {tiers.locked.length}개
                     </strong>
-                    의 추가 이름이 잠겨있습니다
+                    의 프리미엄 이름을 69,000원에 모두 확인하세요
                   </p>
-                  <p className="text-sm mt-2 text-gray-500">
-                    프리미엄으로 업그레이드하여 모든 이름을 확인하세요
+                  <p className="text-sm mt-2 text-gray-600">
+                    이름 하나당 약 {Math.round(69000 / 8).toLocaleString()}원, 평생 사용할 이름을 지금 선택하세요
                   </p>
                 </div>
               </Card>
@@ -291,12 +291,20 @@ export default function ResultsPage() {
             <span>한자를 클릭하면 상세한 뜻과 오행 정보를 확인할 수 있습니다</span>
           </li>
           {!isPremiumUser && (
-            <li className="flex items-start">
-              <span className="mr-2">•</span>
-              <span className="text-orange-600 font-semibold">
-                프리미엄 업그레이드 시 전체 {totalCount}개 이름을 평생 열람하실 수 있습니다
-              </span>
-            </li>
+            <>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span className="text-green-600 font-semibold">
+                  1-2위 무료 이름을 지금 바로 확인하실 수 있습니다
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span className="text-orange-600 font-semibold">
+                  프리미엄 업그레이드 시 3-10위 이름 8개를 추가로 확인하실 수 있습니다 (69,000원)
+                </span>
+              </li>
+            </>
           )}
         </ul>
       </div>
