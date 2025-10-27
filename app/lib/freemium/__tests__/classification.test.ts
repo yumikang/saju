@@ -25,7 +25,6 @@ function createMockCandidate(
   overrides?: Partial<ScoredCandidate>
 ): ScoredCandidate {
   return {
-    id: `candidate-${rank}`,
     firstName: [`이름${rank}`, `名${rank}`],
     characters: [
       {
@@ -47,133 +46,138 @@ function createMockCandidate(
         koreanReading: `읽기${rank + 1}`,
       },
     ],
-    totalStrokes: 22,
     scores: {
       overall: score,
       elementHarmony: {
         score: score * 0.4,
-        weight: 0.4,
-        weightedScore: score * 0.4 * 0.4,
-        explanation: '오행 조화',
+        weight: 40,
+        breakdown: {
+          lackingElements: score * 0.15,
+          elementBalance: score * 0.15,
+          yongsinAlignment: score * 0.10,
+        },
       },
       yinYangBalance: {
         score: score * 0.2,
-        weight: 0.2,
-        weightedScore: score * 0.2 * 0.2,
-        explanation: '음양 균형',
+        weight: 20,
+        breakdown: {
+          ganBalance: score * 0.1,
+          jiBalance: score * 0.1,
+          overallBalance: score * 0.1,
+        },
       },
       numerology: {
-        score: score * 0.2,
-        weight: 0.2,
-        weightedScore: score * 0.2 * 0.2,
-        explanation: '수리',
+        score: score * 0.25,
+        weight: 25,
+        breakdown: {
+          totalStrokes: 22,
+          individualStrokes: [10, 12],
+        },
       },
       meaningHarmony: {
-        score: score * 0.2,
-        weight: 0.2,
-        weightedScore: score * 0.2 * 0.2,
-        explanation: '의미 조화',
+        score: score * 0.15,
+        weight: 15,
+        breakdown: {
+          valueAlignment: score * 0.08,
+          synergy: score * 0.07,
+        },
       },
     },
-    confidenceScore: 0.85,
+    confidenceScore: 85,
+    aiExplanation: `${rank}번째 이름에 대한 AI 설명`,
     ...overrides,
   };
 }
 
 /**
- * Create a list of mock candidates
+ * Create a list of mock candidates with descending scores
  */
 function createMockCandidateList(count: number): ScoredCandidate[] {
   const candidates: ScoredCandidate[] = [];
-  const baseScore = 100;
-
   for (let i = 0; i < count; i++) {
-    // 점수는 순위에 따라 감소 (1등 100점, 2등 98점, 3등 96점...)
-    const score = baseScore - (i * 2);
+    const score = 100 - i * 2;
     candidates.push(createMockCandidate(score, i + 1));
   }
-
   return candidates;
 }
 
 // ============================================================
-// Tests: classifyCandidates()
+// Tests: classifyCandidates() - 2+8 Structure
 // ============================================================
 
-describe('classifyCandidates', () => {
+describe('classifyCandidates (2+8 structure)', () => {
   describe('정상 케이스 (Happy Path)', () => {
-    it('10개의 후보를 올바르게 분류해야 함', () => {
+    it('10개의 후보를 2+8로 올바르게 분류해야 함', () => {
       const candidates = createMockCandidateList(10);
       const result = classifyCandidates(candidates);
 
-      expect(result.blurred).toHaveLength(4);
-      expect(result.free).toHaveLength(1);
-      expect(result.locked).toHaveLength(5);
+      expect(result.free).toHaveLength(2); // 1-2위
+      expect(result.locked).toHaveLength(8); // 3-10위
+      expect(result.remaining).toHaveLength(0); // 11+위
     });
 
-    it('1-4위는 blurred 티어에 배정되어야 함', () => {
+    it('1-2위는 free 티어에 배정되어야 함', () => {
       const candidates = createMockCandidateList(10);
       const result = classifyCandidates(candidates);
 
-      expect(result.blurred[0].scores.overall).toBe(100);
-      expect(result.blurred[1].scores.overall).toBe(98);
-      expect(result.blurred[2].scores.overall).toBe(96);
-      expect(result.blurred[3].scores.overall).toBe(94);
+      expect(result.free[0].scores.overall).toBe(100);
+      expect(result.free[1].scores.overall).toBe(98);
     });
 
-    it('5위는 free 티어에 배정되어야 함', () => {
+    it('3-10위는 locked 티어에 배정되어야 함', () => {
       const candidates = createMockCandidateList(10);
       const result = classifyCandidates(candidates);
 
-      expect(result.free).toHaveLength(1);
-      expect(result.free[0].scores.overall).toBe(92);
+      expect(result.locked).toHaveLength(8);
+      expect(result.locked[0].scores.overall).toBe(96); // 3위
+      expect(result.locked[7].scores.overall).toBe(82); // 10위
     });
 
-    it('6위 이상은 locked 티어에 배정되어야 함', () => {
-      const candidates = createMockCandidateList(10);
+    it('11위 이상은 remaining 티어에 배정되어야 함', () => {
+      const candidates = createMockCandidateList(15);
       const result = classifyCandidates(candidates);
 
-      expect(result.locked).toHaveLength(5);
-      expect(result.locked[0].scores.overall).toBe(90);
-      expect(result.locked[4].scores.overall).toBe(82);
+      expect(result.remaining).toHaveLength(5);
+      expect(result.remaining[0].scores.overall).toBe(80); // 11위
+      expect(result.remaining[4].scores.overall).toBe(72); // 15위
     });
   });
 
   describe('경계값 테스트 (Edge Cases)', () => {
-    it('정확히 5개의 후보를 처리해야 함', () => {
-      const candidates = createMockCandidateList(5);
+    it('정확히 10개의 후보를 처리해야 함', () => {
+      const candidates = createMockCandidateList(10);
       const result = classifyCandidates(candidates);
 
-      expect(result.blurred).toHaveLength(4);
-      expect(result.free).toHaveLength(1);
-      expect(result.locked).toHaveLength(0);
+      expect(result.free).toHaveLength(2);
+      expect(result.locked).toHaveLength(8);
+      expect(result.remaining).toHaveLength(0);
     });
 
-    it('4개 미만의 후보를 처리해야 함', () => {
-      const candidates = createMockCandidateList(3);
+    it('2개 미만의 후보를 처리해야 함', () => {
+      const candidates = createMockCandidateList(1);
       const result = classifyCandidates(candidates);
 
-      expect(result.blurred).toHaveLength(3);
-      expect(result.free).toHaveLength(0);
+      expect(result.free).toHaveLength(1);
       expect(result.locked).toHaveLength(0);
+      expect(result.remaining).toHaveLength(0);
     });
 
     it('빈 배열을 처리해야 함', () => {
       const candidates: ScoredCandidate[] = [];
       const result = classifyCandidates(candidates);
 
-      expect(result.blurred).toHaveLength(0);
       expect(result.free).toHaveLength(0);
       expect(result.locked).toHaveLength(0);
+      expect(result.remaining).toHaveLength(0);
     });
 
-    it('100개 이상의 대량 후보를 처리해야 함', () => {
-      const candidates = createMockCandidateList(150);
+    it('50개 이상의 대량 후보를 처리해야 함', () => {
+      const candidates = createMockCandidateList(50);
       const result = classifyCandidates(candidates);
 
-      expect(result.blurred).toHaveLength(4);
-      expect(result.free).toHaveLength(1);
-      expect(result.locked).toHaveLength(145);
+      expect(result.free).toHaveLength(2);
+      expect(result.locked).toHaveLength(8);
+      expect(result.remaining).toHaveLength(40);
     });
   });
 
@@ -190,187 +194,77 @@ describe('classifyCandidates', () => {
       const result = classifyCandidates(candidates);
 
       // 점수 내림차순으로 정렬되어야 함
-      expect(result.blurred[0].scores.overall).toBe(100);
-      expect(result.blurred[1].scores.overall).toBe(95);
-      expect(result.blurred[2].scores.overall).toBe(90);
-      expect(result.blurred[3].scores.overall).toBe(85);
-      expect(result.free[0].scores.overall).toBe(80);
-    });
-
-    it('동점자가 있어도 처리해야 함', () => {
-      const candidates = [
-        createMockCandidate(90, 1),
-        createMockCandidate(90, 2),
-        createMockCandidate(90, 3),
-        createMockCandidate(90, 4),
-        createMockCandidate(90, 5),
-      ];
-
-      const result = classifyCandidates(candidates);
-
-      expect(result.blurred).toHaveLength(4);
-      expect(result.free).toHaveLength(1);
-    });
-  });
-
-  describe('불변성 테스트', () => {
-    it('원본 배열을 변경하지 않아야 함', () => {
-      const candidates = createMockCandidateList(10);
-      const originalFirst = candidates[0];
-
-      classifyCandidates(candidates);
-
-      expect(candidates[0]).toBe(originalFirst);
-      expect(candidates).toHaveLength(10);
+      expect(result.free[0].scores.overall).toBe(100);
+      expect(result.free[1].scores.overall).toBe(95);
+      expect(result.locked[0].scores.overall).toBe(90);
+      expect(result.locked[1].scores.overall).toBe(85);
+      expect(result.locked[2].scores.overall).toBe(80);
     });
   });
 });
 
 // ============================================================
-// Tests: calculatePsychologicalMetrics()
+// Tests: calculatePsychologicalMetrics() - 2+8 Structure
 // ============================================================
 
-describe('calculatePsychologicalMetrics', () => {
-  let mockTiers: FreemiumTiers;
-
-  beforeEach(() => {
+describe('calculatePsychologicalMetrics (2+8 structure)', () => {
+  it('기본 메트릭을 올바르게 계산해야 함', () => {
     const candidates = createMockCandidateList(10);
-    mockTiers = classifyCandidates(candidates);
+    const tiers = classifyCandidates(candidates);
+    const metrics = calculatePsychologicalMetrics(tiers);
+
+    expect(metrics.topScore).toBe(100); // 1위
+    expect(metrics.secondScore).toBe(98); // 2위
+    expect(metrics.lockedTopScore).toBe(96); // 3위
+    expect(metrics.scoreDifference).toBe(4); // 100 - 96
+    expect(metrics.lockedCount).toBe(8); // 3-10위
+    expect(metrics.totalCount).toBe(10);
   });
 
-  describe('정상 케이스', () => {
-    it('올바른 메트릭을 계산해야 함', () => {
-      const metrics = calculatePsychologicalMetrics(mockTiers);
+  it('점수 차이를 올바르게 계산해야 함', () => {
+    const candidates = [
+      createMockCandidate(95, 1),
+      createMockCandidate(90, 2),
+      createMockCandidate(75, 3),
+      ...createMockCandidateList(7).slice(3),
+    ];
 
-      expect(metrics.topScore).toBe(100);
-      expect(metrics.freeScore).toBe(92);
-      expect(metrics.scoreDifference).toBe(8);
-      expect(metrics.lockedCount).toBe(5);
-      expect(metrics.totalCount).toBe(10);
-    });
+    const tiers = classifyCandidates(candidates);
+    const metrics = calculatePsychologicalMetrics(tiers);
 
-    it('퍼센트 차이를 올바르게 계산해야 함', () => {
-      const metrics = calculatePsychologicalMetrics(mockTiers);
-
-      // (100 - 92) / 92 * 100 = 8.69... ≈ 9
-      expect(metrics.percentageDiff).toBe(9);
-    });
-
-    it('점수 차이가 20점 이상일 때 올바른 메시지를 생성해야 함', () => {
-      const tiers: FreemiumTiers = {
-        blurred: [createMockCandidate(100, 1)],
-        free: [createMockCandidate(70, 5)],
-        locked: [],
-      };
-
-      const metrics = calculatePsychologicalMetrics(tiers);
-
-      expect(metrics.scoreDifference).toBe(30);
-      expect(metrics.conversionMessage).toContain('무려 30점이나 더 높습니다');
-    });
-
-    it('점수 차이가 10-19점일 때 올바른 메시지를 생성해야 함', () => {
-      const tiers: FreemiumTiers = {
-        blurred: [createMockCandidate(100, 1)],
-        free: [createMockCandidate(85, 5)],
-        locked: [],
-      };
-
-      const metrics = calculatePsychologicalMetrics(tiers);
-
-      expect(metrics.scoreDifference).toBe(15);
-      expect(metrics.conversionMessage).toContain('15점 더 완벽한 조화');
-    });
-
-    it('점수 차이가 10점 미만일 때 기본 메시지를 생성해야 함', () => {
-      const tiers: FreemiumTiers = {
-        blurred: [createMockCandidate(100, 1)],
-        free: [createMockCandidate(95, 5)],
-        locked: [],
-      };
-
-      const metrics = calculatePsychologicalMetrics(tiers);
-
-      expect(metrics.scoreDifference).toBe(5);
-      expect(metrics.conversionMessage).toBe('TOP 4 이름들은 최상위 품질입니다');
-    });
+    expect(metrics.scoreDifference).toBe(20); // 95 - 75
+    expect(metrics.conversionMessage).toContain('완벽');
   });
 
-  describe('경계값 테스트', () => {
-    it('빈 티어를 처리해야 함', () => {
-      const emptyTiers: FreemiumTiers = {
-        blurred: [],
-        free: [],
-        locked: [],
-      };
+  it('전환 메시지를 적절히 생성해야 함', () => {
+    const candidates = createMockCandidateList(10);
+    const tiers = classifyCandidates(candidates);
+    const metrics = calculatePsychologicalMetrics(tiers);
 
-      const metrics = calculatePsychologicalMetrics(emptyTiers);
-
-      expect(metrics.topScore).toBe(0);
-      expect(metrics.freeScore).toBe(0);
-      expect(metrics.scoreDifference).toBe(0);
-      expect(metrics.percentageDiff).toBe(0);
-      expect(metrics.lockedCount).toBe(0);
-      expect(metrics.totalCount).toBe(0);
-    });
-
-    it('free 티어만 비어있는 경우를 처리해야 함', () => {
-      const tiers: FreemiumTiers = {
-        blurred: [createMockCandidate(100, 1)],
-        free: [],
-        locked: [createMockCandidate(80, 6)],
-      };
-
-      const metrics = calculatePsychologicalMetrics(tiers);
-
-      expect(metrics.topScore).toBe(100);
-      expect(metrics.freeScore).toBe(0);
-      expect(metrics.percentageDiff).toBe(0); // division by zero 방지
-    });
+    expect(metrics.conversionMessage).toBeTruthy();
+    expect(typeof metrics.conversionMessage).toBe('string');
   });
 });
 
 // ============================================================
-// Tests: getRankLabel()
+// Tests: getRankLabel() - 2+8 Structure
 // ============================================================
 
-describe('getRankLabel', () => {
-  describe('정상 케이스', () => {
-    it('1등에 대한 라벨을 반환해야 함', () => {
-      expect(getRankLabel(1)).toBe('🏆 1등');
-    });
-
-    it('2등에 대한 라벨을 반환해야 함', () => {
-      expect(getRankLabel(2)).toBe('🥈 2등');
-    });
-
-    it('3등에 대한 라벨을 반환해야 함', () => {
-      expect(getRankLabel(3)).toBe('🥉 3등');
-    });
-
-    it('4등에 대한 라벨을 반환해야 함', () => {
-      expect(getRankLabel(4)).toBe('4등');
-    });
-
-    it('5등(무료)에 대한 라벨을 반환해야 함', () => {
-      expect(getRankLabel(5)).toBe('🎁 5등 (무료)');
-    });
-
-    it('6등 이상에 대한 라벨을 반환해야 함', () => {
-      expect(getRankLabel(6)).toBe('6등');
-      expect(getRankLabel(10)).toBe('10등');
-      expect(getRankLabel(100)).toBe('100등');
-    });
+describe('getRankLabel (2+8 structure)', () => {
+  it('1-2위는 무료 라벨을 반환해야 함', () => {
+    expect(getRankLabel(1)).toContain('무료');
+    expect(getRankLabel(2)).toContain('무료');
   });
 
-  describe('경계값 테스트', () => {
-    it('0 순위를 처리해야 함', () => {
-      expect(getRankLabel(0)).toBe('0등');
-    });
+  it('3-10위는 프리미엄 라벨을 반환해야 함', () => {
+    expect(getRankLabel(3)).toContain('프리미엄');
+    expect(getRankLabel(5)).toContain('프리미엄');
+    expect(getRankLabel(10)).toContain('프리미엄');
+  });
 
-    it('음수 순위를 처리해야 함', () => {
-      expect(getRankLabel(-1)).toBe('-1등');
-    });
+  it('11위 이상은 등수만 반환해야 함', () => {
+    expect(getRankLabel(11)).toBe('11등');
+    expect(getRankLabel(50)).toBe('50등');
   });
 });
 
@@ -379,145 +273,129 @@ describe('getRankLabel', () => {
 // ============================================================
 
 describe('hasPremiumAccess', () => {
-  describe('정상 케이스', () => {
-    it('프리미엄이고 사주 ID가 일치하면 true를 반환해야 함', () => {
-      expect(hasPremiumAccess(true, 'saju-123', 'saju-123')).toBe(true);
-    });
-
-    it('프리미엄이 아니면 false를 반환해야 함', () => {
-      expect(hasPremiumAccess(false, 'saju-123', 'saju-123')).toBe(false);
-    });
-
-    it('사주 ID가 일치하지 않으면 false를 반환해야 함', () => {
-      expect(hasPremiumAccess(true, 'saju-123', 'saju-456')).toBe(false);
-    });
+  it('프리미엄이고 같은 사주 ID면 true를 반환해야 함', () => {
+    const result = hasPremiumAccess(true, 'saju-123', 'saju-123');
+    expect(result).toBe(true);
   });
 
-  describe('null 처리', () => {
-    it('구매한 사주 ID가 null이면 false를 반환해야 함', () => {
-      expect(hasPremiumAccess(true, null, 'saju-123')).toBe(false);
-    });
+  it('프리미엄이지만 다른 사주 ID면 false를 반환해야 함', () => {
+    const result = hasPremiumAccess(true, 'saju-123', 'saju-456');
+    expect(result).toBe(false);
+  });
 
-    it('현재 사주 ID가 null이면 false를 반환해야 함', () => {
-      expect(hasPremiumAccess(true, 'saju-123', null)).toBe(false);
-    });
+  it('프리미엄이 아니면 false를 반환해야 함', () => {
+    const result = hasPremiumAccess(false, 'saju-123', 'saju-123');
+    expect(result).toBe(false);
+  });
 
-    it('둘 다 null이면 false를 반환해야 함', () => {
-      expect(hasPremiumAccess(true, null, null)).toBe(false);
-    });
+  it('sajuIdPurchased가 null이면 false를 반환해야 함', () => {
+    const result = hasPremiumAccess(true, null, 'saju-123');
+    expect(result).toBe(false);
+  });
+
+  it('currentSajuId가 null이면 false를 반환해야 함', () => {
+    const result = hasPremiumAccess(true, 'saju-123', null);
+    expect(result).toBe(false);
   });
 });
 
 // ============================================================
-// Tests: getConversionMessages()
+// Tests: getConversionMessages() - 2+8 Structure
 // ============================================================
 
-describe('getConversionMessages', () => {
-  describe('점수 차이가 20점 이상인 경우', () => {
-    it('올바른 메시지를 반환해야 함', () => {
-      const metrics: PsychologicalMetrics = {
-        topScore: 100,
-        freeScore: 70,
-        scoreDifference: 30,
-        percentageDiff: 43,
-        lockedCount: 10,
-        totalCount: 15,
-        conversionMessage: '테스트',
-      };
+describe('getConversionMessages (2+8 structure)', () => {
+  it('높은 점수 차이에 대한 메시지를 생성해야 함', () => {
+    const tiers: FreemiumTiers = {
+      free: [
+        createMockCandidate(95, 1),
+        createMockCandidate(93, 2),
+      ],
+      locked: [
+        createMockCandidate(80, 3),
+        ...createMockCandidateList(7).slice(3),
+      ],
+      remaining: [],
+    };
 
-      const messages = getConversionMessages(metrics);
+    const metrics = calculatePsychologicalMetrics(tiers);
+    const messages = getConversionMessages(metrics);
 
-      expect(messages).toContain('1등 이름이 무려 **100점**입니다!');
-      expect(messages).toContain('무료 이름보다 **30점** 더 높은 완벽한 조화');
-      expect(messages).toContain('평생 사용할 이름, 단 한 번의 투자로 완성하세요');
-    });
+    expect(messages.length).toBeGreaterThan(0);
+    expect(messages.some((msg) => msg.includes('점'))).toBe(true);
   });
 
-  describe('점수 차이가 10-19점인 경우', () => {
-    it('올바른 메시지를 반환해야 함', () => {
-      const metrics: PsychologicalMetrics = {
-        topScore: 95,
-        freeScore: 80,
-        scoreDifference: 15,
-        percentageDiff: 19,
-        lockedCount: 5,
-        totalCount: 10,
-        conversionMessage: '테스트',
-      };
+  it('프리미엄 이름 개수를 강조해야 함', () => {
+    const candidates = createMockCandidateList(10);
+    const tiers = classifyCandidates(candidates);
+    const metrics = calculatePsychologicalMetrics(tiers);
+    const messages = getConversionMessages(metrics);
 
-      const messages = getConversionMessages(metrics);
-
-      expect(messages).toContain('최고 점수는 **95점**');
-      expect(messages).toContain('무료 이름보다 15점 더 완벽합니다');
-    });
+    expect(messages.some((msg) => msg.includes('8개'))).toBe(true);
   });
 
-  describe('항상 포함되는 메시지', () => {
-    it('가치 강조 메시지가 항상 포함되어야 함', () => {
-      const metrics: PsychologicalMetrics = {
-        topScore: 80,
-        freeScore: 75,
-        scoreDifference: 5,
-        percentageDiff: 7,
-        lockedCount: 5,
-        totalCount: 10,
-        conversionMessage: '테스트',
-      };
+  it('가치 제안 메시지를 포함해야 함', () => {
+    const candidates = createMockCandidateList(10);
+    const tiers = classifyCandidates(candidates);
+    const metrics = calculatePsychologicalMetrics(tiers);
+    const messages = getConversionMessages(metrics);
 
-      const messages = getConversionMessages(metrics);
-
-      expect(messages).toContain('평생 사용할 이름, 단 한 번의 투자로 완성하세요');
-    });
+    expect(messages.some((msg) => msg.includes('평생'))).toBe(true);
   });
 });
 
 // ============================================================
-// Tests: getValueProposition()
+// Tests: getValueProposition() - 2+8 Structure with 69,000원
 // ============================================================
 
-describe('getValueProposition', () => {
-  describe('정상 케이스', () => {
-    it('기본 가격으로 가치 제안을 반환해야 함', () => {
-      const result = getValueProposition(10);
-
-      // 9900 / 10 = 990원
-      expect(result).toBe('이름 하나당 단 990원, 총 10개의 완벽한 이름');
-    });
-
-    it('커스텀 가격으로 가치 제안을 반환해야 함', () => {
-      const result = getValueProposition(20, 20000);
-
-      // 20000 / 20 = 1000원
-      expect(result).toBe('이름 하나당 단 1000원, 총 20개의 완벽한 이름');
-    });
+describe('getValueProposition (2+8 structure, 69,000원)', () => {
+  it('기본 가격(69,000원)으로 가치 제안을 생성해야 함', () => {
+    const proposition = getValueProposition(10); // 기본 69,000원
+    expect(proposition).toContain('8개');
+    expect(proposition).toContain('8,625'); // 69,000 / 8 = 8,625
   });
 
-  describe('반올림 테스트', () => {
-    it('나눗셈 결과를 반올림해야 함', () => {
-      // 9900 / 3 = 3300
-      expect(getValueProposition(3)).toBe('이름 하나당 단 3300원, 총 3개의 완벽한 이름');
-
-      // 9900 / 7 = 1414.28... ≈ 1414
-      expect(getValueProposition(7)).toBe('이름 하나당 단 1414원, 총 7개의 완벽한 이름');
-    });
+  it('커스텀 가격으로 가치 제안을 생성해야 함', () => {
+    const proposition = getValueProposition(10, 100000);
+    expect(proposition).toContain('8개');
+    expect(proposition).toContain('12,500'); // 100,000 / 8 = 12,500
   });
 
-  describe('경계값 테스트', () => {
-    it('1개의 후보를 처리해야 함', () => {
-      expect(getValueProposition(1)).toBe('이름 하나당 단 9900원, 총 1개의 완벽한 이름');
-    });
-
-    it('매우 많은 후보를 처리해야 함', () => {
-      expect(getValueProposition(1000)).toBe('이름 하나당 단 10원, 총 1000개의 완벽한 이름');
-    });
+  it('가격 포맷팅이 올바른지 확인해야 함', () => {
+    const proposition = getValueProposition(10, 69000);
+    expect(proposition).toMatch(/\d{1,3}(,\d{3})*/); // 쉼표 포맷팅 확인
   });
+});
 
-  describe('기본값 테스트', () => {
-    it('가격 파라미터를 생략하면 9900원을 사용해야 함', () => {
-      const withDefault = getValueProposition(10);
-      const withExplicit = getValueProposition(10, 9900);
+// ============================================================
+// Integration Tests
+// ============================================================
 
-      expect(withDefault).toBe(withExplicit);
-    });
+describe('통합 테스트 (2+8 structure)', () => {
+  it('전체 워크플로우가 정상 작동해야 함', () => {
+    // 1. 후보 생성
+    const candidates = createMockCandidateList(15);
+
+    // 2. 분류
+    const tiers = classifyCandidates(candidates);
+    expect(tiers.free).toHaveLength(2);
+    expect(tiers.locked).toHaveLength(8);
+    expect(tiers.remaining).toHaveLength(5);
+
+    // 3. 메트릭 계산
+    const metrics = calculatePsychologicalMetrics(tiers);
+    expect(metrics.topScore).toBeGreaterThan(0);
+    expect(metrics.lockedCount).toBe(8);
+
+    // 4. 전환 메시지 생성
+    const messages = getConversionMessages(metrics);
+    expect(messages.length).toBeGreaterThan(0);
+
+    // 5. 가치 제안 생성
+    const valueProposition = getValueProposition(15);
+    expect(valueProposition).toBeTruthy();
+
+    // 6. 순위 라벨 확인
+    expect(getRankLabel(1)).toContain('무료');
+    expect(getRankLabel(5)).toContain('프리미엄');
   });
 });

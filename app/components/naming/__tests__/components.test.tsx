@@ -88,19 +88,20 @@ function createMockCandidate(
 }
 
 /**
- * Create mock PsychologicalMetrics
+ * Create mock PsychologicalMetrics (2+8 structure)
  */
 function createMockMetrics(
   overrides?: Partial<PsychologicalMetrics>
 ): PsychologicalMetrics {
   return {
     topScore: 95,
-    freeScore: 75,
-    scoreDifference: 20,
-    percentageDiff: 27,
-    lockedCount: 45,
-    totalCount: 50,
-    conversionMessage: '1등 이름은 무료 이름보다 무려 20점이나 더 높습니다!',
+    secondScore: 93,
+    lockedTopScore: 85,
+    scoreDifference: 10,
+    percentageDiff: 12,
+    lockedCount: 8,
+    totalCount: 10,
+    conversionMessage: '프리미엄 이름 8개로 더 많은 선택지를 확보하세요',
     ...overrides,
   };
 }
