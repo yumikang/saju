@@ -458,8 +458,13 @@ model NamingPayment {
   receiptUrl      String?           @map("receipt_url")                    // 영수증 URL
   cardInfo        Json?             @map("card_info")                      // 카드 정보 (마스킹된 번호 등)
 
+  // Freemium fields - 추가됨 (2025-10-27)
+  unlocked        Boolean           @default(false)                    // 20개 이름 잠금 해제 여부
+  unlockedAt      DateTime?         @map("unlocked_at") @db.Timestamptz(3)  // 잠금 해제 시각
+
   // Relations
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session         NamingSession?    // 연결된 작명 세션
 
   // Indexes
   @@unique([userId, sajuId])  // 한 사용자가 같은 사주에 대해 중복 결제 방지
@@ -468,8 +473,44 @@ model NamingPayment {
   @@index([orderId])
   @@index([paymentKey])
   @@index([status])
+  @@index([unlocked])
   @@index([requestedAt(sort: Desc)])
   @@map("naming_payments")
+}
+
+// NamingSession - Freemium 작명 세션 데이터
+model NamingSession {
+  id              String    @id @default(uuid())
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  expiresAt       DateTime  @default(dbgenerated("NOW() + interval '7 days'")) @map("expires_at") @db.Timestamptz(3)
+
+  // 입력 정보
+  lastName        String    @map("last_name")
+  lastNameStrokes Int       @map("last_name_strokes")
+  gender          String
+  birthDate       DateTime  @map("birth_date") @db.Date
+  birthTime       String    @map("birth_time")           // HH:MM format
+  isLunar         Boolean   @map("is_lunar")
+  selectedValues  String[]  @map("selected_values")     // ["health", "wisdom"]
+
+  // 분석 결과
+  saju            Json                                 // SajuResult
+  yongsin         Json                                 // YongsinResult
+
+  // 추천 이름
+  top5            Json                                 // 무료 제공 (5개)
+  remaining15     Json                                 // 결제 후 제공 (15개)
+  allCandidates   Json                                 // 전체 50개
+
+  // 결제 연동
+  paymentId       String?   @unique @map("payment_id")
+  payment         NamingPayment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([createdAt])
+  @@index([expiresAt])
+  @@index([paymentId])
+  @@map("naming_sessions")
 }
 
 // RenamingAnalysis - 개명 서비스 현재 이름 분석 결과
