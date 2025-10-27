@@ -71,19 +71,18 @@ export function PremiumCTA({ metrics, onPayment }: PremiumCTAProps) {
           {/* 메인 메시지 */}
           <div className="text-center mb-6">
             <h3 className="text-3xl font-bold mb-3 text-gray-900">
-              1등 이름이 무려{' '}
-              <span className="text-yellow-600">{metrics.topScore}점</span>
-              입니다!
+              최고 점수{' '}
+              <span className="text-yellow-600">{metrics.topScore}점</span>부터
+              시작합니다!
             </h3>
             <p className="text-lg text-gray-700 mb-2">
-              아래 무료 이름보다{' '}
+              3-10위 프리미엄 이름은{' '}
               <strong className="text-orange-600">
-                {metrics.scoreDifference}점
-              </strong>{' '}
-              더 높은 완벽한 조화
+                평균 {metrics.lockedTopScore}점 이상
+              </strong>의 완벽한 조화
             </p>
             <p className="text-sm text-gray-600">
-              평생 사용할 이름, 지금 바로 확인하세요
+              평생 사용할 이름, 8개 중에서 선택하세요
             </p>
           </div>
 
@@ -93,14 +92,14 @@ export function PremiumCTA({ metrics, onPayment }: PremiumCTAProps) {
             <div className="text-center mb-6">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <span className="text-gray-500 line-through text-xl">
-                  ₩29,900
+                  ₩99,000
                 </span>
                 <Badge variant="destructive" className="bg-red-500">
-                  67% 할인
+                  30% 할인
                 </Badge>
               </div>
               <div className="text-5xl font-bold text-orange-600 mb-2">
-                ₩9,900
+                ₩69,000
               </div>
               <p className="text-sm text-gray-600">
                 1회 결제로 평생 이용
@@ -116,10 +115,10 @@ export function PremiumCTA({ metrics, onPayment }: PremiumCTAProps) {
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900">
                     <Sparkles className="w-4 h-4 inline mr-1 text-yellow-500" />
-                    TOP 4 최고 점수 이름 공개
+                    프리미엄 8개 이름 (3-10위) 공개
                   </p>
                   <p className="text-sm text-gray-600">
-                    85점 이상 프리미엄 이름 4개
+                    사주 조화 최적 이름 8개
                   </p>
                 </div>
               </div>
@@ -163,7 +162,7 @@ export function PremiumCTA({ metrics, onPayment }: PremiumCTAProps) {
               onClick={onPayment}
             >
               <CreditCard className="mr-2 h-5 w-5" />
-              지금 바로 전체 이름 보기 - ₩9,900
+              지금 바로 프리미엄 이름 보기 - ₩69,000
             </Button>
           </motion.div>
 
@@ -188,7 +187,7 @@ export function PremiumCTA({ metrics, onPayment }: PremiumCTAProps) {
           {/* 가치 제안 */}
           <div className="mt-4 text-center">
             <p className="text-xs text-gray-500">
-              💡 이름 하나당 단 {Math.round(9900 / metrics.totalCount)}원,
+              💡 이름 하나당 약 {Math.round(69000 / 8).toLocaleString()}원,
               평생 사용할 소중한 이름을 위한 투자
             </p>
           </div>

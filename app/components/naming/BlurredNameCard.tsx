@@ -1,5 +1,5 @@
 /**
- * Blurred Name Card - 1-4위 프리뷰
+ * Blurred Name Card - 3-10위 프리미엄 프리뷰 (2+8 구조)
  *
  * 블러 효과로 이름/한자를 가리고, 점수만 선명하게 표시
  * 클릭 시 결제 모달 오픈
@@ -134,7 +134,7 @@ export function BlurredNameCard({
               🔓 클릭하여 {rank}등 이름 확인하기
             </p>
             <p className="text-xs opacity-90">
-              TOP 4 + 전체 이름 보기 · 단 ₩9,900
+              8개 프리미엄 이름 (3-10위) · 단 ₩69,000
             </p>
           </motion.div>
         </div>

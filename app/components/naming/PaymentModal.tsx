@@ -125,11 +125,11 @@ export function PaymentModal({
 
           {/* 혜택 안내 */}
           <div className="rounded-lg bg-muted p-4 space-y-2">
-            <p className="text-sm font-medium">프리미엄 혜택</p>
+            <p className="text-sm font-medium">프리미엄 혜택 (2+8 구조)</p>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>✓ 6위 이하 모든 이름 조회 가능</li>
+              <li>✓ 3-10위 프리미엄 이름 8개 조회 가능</li>
               <li>✓ 상세 한자 정보 및 획수 분석</li>
-              <li>✓ 심리적 특성 분석 결과</li>
+              <li>✓ 사주 오행 조화 분석 결과</li>
               <li>✓ PDF 내보내기 기능</li>
               <li>✓ 영구 보관 및 즐겨찾기</li>
             </ul>
