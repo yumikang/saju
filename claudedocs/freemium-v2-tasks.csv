@@ -1,0 +1,54 @@
+Task ID,Phase,Task Name,Priority,Estimated Hours,Dependencies,Status,Assignee,Due Date,Notes
+FV2-001,Phase 1,FreeNameCard - Setup & Types,HIGH,0.5,None,Pending,,,Create file and define props interface
+FV2-002,Phase 1,FreeNameCard - Layout Structure,HIGH,0.75,FV2-001,Pending,,,Implement all card sections
+FV2-003,Phase 1,FreeNameCard - Styling & Animation,MEDIUM,0.75,FV2-002,Pending,,,Apply green theme and animations
+FV2-004,Phase 1,LockedNameCard - Setup & Types,HIGH,0.5,None,Pending,,,Create file and define props interface
+FV2-005,Phase 1,LockedNameCard - Layout & Blur Effect,HIGH,1.0,FV2-004,Pending,,,Implement blur strategy
+FV2-006,Phase 1,LockedNameCard - Interaction & Animation,MEDIUM,0.75,FV2-005,Pending,,,Add hover and click handlers
+FV2-007,Phase 1,LockedNameCard - Styling,MEDIUM,0.5,FV2-006,Pending,,,Apply premium theme
+FV2-008,Phase 1,FreemiumResultsLayout - Setup & Types,MEDIUM,0.33,None,Pending,,,Create file and define props
+FV2-009,Phase 1,FreemiumResultsLayout - Layout Structure,MEDIUM,0.75,FV2-008,Pending,,,Implement 3 states
+FV2-010,Phase 1,FreemiumResultsLayout - States & Styling,MEDIUM,0.5,FV2-009,Pending,,,Style and test state transitions
+FV2-011,Phase 1,Phase 1 - Component Index,LOW,0.17,FV2-003;FV2-007;FV2-010,Pending,,,Create index.ts exports
+FV2-012,Phase 2,FreemiumCTA - Setup & Types,HIGH,0.33,None,Pending,,,Create file and define props
+FV2-013,Phase 2,FreemiumCTA - Content Structure,HIGH,1.0,FV2-012,Pending,,,Implement all content sections
+FV2-014,Phase 2,FreemiumCTA - Gradient Animation,MEDIUM,0.75,FV2-013,Pending,,,Implement animated gradient
+FV2-015,Phase 2,FreemiumCTA - Conversion Psychology,HIGH,0.75,FV2-013,Pending,,,Add psychological triggers
+FV2-016,Phase 2,FreemiumCTA - Styling & Mobile,MEDIUM,0.5,FV2-014,Pending,,,Apply styling and responsive
+FV2-017,Phase 2,FreemiumPaymentModal - Setup & Types,HIGH,0.5,None,Pending,,,Create file and define props
+FV2-018,Phase 2,FreemiumPaymentModal - Modal Structure,HIGH,1.0,FV2-017,Pending,,,Implement modal sections
+FV2-019,Phase 2,FreemiumPaymentModal - Payment Integration,HIGH,1.5,FV2-018,Pending,,,Integrate TossPayments API
+FV2-020,Phase 2,FreemiumPaymentModal - Error Handling,HIGH,0.75,FV2-019,Pending,,,Comprehensive error handling
+FV2-021,Phase 2,FreemiumPaymentModal - Styling,MEDIUM,0.5,FV2-018,Pending,,,Style modal and buttons
+FV2-022,Phase 2,Phase 2 - Update Index,LOW,0.08,FV2-016;FV2-021,Pending,,,Update index.ts exports
+FV2-023,Phase 3,Route File - Setup & Types,HIGH,0.5,None,Pending,,,Create route file with imports
+FV2-024,Phase 3,Route - State Management Setup,HIGH,0.5,FV2-023,Pending,,,Set up all useState hooks
+FV2-025,Phase 3,Route - API Integration,HIGH,1.5,FV2-024,Pending,,,Fetch and transform data
+FV2-026,Phase 3,Route - Classification Integration,HIGH,0.75,FV2-025,Pending,,,Use classification utilities
+FV2-027,Phase 3,Route - Payment Success Handling,HIGH,0.5,FV2-024,Pending,,,Handle payment redirects
+FV2-028,Phase 3,Route - Free Names Section,HIGH,0.75,FV2-026,Pending,,,Render 11-12위 cards
+FV2-029,Phase 3,Route - Premium CTA Section,HIGH,0.5,FV2-026,Pending,,,Render CTA component
+FV2-030,Phase 3,Route - Locked Names Section,HIGH,1.0,FV2-026,Pending,,,Render 1-10위 locked cards
+FV2-031,Phase 3,Route - Unlocked Premium Section,HIGH,0.75,FV2-027,Pending,,,Render unlocked premium
+FV2-032,Phase 3,Route - Payment Modal Integration,HIGH,0.75,FV2-024,Pending,,,Integrate payment modal
+FV2-033,Phase 3,Route - Info Card Section,LOW,0.5,FV2-026,Pending,,,Add info card at bottom
+FV2-034,Phase 3,Route - Layout Wrapper Integration,HIGH,0.5,FV2-028;FV2-029;FV2-030;FV2-031;FV2-032;FV2-033,Pending,,,Wrap in FreemiumResultsLayout
+FV2-035,Phase 4,Unit Test - FreeNameCard,MEDIUM,0.75,FV2-003,Pending,,,Write component tests
+FV2-036,Phase 4,Unit Test - LockedNameCard,MEDIUM,0.75,FV2-007,Pending,,,Write component tests
+FV2-037,Phase 4,Unit Test - FreemiumCTA,MEDIUM,0.75,FV2-016,Pending,,,Write component tests
+FV2-038,Phase 4,Unit Test - FreemiumPaymentModal,HIGH,1.5,FV2-021,Pending,,,Write modal tests with mocks
+FV2-039,Phase 4,Unit Test - FreemiumResultsLayout,MEDIUM,0.5,FV2-010,Pending,,,Write layout tests
+FV2-040,Phase 4,Integration Test - Full Flow,HIGH,1.5,FV2-034,Pending,,,Test complete user flow
+FV2-041,Phase 4,E2E Test - User Journey,MEDIUM,2.0,FV2-034,Pending,,,Playwright E2E test
+FV2-042,Phase 4,Mobile Responsiveness Testing,HIGH,1.0,FV2-034,Pending,,,Test all screen sizes
+FV2-043,Phase 4,Performance Optimization,MEDIUM,1.0,FV2-034,Pending,,,Lighthouse audit and optimization
+FV2-044,Phase 4,Accessibility Testing,MEDIUM,1.0,FV2-034,Pending,,,WCAG AA compliance
+FV2-045,Phase 4,Cross-Browser Testing,LOW,0.5,FV2-034,Pending,,,Test major browsers
+FV2-046,Phase 4,Error Handling Validation,HIGH,0.75,FV2-034,Pending,,,Test all error scenarios
+FV2-047,Phase 4,Final QA & Bug Fixes,HIGH,1.0,FV2-035;FV2-036;FV2-037;FV2-038;FV2-039;FV2-040;FV2-041;FV2-042;FV2-043;FV2-044;FV2-045;FV2-046,Pending,,,Complete QA checklist
+FV2-048,Phase 5,Component Documentation,LOW,0.75,FV2-047,Pending,,,Create README.md
+FV2-049,Phase 5,Integration Guide,LOW,0.75,FV2-047,Pending,,,Create integration guide
+FV2-050,Phase 5,Analytics Setup,LOW,0.5,FV2-034,Pending,,,Add analytics events
+FV2-051,Phase 5,Monitoring Setup,LOW,0.5,FV2-034,Pending,,,Set up error tracking
+FV2-052,Phase 5,Staging Deployment,MEDIUM,0.5,FV2-047,Pending,,,Deploy to staging
+FV2-053,Phase 5,Production Deployment,HIGH,0.5,FV2-052,Pending,,,Deploy to production

@@ -267,6 +267,57 @@ export function validateAnalyzeCurrentRequest(data: unknown): AnalyzeCurrentRequ
 }
 
 // ============================================================
+// Renaming Recommend Request Schema
+// ============================================================
+
+/**
+ * POST /api/renaming/recommend 요청 스키마
+ *
+ * 개명 추천 API 요청 데이터 (기존 분석 결과 기반)
+ */
+export const RenamingRecommendRequestSchema = z.object({
+  analysisId: z.string()
+    .uuid('올바른 분석 ID가 아닙니다'),
+
+  preferences: z.object({
+    minScore: z.number()
+      .int()
+      .min(0, '최소 점수는 0 이상이어야 합니다')
+      .max(100, '최소 점수는 100 이하여야 합니다')
+      .default(75)
+      .describe('최소 점수 (default: 75)'),
+
+    maxResults: z.number()
+      .int()
+      .min(1, '최소 1개 이상의 결과가 필요합니다')
+      .max(1000, '최대 1000개까지 요청 가능합니다')
+      .default(20)
+      .describe('최대 결과 개수 (default: 20)'),
+
+    gender: z.enum(['male', 'female'], {
+      errorMap: () => ({ message: 'male 또는 female이어야 합니다' }),
+    }).optional(),
+
+    avoidCharacters: z.array(z.string().length(1, '한 글자만 입력 가능합니다'))
+      .optional()
+      .describe('피해야 할 한자 목록 (선택)'),
+
+    preferredElements: z.array(z.enum(['木', '火', '土', '金', '水']))
+      .optional()
+      .describe('선호하는 오행 (선택)'),
+  }).optional().default({}),
+});
+
+export type RenamingRecommendRequest = z.infer<typeof RenamingRecommendRequestSchema>;
+
+/**
+ * RenamingRecommend 요청 데이터 검증
+ */
+export function validateRenamingRecommendRequest(data: unknown): RenamingRecommendRequest {
+  return RenamingRecommendRequestSchema.parse(data);
+}
+
+// ============================================================
 // Type Exports for Convenience
 // ============================================================
 

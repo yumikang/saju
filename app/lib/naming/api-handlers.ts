@@ -13,6 +13,7 @@ import type {
   AnalyzeRequest,
   AnalyzeCurrentRequest,
   RecommendRequest,
+  RenamingRecommendRequest,
   CharacterParams,
   CharacterQuery,
 } from './validators';
@@ -685,6 +686,105 @@ export async function handleAnalyzeCurrent(
     };
   } catch (error) {
     console.error('[handleAnalyzeCurrent] Error:', error);
+    throw new SajuCalculationError(
+      error instanceof Error ? error.message : 'Unknown error'
+    );
+  }
+}
+
+// ============================================================
+// Handler: Renaming Recommendation
+// ============================================================
+
+/**
+ * 개명 추천 핸들러
+ *
+ * POST /api/renaming/recommend
+ *
+ * 기존 분석 결과를 기반으로 개명 추천
+ *
+ * @param request - Validated renaming recommendation request
+ * @param userId - Optional user ID for tracking
+ */
+export async function handleRenamingRecommend(
+  request: RenamingRecommendRequest,
+  userId?: string
+): Promise<RecommendResponse> {
+  const startTime = Date.now();
+
+  try {
+    // 1. Load existing analysis from database
+    const analysis = await prisma.renamingAnalysis.findUnique({
+      where: { id: request.analysisId },
+    });
+
+    if (!analysis) {
+      throw new NotFoundError('Renaming analysis', '개명 분석 데이터를 찾을 수 없습니다');
+    }
+
+    // 2. Extract Saju data from analysis
+    const sajuData = analysis.sajuData as any;
+    const sajuResult: SajuResult = {
+      pillars: sajuData.pillars,
+      elementCounts: sajuData.elementCounts,
+      lackingElements: sajuData.lackingElements,
+      favorableElements: sajuData.favorableElements,
+    };
+
+    // 3. Extract lastName from current name
+    const currentNameHanja = analysis.currentNameHanja;
+    const lastName = currentNameHanja.charAt(0); // First character is lastName
+
+    // 4. Generate name candidates using HanjaMatcher
+    const matcher = new HanjaMatcher();
+    const matchingOptions: MatchingOptions = {
+      minScore: request.preferences?.minScore ?? 75,
+      maxResults: request.preferences?.maxResults ?? 20,
+      gender: request.preferences?.gender as 'male' | 'female' | undefined,
+      avoidChars: request.preferences?.avoidCharacters,
+      preferredElements: request.preferences?.preferredElements,
+      enableEarlyTermination: true,
+    };
+
+    const candidates = await matcher.findOptimalNames(
+      sajuResult,
+      lastName,
+      matchingOptions
+    );
+
+    // 5. Validate results
+    if (candidates.length === 0) {
+      throw new InsufficientCharactersError(0);
+    }
+
+    const executionTime = Date.now() - startTime;
+
+    // 6. Performance warning (target: <5s)
+    if (executionTime > 5000) {
+      console.warn(
+        `[Performance Warning] Renaming recommendation took ${executionTime}ms (target: <5000ms)`
+      );
+    }
+
+    return {
+      success: true,
+      data: {
+        candidates,
+        saju: {
+          lackingElements: sajuResult.lackingElements,
+          favorableElements: sajuResult.favorableElements,
+          elementCounts: sajuResult.elementCounts,
+        },
+      },
+      metadata: {
+        totalGenerated: candidates.length,
+        totalScored: candidates.length,
+        executionTime,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    console.error('[handleRenamingRecommend] Error:', error);
     throw new SajuCalculationError(
       error instanceof Error ? error.message : 'Unknown error'
     );
