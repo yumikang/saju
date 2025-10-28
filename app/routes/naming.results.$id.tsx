@@ -1,14 +1,16 @@
 /**
- * 이름 추천 결과 페이지 (Strategic Freemium 모델)
+ * 이름 추천 결과 페이지 (Strategic Freemium V2)
  *
  * 전략적 freemium 구조:
- * - 11-12위: 무료 공개 (Free preview names)
- * - 1-10위: 프리미엄 잠금 (Top 10 premium names, 결제 필요)
+ * - 11-12위: 무료 공개 (Free preview names with emerald theme)
+ * - 1-10위: 프리미엄 잠금 (Top 10 premium names with yellow/orange theme)
+ *
+ * Uses new freemium-v2 component system for optimized conversion
  */
 
 import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { useState, useEffect } from 'react';
+import { useLoaderData, useNavigate } from '@remix-run/react';
+import { useEffect } from 'react';
 import { PrismaClient } from '@prisma/client';
 import type { ScoredCandidate } from '~/lib/naming/types';
 import { useNamingStore } from '~/store/naming.store';
@@ -19,13 +21,9 @@ import {
   type FreemiumTiers,
   type PsychologicalMetrics,
 } from '~/lib/freemium/classification';
-import { BlurredNameCard } from '~/components/naming/BlurredNameCard';
-import { PremiumCTA } from '~/components/naming/PremiumCTA';
-import { NameCard } from '~/components/naming/NameCard';
-import { Card } from '~/components/ui/card';
+import { FreemiumResultsLayout } from '~/components/naming/freemium-v2';
 import { Badge } from '~/components/ui/badge';
-import { Lock, Gift, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 const prisma = new PrismaClient();
 
@@ -106,18 +104,16 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 }
 
 /**
- * 결과 페이지 컴포넌트
+ * 결과 페이지 컴포넌트 - Freemium V2
  */
 export default function ResultsPage() {
   const { sajuId, lastName, tiers, metrics, totalCount } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   // Zustand store
   const {
     isPremium,
     sajuIdPurchased,
-    favorites,
-    toggleFavorite,
-    openPaymentModal,
     openCharacterDetail,
     setCurrentSaju,
   } = useNamingStore();
@@ -130,184 +126,59 @@ export default function ResultsPage() {
   // 프리미엄 접근 확인
   const isPremiumUser = hasPremiumAccess(isPremium, sajuIdPurchased, sajuId);
 
-  return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      {/* 헤더 */}
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">
-          총 {totalCount}개의 이름을 찾았습니다
-        </h1>
-        <p className="text-lg text-gray-600">
-          성씨 <span className="font-semibold text-orange-600">{lastName}</span>에
-          가장 잘 맞는 이름 순으로 정렬되어 있습니다
-        </p>
-        {isPremiumUser && (
-          <Badge variant="default" className="mt-3 bg-yellow-500">
+  // Handle payment success
+  const handlePaymentSuccess = (orderId: string) => {
+    // Reload to reflect premium status
+    window.location.reload();
+  };
+
+  // Premium user sees all names unlocked
+  if (isPremiumUser) {
+    return (
+      <div className="max-w-6xl mx-auto py-8 px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3 flex items-center justify-center gap-2">
+            <Sparkles className="w-8 h-8 text-yellow-500" />
+            총 {totalCount}개의 이름을 찾았습니다
+          </h1>
+          <p className="text-lg text-gray-600 mb-2">
+            성씨 <span className="font-semibold text-orange-600">{lastName}</span>에
+            가장 잘 맞는 이름 순으로 정렬되어 있습니다
+          </p>
+          <Badge variant="default" className="bg-yellow-500">
             💎 프리미엄 회원 - 전체 이름 열람 가능
           </Badge>
-        )}
+        </div>
+
+        <FreemiumResultsLayout
+          tiers={tiers}
+          metrics={metrics}
+          sessionId={sajuId}
+          title={`${lastName}씨 추천 이름`}
+          description={`총 ${totalCount}개의 이름 - 프리미엄 잠금 해제됨`}
+          paymentAmount={69000}
+          onPaymentSuccess={handlePaymentSuccess}
+          onCharacterClick={openCharacterDetail}
+          showProgress={false}
+          showGuide={true}
+        />
       </div>
+    );
+  }
 
-      {/* ─────────────────────────────────────────────────── */}
-      {/* 프리미엄 유저: 전체 공개 */}
-      {/* ─────────────────────────────────────────────────── */}
-      {isPremiumUser ? (
-        <section>
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-yellow-500" />
-              전체 추천 이름 (1-10위)
-            </h2>
-            <p className="text-gray-600 mt-2">
-              모든 이름의 상세 정보를 확인하실 수 있습니다
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {[...tiers.free, ...tiers.locked].map((candidate, idx) => (
-              <NameCard
-                key={candidate.id}
-                candidate={candidate}
-                rank={idx + 1}
-                isFavorite={favorites.includes(candidate.id)}
-                onFavorite={toggleFavorite}
-                onCharacterClick={openCharacterDetail}
-                showFreeBadge={idx < 2}
-              />
-            ))}
-          </div>
-        </section>
-      ) : (
-        <>
-          {/* ─────────────────────────────────────────────────── */}
-          {/* 무료 유저: 전략적 freemium 구조 */}
-          {/* ─────────────────────────────────────────────────── */}
-
-          {/* 🆓 무료 공개 11-12위 */}
-          {tiers.free.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <Gift className="w-6 h-6 text-green-500" />
-                  무료 체험 이름 (11-12위)
-                  <Badge variant="secondary" className="bg-green-50 border-green-300">
-                    무료
-                  </Badge>
-                </h2>
-                <div className="text-right">
-                  <p className="text-sm text-gray-500">1위 최고 점수</p>
-                  <p className="text-2xl font-bold text-orange-600">
-                    {metrics.topScore}점
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {tiers.free.map((candidate, idx) => (
-                  <NameCard
-                    key={candidate.id}
-                    candidate={candidate}
-                    rank={idx + 11}
-                    isFavorite={favorites.includes(candidate.id)}
-                    onFavorite={toggleFavorite}
-                    onCharacterClick={openCharacterDetail}
-                    showFreeBadge={true}
-                  />
-                ))}
-              </div>
-
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-4 text-center text-sm text-gray-600"
-              >
-                이 이름들도 좋지만, 1-10위 프리미엄 이름은 평균 {metrics.scoreDifference}점 더 높습니다
-              </motion.p>
-            </section>
-          )}
-
-          {/* 💎 CTA: 프리미엄 이름 업그레이드 */}
-          <PremiumCTA metrics={metrics} onPayment={openPaymentModal} />
-
-          {/* 🔒 프리미엄 잠금 1-10위 */}
-          {tiers.locked.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <Lock className="w-6 h-6 text-orange-500" />
-                  프리미엄 이름 (1-10위)
-                  <Badge variant="outline" className="bg-orange-50 border-orange-300">
-                    프리미엄
-                  </Badge>
-                </h2>
-              </div>
-
-              <div className="grid gap-4">
-                {tiers.locked.map((candidate, idx) => (
-                  <BlurredNameCard
-                    key={candidate.id}
-                    candidate={candidate}
-                    rank={idx + 1}
-                    onClick={openPaymentModal}
-                  />
-                ))}
-              </div>
-
-              <Card className="p-6 border-dashed border-2 bg-orange-50 mt-4">
-                <div className="text-center text-gray-700">
-                  <p className="text-lg">
-                    <strong className="text-orange-600 text-2xl">
-                      {tiers.locked.length}개
-                    </strong>
-                    의 최고 점수 프리미엄 이름을 69,000원에 모두 확인하세요
-                  </p>
-                  <p className="text-sm mt-2 text-gray-600">
-                    이름 하나당 약 {Math.round(69000 / 10).toLocaleString()}원, 평생 사용할 이름을 지금 선택하세요
-                  </p>
-                </div>
-              </Card>
-            </section>
-          )}
-        </>
-      )}
-
-      {/* 안내 정보 */}
-      <div className="p-6 bg-gray-50 rounded-lg">
-        <h3 className="font-semibold text-gray-900 mb-3">
-          💡 결과 안내
-        </h3>
-        <ul className="space-y-2 text-sm text-gray-600">
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>모든 이름은 사주 오행 조화, 음양 균형, 수리 길흉을 종합하여 채점되었습니다</span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>높은 점수일수록 사주와의 조화가 뛰어난 이름입니다</span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>한자를 클릭하면 상세한 뜻과 오행 정보를 확인할 수 있습니다</span>
-          </li>
-          {!isPremiumUser && (
-            <>
-              <li className="flex items-start">
-                <span className="mr-2">•</span>
-                <span className="text-green-600 font-semibold">
-                  11-12위 무료 이름을 지금 바로 확인하실 수 있습니다
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">•</span>
-                <span className="text-orange-600 font-semibold">
-                  프리미엄 업그레이드 시 1-10위 최고 점수 이름 10개를 확인하실 수 있습니다 (69,000원)
-                </span>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-    </div>
+  // Free user sees strategic freemium flow
+  return (
+    <FreemiumResultsLayout
+      tiers={tiers}
+      metrics={metrics}
+      sessionId={sajuId}
+      title={`${lastName}씨 추천 이름`}
+      description={`총 ${totalCount}개의 이름을 찾았습니다`}
+      paymentAmount={69000}
+      onPaymentSuccess={handlePaymentSuccess}
+      onCharacterClick={openCharacterDetail}
+      showProgress={false}
+      showGuide={true}
+    />
   );
 }
