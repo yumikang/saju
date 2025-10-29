@@ -622,9 +622,11 @@ export async function handleAnalyzeCurrent(
         currentScore,
         sajuData: {
           pillars: sajuResult.pillars,
+          dayMaster: sajuResult.dayMaster,
           elementCounts: sajuResult.elementCounts,
           lackingElements: sajuResult.lackingElements,
           favorableElements: sajuResult.favorableElements,
+          yongsin: sajuResult.yongsin,
         },
         analysisData: {
           currentName: {
@@ -726,9 +728,11 @@ export async function handleRenamingRecommend(
     const sajuData = analysis.sajuData as any;
     const sajuResult: SajuResult = {
       pillars: sajuData.pillars,
+      dayMaster: sajuData.dayMaster,
       elementCounts: sajuData.elementCounts,
       lackingElements: sajuData.lackingElements,
       favorableElements: sajuData.favorableElements,
+      yongsin: sajuData.yongsin,
     };
 
     // 3. Extract lastName from current name
