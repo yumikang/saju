@@ -11,11 +11,10 @@ export function Header() {
   const user = rootData?.user
 
   const navItems = [
-    // { label: "홈", href: "/" }, // Removed - logo click is sufficient
     { label: "신생아 작명", href: "/naming/freemium" },
-    { label: "K-사주 작명", href: "/ai-naming" },
     { label: "개명 서비스", href: "/renaming" },
-    // { label: "사주 궁합", href: "/saju" }, // Commented out - to be restored later
+    { label: "사주 궁합", href: "/saju" },
+    { label: "K-사주 작명", href: "/ai-naming" },
   ]
 
   return (
