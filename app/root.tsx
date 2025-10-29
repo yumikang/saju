@@ -5,16 +5,42 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react"
-import type { LinksFunction } from "@remix-run/node"
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node"
+import { json } from "@remix-run/node"
 import { Toaster } from "~/components/ui/toaster"
 import { Header } from "~/components/layout/Header"
 import { Footer } from "~/components/layout/Footer"
+import { getOptionalUser } from "~/utils/user-session.server"
+import { db } from "~/utils/db.server"
 
 import globalStyles from "./globals.css?url"
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: globalStyles },
 ]
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  try {
+    const sessionUser = await getOptionalUser(request)
+
+    let user = null
+    if (sessionUser && typeof sessionUser.userId === 'string') {
+      user = await db.user.findUnique({
+        where: { id: sessionUser.userId },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+        }
+      })
+    }
+
+    return json({ user })
+  } catch (error) {
+    console.error('Error in root loader:', error)
+    return json({ user: null })
+  }
+}
 
 export default function App() {
   return (

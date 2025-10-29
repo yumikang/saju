@@ -1,11 +1,14 @@
-import { Link } from "@remix-run/react"
+import { Link, useRouteLoaderData } from "@remix-run/react"
 import { motion } from "framer-motion"
-import { Menu, X, Sparkles } from "lucide-react"
+import { Menu, X, Sparkles, User, LogIn } from "lucide-react"
 import { useState } from "react"
 import { Button } from "~/components/ui/button"
+import type { loader as rootLoader } from "~/root"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const rootData = useRouteLoaderData<typeof rootLoader>("root")
+  const user = rootData?.user
 
   const navItems = [
     // { label: "홈", href: "/" }, // Removed - logo click is sufficient
@@ -40,11 +43,21 @@ export function Header() {
 
           {/* CTA 버튼 */}
           <div className="hidden md:block">
-            <Link to="/naming/freemium">
-              <Button className="bg-orange-500 hover:bg-orange-600">
-                서비스 선택
-              </Button>
-            </Link>
+            {!user ? (
+              <Link to="/login">
+                <Button className="bg-orange-500 hover:bg-orange-600 flex items-center gap-2">
+                  <LogIn className="w-4 h-4" />
+                  로그인
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/account">
+                <Button className="bg-orange-500 hover:bg-orange-600 flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  마이페이지
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* 모바일 메뉴 버튼 */}
@@ -77,11 +90,21 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
-            <Link to="/naming/freemium" onClick={() => setIsMenuOpen(false)}>
-              <Button className="w-full mt-4 bg-orange-500 hover:bg-orange-600">
-                서비스 선택
-              </Button>
-            </Link>
+            {!user ? (
+              <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                <Button className="w-full mt-4 bg-orange-500 hover:bg-orange-600 flex items-center justify-center gap-2">
+                  <LogIn className="w-4 h-4" />
+                  로그인
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/account" onClick={() => setIsMenuOpen(false)}>
+                <Button className="w-full mt-4 bg-orange-500 hover:bg-orange-600 flex items-center justify-center gap-2">
+                  <User className="w-4 h-4" />
+                  마이페이지
+                </Button>
+              </Link>
+            )}
           </motion.nav>
         )}
       </div>

@@ -1,39 +1,10 @@
-import { Link, useLoaderData } from "@remix-run/react"
+import { Link } from "@remix-run/react"
 import { motion } from "framer-motion"
-import { Sparkles, Crown, Users, ArrowRight, Clock, Shield, Award, LogIn, User as UserIcon } from "lucide-react"
+import { Sparkles, Crown, Users, ArrowRight, Clock, Shield, Award } from "lucide-react"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
-import type { LoaderFunctionArgs } from "@remix-run/node"
-import { json } from "@remix-run/node"
-import { getOptionalUser } from "~/utils/user-session.server"
-import { db } from "~/utils/db.server"
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  try {
-    const sessionUser = await getOptionalUser(request)
-    
-    // If we have a session user, get the full user data from DB
-    let user = null
-    if (sessionUser && typeof sessionUser.userId === 'string') {
-      user = await db.user.findUnique({
-        where: { id: sessionUser.userId },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-        }
-      })
-    }
-    
-    return json({ user })
-  } catch (error) {
-    console.error('Error in index loader:', error)
-    return json({ user: null })
-  }
-}
 
 export default function Index() {
-  const { user } = useLoaderData<typeof loader>()
   const services = [
     {
       id: 'naming',
@@ -89,22 +60,6 @@ export default function Index() {
             신생아 작명부터 개명, 사주 궁합까지<br />
             전문가의 사주 분석으로 최적의 이름을 찾아보세요
           </p>
-          
-          {!user ? (
-            <Link to="/login">
-              <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600 flex items-center gap-2 mx-auto">
-                <LogIn className="w-5 h-5" />
-                로그인
-              </Button>
-            </Link>
-          ) : (
-            <Link to="/account">
-              <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600 flex items-center gap-2 mx-auto">
-                <UserIcon className="w-5 h-5" />
-                마이페이지
-              </Button>
-            </Link>
-          )}
         </motion.div>
       </section>
 
