@@ -15,45 +15,12 @@ import { HomeIcon } from 'lucide-react';
 export default function NamingLayout() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-      <NamingHeader />
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <Outlet />
       </main>
     </div>
   );
 }
-
-/**
- * Header component with navigation
- */
-function NamingHeader() {
-  return (
-    <header className="bg-white shadow-sm border-b border-orange-100">
-      <div className="container mx-auto px-4 py-2 max-w-6xl">
-        <div className="flex items-center justify-between">
-          <Link to="/naming" className="flex items-center">
-            {/* Text removed - keep link for navigation */}
-          </Link>
-          <nav className="flex items-center gap-4">
-            <Link
-              to="/naming/favorites"
-              className="text-sm text-gray-600 hover:text-orange-600 transition-colors"
-            >
-              즐겨찾기
-            </Link>
-            <Link
-              to="/naming/history"
-              className="text-sm text-gray-600 hover:text-orange-600 transition-colors"
-            >
-              이전 분석
-            </Link>
-          </nav>
-        </div>
-      </div>
-    </header>
-  );
-}
-
 
 /**
  * Error Boundary
@@ -66,7 +33,6 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-        <NamingHeader />
         <main className="container mx-auto px-4 py-16 max-w-2xl">
           <div className="text-center space-y-6">
             <div className="text-6xl font-bold text-orange-600">
@@ -95,7 +61,6 @@ export function ErrorBoundary() {
   // Unknown error
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-      <NamingHeader />
       <main className="container mx-auto px-4 py-16 max-w-2xl">
         <div className="text-center space-y-6">
           <div className="text-6xl">⚠️</div>
