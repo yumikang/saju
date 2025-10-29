@@ -139,7 +139,9 @@
 
   /* Feature Cards - 특징 카드 섹션 */
   .feature-card p {
-    @apply korean-text-optimize;
+    word-break: keep-all;
+    line-height: 1.6;
+    text-align: center; /* 중앙 정렬 */
     font-size: clamp(0.875rem, 2.2vw, 0.95rem);
     letter-spacing: -0.01em;
   }
