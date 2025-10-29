@@ -73,9 +73,6 @@ export function RenamingResultsLayout({
             <Sparkles className="inline w-7 h-7 sm:w-8 sm:h-8 text-orange-500 mr-2" />
             {title}
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 mb-2">
-            {description || `총 ${metrics.totalCount}개의 개명을 추천합니다`}
-          </p>
           <p className="text-sm text-gray-500">
             1위 최고 점수: <strong className="text-orange-600">{metrics.topScore}점</strong>
           </p>
@@ -94,7 +91,7 @@ export function RenamingResultsLayout({
             transition={{ delay: 0.1 }}
             className="mb-8 sm:mb-12"
           >
-            <div className="mb-4 sm:mb-6">
+            <div className="mb-4 sm:mb-6 text-center">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
                 무료 체험 개명 (10위)
               </h2>
@@ -136,7 +133,7 @@ export function RenamingResultsLayout({
             transition={{ delay: 0.3 }}
             className="mb-8 sm:mb-12"
           >
-            <div className="mb-4 sm:mb-6">
+            <div className="mb-4 sm:mb-6 text-center">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
                 프리미엄 개명 (1-9위)
               </h2>

@@ -3,8 +3,8 @@
  *
  * Route: /renaming/results?analysisId=xxx
  * Purpose: Show renaming recommendations with freemium-v2 strategy
- *   - 11-12위: Free preview (emerald theme)
- *   - 1-10위: Premium locked (yellow theme, requires payment ₩120,000)
+ *   - 10위: Free preview (orange theme)
+ *   - 1-9위: Premium locked (orange theme, requires payment ₩120,000)
  * Next: Payment flow or /renaming/experts
  *
  * @created 2025-10-28
@@ -98,7 +98,7 @@ export default function RenamingResults() {
             analysisId, // Existing analysis result ID
             preferences: {
               minScore: 80, // High score for renaming (75 → 80)
-              maxResults: 20, // Freemium-v2: Generate 20 for classification (1-10 locked + 11-12 free)
+              maxResults: 10, // Freemium-v2: Generate 10 for classification (1-9 locked + 10 free)
               gender: formData.gender === 'M' ? 'male' : 'female',
               avoidCharacters: badCharacters, // Exclude negative characters
             },
@@ -116,7 +116,7 @@ export default function RenamingResults() {
           // Freemium-v2: Keep all candidates as ScoredCandidate[]
           const candidates = result.data.candidates as ScoredCandidate[];
 
-          // Phase 2.3: Classification logic (1-10 locked, 11-12 free)
+          // Phase 2.3: Classification logic (1-9 locked, 10 free)
           const classified = classifyRenamingCandidates(candidates);
 
           // Phase 2.4: Psychological metrics calculation (with current name score)
@@ -131,7 +131,7 @@ export default function RenamingResults() {
 
           toast({
             title: '개명 제안 완료',
-            description: `총 ${psychMetrics.totalCount}개의 개명을 추천합니다 (1-10위 프리미엄, 11-12위 무료 체험)`,
+            description: `최고 점수 ${psychMetrics.topScore}점의 프리미엄 개명을 확인하세요`,
           });
         }
       } catch (err) {
