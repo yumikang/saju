@@ -99,16 +99,14 @@ export function RenamingResultsLayout({
                 지금 바로 확인할 수 있는 무료 샘플 개명입니다
               </p>
             </div>
-            <div className="max-w-md mx-auto">
-              <RenamingFreeCard
-                candidate={tiers.free[0]}
-                rank={10}
-                currentName={currentName}
-                currentNameScore={metrics.currentNameScore}
-                onCharacterClick={onCharacterClick}
-                onUpgradeClick={handlePaymentOpen}
-              />
-            </div>
+            <RenamingFreeCard
+              candidate={tiers.free[0]}
+              rank={10}
+              currentName={currentName}
+              currentNameScore={metrics.currentNameScore}
+              onCharacterClick={onCharacterClick}
+              onUpgradeClick={handlePaymentOpen}
+            />
           </motion.section>
         )}
 
