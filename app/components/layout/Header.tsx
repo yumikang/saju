@@ -8,11 +8,11 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navItems = [
-    { label: "홈", href: "/" },
+    // { label: "홈", href: "/" }, // Removed - logo click is sufficient
     { label: "신생아 작명", href: "/naming/freemium" },
-    { label: "AI 사주 작명", href: "/ai-naming" },
+    { label: "K-사주 작명", href: "/ai-naming" },
     { label: "개명 서비스", href: "/renaming" },
-    { label: "사주 궁합", href: "/saju" },
+    // { label: "사주 궁합", href: "/saju" }, // Commented out - to be restored later
   ]
 
   return (
