@@ -178,10 +178,10 @@ export default function Index() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center process-card mx-auto"
               >
-                <div className="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                <div className="number-icon w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto">
                   {step.number}
                 </div>
-                <h3 className="text-lg font-bold mb-2">{step.title}</h3>
+                <h3 className="text-lg font-bold">{step.title}</h3>
                 <p className="text-gray-600 text-sm">{step.desc}</p>
               </motion.div>
             ))}
