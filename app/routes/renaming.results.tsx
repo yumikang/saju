@@ -17,7 +17,6 @@ import { useLoaderData, useSearchParams } from '@remix-run/react';
 import { motion } from 'framer-motion';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import { useToast } from '~/hooks/use-toast';
 import { getRenamingFormData } from '~/lib/renaming/session.server';
 import { RenamingResultsLayout } from '~/components/renaming/freemium-v2';
 import {
@@ -57,7 +56,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function RenamingResults() {
   const { formData, analysisId } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
-  const { toast } = useToast();
 
   const [isLoading, setIsLoading] = useState(true);
   const [tiers, setTiers] = useState<RenamingFreemiumTiers | null>(null);
@@ -128,29 +126,19 @@ export default function RenamingResults() {
           // Update state
           setTiers(classified);
           setMetrics(psychMetrics);
-
-          toast({
-            title: '개명 제안 완료',
-            description: `최고 점수 ${psychMetrics.topScore}점의 프리미엄 개명을 확인하세요`,
-          });
         }
       } catch (err) {
         console.error('Recommendation error:', err);
         const errorMessage =
           err instanceof Error ? err.message : '개명 제안을 가져오는 중 오류가 발생했습니다';
         setError(errorMessage);
-        toast({
-          title: '오류 발생',
-          description: errorMessage,
-          variant: 'destructive',
-        });
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchRecommendations();
-  }, [analysisId, formData, toast, currentScore]);
+  }, [analysisId, formData, currentScore]);
 
   // Loading state
   if (isLoading) {
