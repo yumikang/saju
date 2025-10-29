@@ -35,41 +35,10 @@ export default function KSajuLanding() {
                 </span>
               </Link>
 
-              {/* 네비게이션 링크 */}
-              <div className="hidden md:flex items-center space-x-8">
-                <a
-                  href="#intro"
-                  className="text-sm font-medium transition-colors"
-                  style={{ color: 'rgba(255, 255, 255, 0.7)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}
-                >
-                  서비스 소개
-                </a>
-                <a
-                  href="#pricing"
-                  className="text-sm font-medium transition-colors"
-                  style={{ color: 'rgba(255, 255, 255, 0.7)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}
-                >
-                  가격
-                </a>
-                <a
-                  href="#how-it-works"
-                  className="text-sm font-medium transition-colors"
-                  style={{ color: 'rgba(255, 255, 255, 0.7)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}
-                >
-                  작명 과정
-                </a>
-              </div>
-
               {/* 로그인 버튼 */}
               <div>
                 <button
-                  className="px-5 py-2.5 text-sm font-semibold text-white rounded-lg transition-all"
+                  className="px-4 py-1.5 text-sm font-semibold text-white rounded-md transition-all"
                   style={{ background: '#8B5CF6', boxShadow: '0 2px 8px rgba(139, 92, 246, 0.2)' }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = '#7C3AED';
