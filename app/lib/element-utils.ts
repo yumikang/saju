@@ -13,6 +13,14 @@ const ELEMENT_MAP: Record<Element, string> = {
   [Element.EARTH]: '토',
 };
 
+const ELEMENT_MAP_WITH_HANJA: Record<Element, string> = {
+  [Element.METAL]: '금(金)',
+  [Element.WOOD]: '목(木)',
+  [Element.WATER]: '수(水)',
+  [Element.FIRE]: '화(火)',
+  [Element.EARTH]: '토(土)',
+};
+
 /**
  * Element enum을 한글 문자열로 변환
  * @param element - Prisma Element enum 값
@@ -20,6 +28,15 @@ const ELEMENT_MAP: Record<Element, string> = {
  */
 export function elementToKorean(element: Element | null): string | undefined {
   return element ? ELEMENT_MAP[element] : undefined;
+}
+
+/**
+ * Element enum을 한자 포함 한글 문자열로 변환
+ * @param element - Prisma Element enum 값
+ * @returns 한자 포함 한글 오행 문자열 ('금(金)', '목(木)', '수(水)', '화(火)', '토(土)') 또는 undefined
+ */
+export function elementToKoreanWithHanja(element: Element | null): string | undefined {
+  return element ? ELEMENT_MAP_WITH_HANJA[element] : undefined;
 }
 
 /**

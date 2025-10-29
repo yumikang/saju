@@ -23,6 +23,7 @@ import {
   ValidationError,
   InsufficientCharactersError,
 } from './errors';
+import { elementToKoreanWithHanja } from '../element-utils';
 
 const prisma = new PrismaClient();
 
@@ -581,7 +582,11 @@ export async function handleAnalyzeCurrent(
     // 5. Analyze problems based on scores
     const problems: string[] = [];
     if (elementScore < 60) {
-      problems.push(`${sajuResult.lackingElements.join(', ')} 기운 부족`);
+      const lackingElementsKorean = sajuResult.lackingElements
+        .map(el => elementToKoreanWithHanja(el as Element))
+        .filter(Boolean)
+        .join(', ');
+      problems.push(`${lackingElementsKorean} 기운 부족`);
     }
     if (yinyangScore < 60) {
       problems.push('음양 불균형');

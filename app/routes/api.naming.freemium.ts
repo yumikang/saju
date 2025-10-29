@@ -24,6 +24,8 @@ import {
   type BirthInfo,
 } from '~/lib/naming/pipeline';
 import { SajuCalculator } from '~/lib/saju/calculator';
+import { Element } from '@prisma/client';
+import { elementToKoreanWithHanja } from '~/lib/element-utils';
 // YongsinAnalyzer disabled for performance - using simple algorithm instead
 // import { YongsinAnalyzer } from '~/lib/saju/yongsin-analyzer';
 
@@ -245,6 +247,11 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
     .filter(([, count]) => count < 1.5)
     .map(([element]) => element);
 
+  // Convert lacking elements to Korean with Hanja
+  const lackingElementsKorean = lackingElements
+    .map(el => elementToKoreanWithHanja(el as Element))
+    .filter(Boolean);
+
   const yongsinResult = {
     primary: lackingElements[0] || 'WOOD',
     secondary: lackingElements[1],
@@ -252,7 +259,7 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
     methods: {} as any,
     dayMasterStrength: { score: 0, category: '중화', explanation: '알고리즘 기반 분석' },
     seasonalContext: { season: '봄', temperatureNeed: '중화', adjustment: '' },
-    fullAnalysis: `부족한 오행(${lackingElements.join(', ')})을 보충하는 용신 분석 결과입니다.`,
+    fullAnalysis: `부족한 오행(${lackingElementsKorean.join(', ')})을 보충하는 용신 분석 결과입니다.`,
     aiEnhanced: false,
   };
 
@@ -267,7 +274,7 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
 
   console.log(`[Stage 2] Saju calculated for session: ${sessionId}`);
 
-  // Format response (reuse lackingElements from above)
+  // Format response (use Korean with Hanja for lackingElements)
   return {
     success: true,
     sessionId,
@@ -280,7 +287,7 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
         hour: sajuResult.pillars.hour,
       },
       elementCounts: sajuResult.elementCounts,
-      lackingElements,
+      lackingElements: lackingElementsKorean,
       yongsin: {
         primary: yongsinResult.primary,
         secondary: yongsinResult.secondary,
