@@ -86,7 +86,7 @@ export function RenamingResultsLayout({
           )}
         </motion.div>
 
-        {/* Free Names Section (11-12위) */}
+        {/* Free Name Section (10위) */}
         {tiers.free.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
@@ -96,24 +96,21 @@ export function RenamingResultsLayout({
           >
             <div className="mb-4 sm:mb-6">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-                무료 체험 개명 (11-12위)
+                무료 체험 개명 (10위)
               </h2>
               <p className="text-sm text-gray-600">
                 지금 바로 확인할 수 있는 무료 샘플 개명입니다
               </p>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-              {tiers.free.map((candidate, index) => (
-                <RenamingFreeCard
-                  key={`free-${index}`}
-                  candidate={candidate}
-                  rank={(11 + index) as 11 | 12}
-                  currentName={currentName}
-                  currentNameScore={metrics.currentNameScore}
-                  onCharacterClick={onCharacterClick}
-                  onUpgradeClick={handlePaymentOpen}
-                />
-              ))}
+            <div className="max-w-md mx-auto">
+              <RenamingFreeCard
+                candidate={tiers.free[0]}
+                rank={10}
+                currentName={currentName}
+                currentNameScore={metrics.currentNameScore}
+                onCharacterClick={onCharacterClick}
+                onUpgradeClick={handlePaymentOpen}
+              />
             </div>
           </motion.section>
         )}
@@ -131,7 +128,7 @@ export function RenamingResultsLayout({
           />
         </motion.section>
 
-        {/* Locked Premium Names Section (1-10위) */}
+        {/* Locked Premium Names Section (1-9위) */}
         {tiers.locked.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
@@ -141,10 +138,10 @@ export function RenamingResultsLayout({
           >
             <div className="mb-4 sm:mb-6">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-                프리미엄 개명 (1-10위)
+                프리미엄 개명 (1-9위)
               </h2>
               <p className="text-sm text-gray-600">
-                최고 점수 {metrics.topScore}점부터 상위 10개 개명 - 결제 후 잠금 해제
+                최고 점수 {metrics.topScore}점부터 상위 9개 개명 - 결제 후 잠금 해제
               </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">

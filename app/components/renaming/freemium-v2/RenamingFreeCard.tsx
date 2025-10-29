@@ -11,7 +11,7 @@ import type { ScoredCandidate } from '~/lib/naming/types';
 
 export interface RenamingFreeCardProps {
   candidate: ScoredCandidate;
-  rank: 11 | 12;
+  rank: 10;
   currentName?: string;
   currentNameScore?: number;
   onCharacterClick?: (characterId: number) => void;
@@ -105,7 +105,7 @@ export function RenamingFreeCard({
             onClick={onUpgradeClick}
             className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold text-sm transition-colors"
           >
-            더 높은 점수의 프리미엄 개명 보기 →
+            1-9위 프리미엄 개명 보기 →
           </button>
         )}
       </Card>

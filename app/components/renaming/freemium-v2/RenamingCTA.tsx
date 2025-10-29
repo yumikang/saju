@@ -38,7 +38,7 @@ export function RenamingCTA({
           </p>
         )}
         <p className="text-gray-600 mb-6">
-          1-10위 프리미엄 개명 <strong className="text-orange-600">10개</strong>를 모두 확인할 수 있습니다
+          1-9위 프리미엄 개명 <strong className="text-orange-600">9개</strong>를 모두 확인할 수 있습니다
         </p>
         <Button
           onClick={onPayment}

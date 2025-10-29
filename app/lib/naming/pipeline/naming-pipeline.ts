@@ -86,11 +86,12 @@ export interface PipelineConfig {
 
 /**
  * Default pipeline configuration
+ * OPTIMIZED: Reduced maxCombinations for performance (10000 → 1500)
  */
 export const DEFAULT_PIPELINE_CONFIG: PipelineConfig = {
-  maxCombinations: 10000,
+  maxCombinations: 1500,  // PERFORMANCE: Reduced from 10000 to 1500
   maxCandidates: 20,
-  batchSize: 100,
+  batchSize: 50,          // PERFORMANCE: Reduced from 100 to 50 for faster batching
   timeout: 10000,
   weights: {
     yongsin: 0.35,
@@ -390,7 +391,7 @@ export class NamingPipeline {
       const primaryElement = context.yongsinResult.primary;
       const secondaryElement = context.yongsinResult.secondary;
 
-      // Query Hanja with primary element
+      // Query Hanja with primary element (OPTIMIZED: limit pool size to reduce combinations)
       let hanjaPool = await this.hanjaService.findByElement(primaryElement, {
         minStrokes: 3,
         maxStrokes: 20,
@@ -399,7 +400,7 @@ export class NamingPipeline {
       });
 
       // Fallback: If pool too small, add secondary element
-      if (hanjaPool.length < 50 && secondaryElement) {
+      if (hanjaPool.length < 30 && secondaryElement) {
         const secondaryPool = await this.hanjaService.findByElement(secondaryElement, {
           minStrokes: 3,
           maxStrokes: 20,
@@ -409,8 +410,9 @@ export class NamingPipeline {
         hanjaPool = [...hanjaPool, ...secondaryPool];
       }
 
-      // Deduplicate
-      context.hanjaPool = Array.from(new Map(hanjaPool.map((h) => [h.character, h])).values());
+      // Deduplicate and LIMIT to top 40 characters (40 × 40 = 1,600 combinations max)
+      const deduped = Array.from(new Map(hanjaPool.map((h) => [h.character, h])).values());
+      context.hanjaPool = deduped.slice(0, 40);  // PERFORMANCE: Limit pool size
 
       context.stepDurations[stepName] = Date.now() - stepStart;
     } catch (error) {
@@ -437,10 +439,14 @@ export class NamingPipeline {
     try {
       const combinations: NameCombination[] = [];
       const pool = context.hanjaPool;
+      const maxCombinations = Math.min(context.config.maxCombinations, 2000); // HARD LIMIT: 2000 max
 
-      // Generate all pairs (with early limit)
-      for (let i = 0; i < pool.length && combinations.length < context.config.maxCombinations; i++) {
-        for (let j = 0; j < pool.length && combinations.length < context.config.maxCombinations; j++) {
+      // Generate all pairs (with early exit optimization)
+      outerLoop: for (let i = 0; i < pool.length; i++) {
+        for (let j = 0; j < pool.length; j++) {
+          // Early exit if we have enough combinations
+          if (combinations.length >= maxCombinations) break outerLoop;
+
           // Skip if same character (unless it's a valid double name)
           if (i === j && !this.isValidDoubleCharacter(pool[i])) continue;
 
@@ -452,6 +458,7 @@ export class NamingPipeline {
         }
       }
 
+      console.log(`[Pipeline] Generated ${combinations.length} combinations from ${pool.length} characters`);
       context.combinations = combinations;
       context.stepDurations[stepName] = Date.now() - stepStart;
     } catch (error) {

@@ -24,7 +24,8 @@ import {
   type BirthInfo,
 } from '~/lib/naming/pipeline';
 import { SajuCalculator } from '~/lib/saju/calculator';
-import { YongsinAnalyzer } from '~/lib/saju/yongsin-analyzer';
+// YongsinAnalyzer disabled for performance - using simple algorithm instead
+// import { YongsinAnalyzer } from '~/lib/saju/yongsin-analyzer';
 
 // ============================================================
 // Request Validation Schemas
@@ -214,7 +215,7 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
 
   // Use SajuCalculator directly
   const sajuCalculator = new SajuCalculator(prisma);
-  const yongsinAnalyzer = new YongsinAnalyzer();
+  // YongsinAnalyzer disabled for performance
 
   // Ensure birthDate is a Date object
   const birthDate = new Date(session.birthDate);
@@ -238,27 +239,22 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
     gender: session.gender as 'M' | 'F',
   };
 
-  // Analyze Yongsin (requires both sajuResult AND birthInfo)
-  let yongsinResult;
-  try {
-    yongsinResult = await yongsinAnalyzer.analyze(sajuResult, birthInfo);
-  } catch (error) {
-    console.error('[Stage 2] Yongsin analysis failed, using fallback:', error);
-    // Fallback to simple yongsin based on lacking elements
-    const lackingElements = Object.entries(sajuResult.elementCounts)
-      .filter(([, count]) => count < 1.5)
-      .map(([element]) => element);
-    yongsinResult = {
-      primary: lackingElements[0] || 'WOOD',
-      secondary: lackingElements[1],
-      avoid: [],
-      methods: {} as any,
-      dayMasterStrength: { score: 0, category: '중화', explanation: '분석 실패' },
-      seasonalContext: { season: '봄', temperatureNeed: '중화', adjustment: '' },
-      fullAnalysis: '용신 분석에 실패했습니다. 기본값을 사용합니다.',
-      aiEnhanced: false,
-    };
-  }
+  // PERFORMANCE: Use simple algorithm-based yongsin instead of AI (skip yongsinAnalyzer.analyze)
+  console.log('[Stage 2] Using fast algorithm-based yongsin (AI disabled for performance)');
+  const lackingElements = Object.entries(sajuResult.elementCounts)
+    .filter(([, count]) => count < 1.5)
+    .map(([element]) => element);
+
+  const yongsinResult = {
+    primary: lackingElements[0] || 'WOOD',
+    secondary: lackingElements[1],
+    avoid: [],
+    methods: {} as any,
+    dayMasterStrength: { score: 0, category: '중화', explanation: '알고리즘 기반 분석' },
+    seasonalContext: { season: '봄', temperatureNeed: '중화', adjustment: '' },
+    fullAnalysis: `부족한 오행(${lackingElements.join(', ')})을 보충하는 용신 분석 결과입니다.`,
+    aiEnhanced: false,
+  };
 
   // Update session with Saju data
   await prisma.namingSession.update({
@@ -271,11 +267,7 @@ async function handleStage2(sessionId: string): Promise<Stage2Response> {
 
   console.log(`[Stage 2] Saju calculated for session: ${sessionId}`);
 
-  // Format response
-  const lackingElements = Object.entries(sajuResult.elementCounts)
-    .filter(([, count]) => count < 1.5)
-    .map(([element]) => element);
-
+  // Format response (reuse lackingElements from above)
   return {
     success: true,
     sessionId,
@@ -347,31 +339,32 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
     session.lastName,
     session.lastNameStrokes,
     {
-      maxCandidates: 50,
-      minScore: 70, // Only consider good names
+      maxCandidates: 10,  // Generate exactly 10 candidates
+      minScore: 50,       // Lower threshold for much faster generation
     }
   );
   const executionTime = Date.now() - startTime;
 
   console.log(`[Stage 3] Generated ${result.candidates.length} names in ${executionTime}ms`);
 
-  // Split results: top 2 free, next 8 paid, rest stored
+  // Freemium V2 structure: 상위 10개만 생성 (1-9위 잠금, 10위 무료)
   const allCandidates = result.candidates;
-  const top2 = allCandidates.slice(0, 2);
-  const locked8 = allCandidates.slice(2, 10);
+  const top10 = allCandidates.slice(0, 10); // 1-10위만 사용
+  const locked9 = top10.slice(0, 9);        // 1-9위 프리미엄 (잠금)
+  const free1 = top10.slice(9, 10);         // 10위 무료
 
-  // Update session with all candidates
+  // Update session with candidates
   await prisma.namingSession.update({
     where: { id: sessionId },
     data: {
-      top2: top2 as any,
-      locked8: locked8 as any,
+      top2: free1 as any,          // V2: 10위 무료 저장
+      locked8: locked9 as any,     // V2: 1-9위 잠금 저장
       allCandidates: allCandidates as any,
     },
   });
 
-  // Format top 2 for response
-  const recommendations: NameRecommendation[] = top2.map((candidate, index) => ({
+  // Format ALL 10 names for response (Freemium V2)
+  const recommendations: NameRecommendation[] = top10.map((candidate, index) => ({
     rank: index + 1,
     fullName: `${session.lastName}${candidate.firstName.join('')}`,
     characters: candidate.characters.map((char) => ({
@@ -390,7 +383,7 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
     aiExplanation: `이 이름은 ${session.selectedValues.join(', ')} 가치를 반영하여 선택되었습니다.`,
   }));
 
-  console.log(`[Stage 3] Returning top 2 names for session: ${sessionId}`);
+  console.log(`[Stage 3] Returning 10 names (1-9위 locked premium, 10위 free) for session: ${sessionId}`);
 
   return {
     success: true,

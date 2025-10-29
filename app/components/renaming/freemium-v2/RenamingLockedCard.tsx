@@ -48,8 +48,8 @@ export function RenamingLockedCard({
           </div>
         </div>
 
-        {/* Header - Visible Score */}
-        <div className="flex items-center justify-between mb-4">
+        {/* Header - Visible Score (with padding to avoid lock icon) */}
+        <div className="flex items-center justify-between mb-4 pr-12">
           <span className="text-sm font-semibold text-orange-600">{rank}위 · 프리미엄</span>
           <div className="text-right">
             <span className="text-2xl font-bold text-orange-600">{Math.round(scores.overall)}점</span>
@@ -100,7 +100,7 @@ export function RenamingLockedCard({
         {/* CTA */}
         <div className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold text-sm text-center transition-colors">
           <Lock className="w-4 h-4 inline mr-2" />
-          클릭하여 {rank}위 개명 확인하기
+          클릭하여 1-9위 프리미엄 개명 보기
         </div>
       </Card>
     </motion.div>

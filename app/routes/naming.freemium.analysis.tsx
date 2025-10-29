@@ -9,13 +9,16 @@
  * - Yongsin analysis
  */
 
-import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from '@remix-run/react';
+import { json, type LoaderFunctionArgs } from '@remix-run/node';
+import { useLoaderData, useNavigate } from '@remix-run/react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
-import { ElementBadge } from '~/components/ui/element-badge';
-import { ArrowRight, Loader2, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
+
+// In-memory cache to prevent duplicate API calls
+const sajuCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 // Element colors
 const ELEMENT_COLORS = {
@@ -35,8 +38,8 @@ const ELEMENT_KOREAN = {
 };
 
 interface SajuPillar {
-  gan: string;
-  ji: string;
+  stem: string;
+  branch: string;
 }
 
 interface SajuData {
@@ -60,95 +63,75 @@ interface SajuData {
   };
 }
 
-export default function FreemiumAnalysisPage() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get('sessionId');
+interface LoaderData {
+  sessionId: string;
+  saju: SajuData;
+}
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [saju, setSaju] = useState<SajuData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+/**
+ * Loader: Fetch Saju data on server-side with caching
+ */
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const sessionId = url.searchParams.get('sessionId');
 
-  // Fetch Saju analysis on mount
-  useEffect(() => {
-    if (!sessionId) {
-      setError('세션 ID가 없습니다');
-      setIsLoading(false);
-      return;
+  if (!sessionId) {
+    throw new Response('세션 ID가 없습니다', { status: 400 });
+  }
+
+  // Check cache first
+  const cached = sajuCache.get(sessionId);
+  const now = Date.now();
+
+  if (cached && (now - cached.timestamp) < CACHE_TTL) {
+    console.log('[Loader] Returning cached data for session:', sessionId);
+    return json<LoaderData>(cached.data);
+  }
+
+  console.log('[Loader] Fetching fresh data for session:', sessionId);
+
+  // Call Stage 2 API
+  const apiUrl = `${url.origin}/api/naming/freemium`;
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stage: 2, sessionId }),
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Response(result.message || '사주 분석에 실패했습니다', { status: 500 });
+  }
+
+  const loaderData: LoaderData = {
+    sessionId,
+    saju: result.saju,
+  };
+
+  // Cache the result
+  sajuCache.set(sessionId, { data: loaderData, timestamp: now });
+
+  // Clean up old cache entries
+  for (const [key, value] of sajuCache.entries()) {
+    if (now - value.timestamp > CACHE_TTL) {
+      sajuCache.delete(key);
     }
+  }
 
-    const fetchSajuAnalysis = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+  return json<LoaderData>(loaderData);
+}
 
-        const response = await fetch('/api/naming/freemium', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ stage: 2, sessionId }),
-        });
+/**
+ * Component: Display Saju analysis results
+ */
+export default function FreemiumAnalysisPage() {
+  const { sessionId, saju } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
-        const result = await response.json();
-
-        if (result.success) {
-          setSaju(result.saju);
-        } else {
-          setError(result.message || '사주 분석에 실패했습니다');
-        }
-      } catch (error) {
-        console.error('[Saju Analysis] Error:', error);
-        setError('서버 연결에 실패했습니다');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSajuAnalysis();
-  }, [sessionId]);
-
-  // Handle continue button
   const handleContinue = () => {
     navigate(`/naming/freemium/results?sessionId=${sessionId}`);
   };
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4">
-        <div className="max-w-2xl mx-auto">
-          <Card className="shadow-xl">
-            <CardContent className="p-12 text-center">
-              <Loader2 className="w-16 h-16 animate-spin mx-auto mb-6 text-blue-500" />
-              <h2 className="text-2xl font-bold mb-2">사주를 분석하고 있습니다...</h2>
-              <p className="text-gray-600">
-                생년월일시를 바탕으로 사주팔자를 계산 중입니다
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error || !saju) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-red-50 to-white py-12 px-4">
-        <div className="max-w-2xl mx-auto">
-          <Card className="shadow-xl border-red-200">
-            <CardContent className="p-12 text-center">
-              <div className="text-6xl mb-4">⚠️</div>
-              <h2 className="text-2xl font-bold mb-2 text-red-600">오류가 발생했습니다</h2>
-              <p className="text-gray-600 mb-6">{error}</p>
-              <Button onClick={() => navigate('/naming/freemium')} variant="outline">
-                처음으로 돌아가기
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4">
@@ -208,10 +191,10 @@ export default function FreemiumAnalysisPage() {
                   <div className="text-sm text-gray-600 mb-2">년주 (年柱)</div>
                   <div className="bg-gradient-to-b from-purple-100 to-purple-50 border-2 border-purple-300 rounded-lg p-4">
                     <div className="text-3xl font-bold text-purple-900">
-                      {saju.pillars.year.gan}
+                      {saju.pillars.year.stem}
                     </div>
                     <div className="text-2xl font-bold text-purple-700 mt-2">
-                      {saju.pillars.year.ji}
+                      {saju.pillars.year.branch}
                     </div>
                   </div>
                 </div>
@@ -221,10 +204,10 @@ export default function FreemiumAnalysisPage() {
                   <div className="text-sm text-gray-600 mb-2">월주 (月柱)</div>
                   <div className="bg-gradient-to-b from-blue-100 to-blue-50 border-2 border-blue-300 rounded-lg p-4">
                     <div className="text-3xl font-bold text-blue-900">
-                      {saju.pillars.month.gan}
+                      {saju.pillars.month.stem}
                     </div>
                     <div className="text-2xl font-bold text-blue-700 mt-2">
-                      {saju.pillars.month.ji}
+                      {saju.pillars.month.branch}
                     </div>
                   </div>
                 </div>
@@ -234,10 +217,10 @@ export default function FreemiumAnalysisPage() {
                   <div className="text-sm text-gray-600 mb-2">일주 (日柱)</div>
                   <div className="bg-gradient-to-b from-green-100 to-green-50 border-2 border-green-300 rounded-lg p-4">
                     <div className="text-3xl font-bold text-green-900">
-                      {saju.pillars.day.gan}
+                      {saju.pillars.day.stem}
                     </div>
                     <div className="text-2xl font-bold text-green-700 mt-2">
-                      {saju.pillars.day.ji}
+                      {saju.pillars.day.branch}
                     </div>
                   </div>
                 </div>
@@ -247,10 +230,10 @@ export default function FreemiumAnalysisPage() {
                   <div className="text-sm text-gray-600 mb-2">시주 (時柱)</div>
                   <div className="bg-gradient-to-b from-orange-100 to-orange-50 border-2 border-orange-300 rounded-lg p-4">
                     <div className="text-3xl font-bold text-orange-900">
-                      {saju.pillars.hour.gan}
+                      {saju.pillars.hour.stem}
                     </div>
                     <div className="text-2xl font-bold text-orange-700 mt-2">
-                      {saju.pillars.hour.ji}
+                      {saju.pillars.hour.branch}
                     </div>
                   </div>
                 </div>

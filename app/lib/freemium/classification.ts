@@ -2,8 +2,8 @@
  * Freemium Classification Utilities
  *
  * Classifies name candidates into strategic freemium structure:
- * - Free (11-12위): Lower-tier preview, no payment required
- * - Locked (1-10위): Premium top names, require payment
+ * - Free (10위): Single free preview name
+ * - Locked (1-9위): Premium top names, require payment
  * - Remaining: Stored but not initially displayed
  */
 
@@ -14,9 +14,9 @@ import type { ScoredCandidate } from '~/lib/naming/types';
 // ============================================================
 
 export interface FreemiumTiers {
-  free: ScoredCandidate[];    // 11-12위: Free preview names (lower tier)
-  locked: ScoredCandidate[];  // 1-10위: Premium names (top 10)
-  remaining: ScoredCandidate[]; // 13+위: Additional names
+  free: ScoredCandidate[];    // 10위: Free preview name (single card)
+  locked: ScoredCandidate[];  // 1-9위: Premium names (top 9)
+  remaining: ScoredCandidate[]; // 11+위: Additional names
 }
 
 export interface PsychologicalMetrics {
@@ -38,7 +38,7 @@ export interface PsychologicalMetrics {
  * Classify candidates into strategic freemium tiers
  *
  * @param candidates - All candidates sorted by score (descending)
- * @returns FreemiumTiers object with free (11-12) + locked (1-10) + remaining
+ * @returns FreemiumTiers object with free (10위) + locked (1-9위) + remaining
  */
 export function classifyCandidates(
   candidates: ScoredCandidate[]
@@ -49,14 +49,14 @@ export function classifyCandidates(
   );
 
   return {
-    // 🔒 1-10위: 프리미엄 잠금 (Top 10 premium names)
-    locked: sorted.slice(0, 10),
+    // 🔒 1-9위: 프리미엄 잠금 (Top 9 premium names)
+    locked: sorted.slice(0, 9),
 
-    // 🆓 11-12위: 무료 공개 (Free preview, lower tier)
-    free: sorted.slice(10, 12),
+    // 🆓 10위: 무료 공개 (Free preview, single name at rank 10)
+    free: sorted.slice(9, 10),
 
-    // 📦 13+위: 추가 이름 (Remaining names)
-    remaining: sorted.slice(12),
+    // 📦 11+위: 추가 이름 (Remaining names)
+    remaining: sorted.slice(10),
   };
 }
 
@@ -72,7 +72,7 @@ export function calculatePsychologicalMetrics(
   const topScore = tiers.locked[0]?.scores.overall || 0;  // 1위 (프리미엄)
   const secondScore = tiers.locked[1]?.scores.overall || 0;  // 2위 (프리미엄)
   const lockedTopScore = tiers.locked[0]?.scores.overall || 0;  // 프리미엄 최고점
-  const freeTopScore = tiers.free[0]?.scores.overall || 0;  // 11위 (무료)
+  const freeTopScore = tiers.free[0]?.scores.overall || 0;  // 10위 (무료)
   const scoreDifference = Math.round(topScore - freeTopScore);
   const percentageDiff = freeTopScore > 0
     ? Math.round(((topScore - freeTopScore) / freeTopScore) * 100)
@@ -81,14 +81,14 @@ export function calculatePsychologicalMetrics(
   const lockedCount = tiers.locked.length;
   const totalCount = tiers.free.length + tiers.locked.length + tiers.remaining.length;
 
-  // 전환 유도 메시지 생성 (11-12위 무료 vs 1-10위 프리미엄)
+  // 전환 유도 메시지 생성 (10위 무료 vs 1-9위 프리미엄)
   let conversionMessage = '';
   if (scoreDifference >= 15) {
     conversionMessage = `1위 이름은 무료 이름보다 ${scoreDifference}점이나 높은 완벽한 조화입니다!`;
   } else if (scoreDifference >= 10) {
-    conversionMessage = `프리미엄 이름 10개로 최고의 선택지를 확보하세요`;
+    conversionMessage = `프리미엄 이름 9개로 최고의 선택지를 확보하세요`;
   } else {
-    conversionMessage = `1-10위 프리미엄 이름들은 최상위 품질입니다`;
+    conversionMessage = `1-9위 프리미엄 이름들은 최상위 품질입니다`;
   }
 
   return {
@@ -123,12 +123,9 @@ export function getRankLabel(rank: number): string {
     case 7:
     case 8:
     case 9:
-    case 10:
       return `${rank}등 (프리미엄)`;
-    case 11:
-      return '11등 (무료)';
-    case 12:
-      return '12등 (무료)';
+    case 10:
+      return '10등 (무료)';
     default:
       return `${rank}등`;
   }
@@ -161,7 +158,7 @@ export function getConversionMessages(
 ): string[] {
   const messages: string[] = [];
 
-  // 11-12위 무료 vs 1-10위 프리미엄 비교
+  // 10위 무료 vs 1-9위 프리미엄 비교
   if (metrics.scoreDifference >= 15) {
     messages.push(
       `무료 이름도 좋지만, 1위 이름은 **${metrics.scoreDifference}점**이나 더 높습니다!`,
@@ -169,17 +166,17 @@ export function getConversionMessages(
     );
   } else if (metrics.scoreDifference >= 10) {
     messages.push(
-      `1-10위 프리미엄 이름은 **${metrics.topScore}점**부터 시작합니다`,
+      `1-9위 프리미엄 이름은 **${metrics.topScore}점**부터 시작합니다`,
       `무료 이름보다 평균 **${metrics.scoreDifference}점** 더 높은 조화`
     );
   } else {
     messages.push(
-      `1-10위 프리미엄 이름: **${metrics.topScore}점**부터 **최상위 품질**`,
-      `더 나은 선택을 위한 10개의 프리미엄 이름`
+      `1-9위 프리미엄 이름: **${metrics.topScore}점**부터 **최상위 품질**`,
+      `더 나은 선택을 위한 9개의 프리미엄 이름`
     );
   }
 
-  // 볼륨 강조 (10개 프리미엄 이름)
+  // 볼륨 강조 (9개 프리미엄 이름)
   messages.push(
     `**${metrics.lockedCount}개**의 최고 점수 이름으로 완벽한 선택을 하세요`
   );
@@ -199,6 +196,6 @@ export function getConversionMessages(
  * @returns Value message
  */
 export function getValueProposition(price: number = 69000): string {
-  const pricePerName = Math.round(price / 10); // 10개 프리미엄 이름 기준
-  return `프리미엄 이름 10개, 이름 하나당 ${pricePerName.toLocaleString()}원`;
+  const pricePerName = Math.round(price / 9); // 9개 프리미엄 이름 기준
+  return `프리미엄 이름 9개, 이름 하나당 ${pricePerName.toLocaleString()}원`;
 }
