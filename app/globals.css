@@ -100,6 +100,48 @@
 }
 
 @layer components {
+  /* Korean Typography Optimization */
+  .korean-text-optimize {
+    word-break: keep-all; /* 단어 단위 줄바꿈 */
+    line-height: 1.6; /* 행간 늘리기 */
+    text-align: justify; /* 양쪽 정렬로 균등 배치 */
+    hyphens: auto; /* 필요시 하이픈 처리 */
+  }
+
+  /* Process Card - 작명 과정 섹션 */
+  .process-card {
+    @apply korean-text-optimize;
+    max-width: 300px;
+    padding: 20px;
+  }
+
+  .process-card p {
+    font-size: clamp(0.875rem, 2.2vw, 0.95rem);
+    letter-spacing: -0.01em; /* 자간 미세 조정 */
+  }
+
+  /* 모바일에서 프로세스 카드 너비 조정 */
+  @media (max-width: 768px) {
+    .process-card {
+      max-width: 100%;
+      padding: 16px;
+    }
+  }
+
+  /* Feature Cards - 특징 카드 섹션 */
+  .feature-card p {
+    @apply korean-text-optimize;
+    font-size: clamp(0.875rem, 2.2vw, 0.95rem);
+    letter-spacing: -0.01em;
+  }
+
+  /* Service Cards - 서비스 카드 섹션 */
+  .service-card-description {
+    @apply korean-text-optimize;
+    font-size: clamp(0.9rem, 2.3vw, 1rem);
+    letter-spacing: -0.01em;
+  }
+
   /* Mobile-first responsive utilities */
   .container-mobile {
     @apply w-full px-4 mx-auto;

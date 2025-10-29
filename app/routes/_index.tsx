@@ -150,7 +150,7 @@ export default function Index() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="text-center"
+              className="text-center feature-card"
             >
               <feature.icon className="w-12 h-12 mx-auto text-orange-500 mb-4" />
               <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
@@ -176,7 +176,7 @@ export default function Index() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.1 }}
-                className="text-center"
+                className="text-center process-card mx-auto"
               >
                 <div className="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                   {step.number}
@@ -210,7 +210,7 @@ export default function Index() {
                     </span>
                   </div>
                   <CardTitle className="text-2xl">{service.title}</CardTitle>
-                  <CardDescription className="text-base">
+                  <CardDescription className="text-base service-card-description">
                     {service.description}
                   </CardDescription>
                 </CardHeader>
