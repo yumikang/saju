@@ -117,7 +117,7 @@ export default function FreemiumInputPage() {
         >
           <h1 className="text-4xl font-bold text-gray-900 mb-3">
             <Sparkles className="inline w-8 h-8 text-yellow-500 mr-2" />
-            AI 작명 서비스
+            작명 서비스
           </h1>
           <p className="text-lg text-gray-600">
             전문가 수준의 작명을 무료로 체험하세요
