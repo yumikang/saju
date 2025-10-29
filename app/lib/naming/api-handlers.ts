@@ -215,7 +215,7 @@ export async function handleRecommendation(
       `${request.birthData.birthDate}T${request.birthData.birthTime}`
     );
 
-    sajuResult = calculator.calculate(
+    sajuResult = await calculator.calculate(
       birthDateTime,
       request.birthData.birthTime,
       request.birthData.isLunar
@@ -509,7 +509,7 @@ export async function handleAnalyzeCurrent(
     const calculator = new SajuCalculator();
     const birthDateTime = new Date(`${request.birthDate}T${request.birthTime}`);
 
-    const sajuResult = calculator.calculate(
+    const sajuResult = await calculator.calculate(
       birthDateTime,
       request.birthTime,
       request.isLunar
