@@ -19,7 +19,6 @@ export default function NamingLayout() {
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <Outlet />
       </main>
-      <NamingFooter />
     </div>
   );
 }
@@ -57,31 +56,6 @@ function NamingHeader() {
   );
 }
 
-/**
- * Footer component
- */
-function NamingFooter() {
-  return (
-    <footer className="bg-white border-t border-gray-200 mt-16">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-600">
-          <p>© 2025 사주 작명 서비스. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link to="/about" className="hover:text-orange-600 transition-colors">
-              서비스 소개
-            </Link>
-            <Link to="/privacy" className="hover:text-orange-600 transition-colors">
-              개인정보처리방침
-            </Link>
-            <Link to="/terms" className="hover:text-orange-600 transition-colors">
-              이용약관
-            </Link>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 /**
  * Error Boundary
@@ -116,7 +90,6 @@ export function ErrorBoundary() {
             </div>
           </div>
         </main>
-        <NamingFooter />
       </div>
     );
   }
@@ -144,7 +117,6 @@ export function ErrorBoundary() {
           </div>
         </div>
       </main>
-      <NamingFooter />
     </div>
   );
 }
