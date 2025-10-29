@@ -44,7 +44,7 @@ export function RenamingFreeCard({
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm font-semibold text-orange-600">{rank}위 · 무료</span>
-          <span className="text-2xl font-bold text-orange-600">{Math.round(scores.overall)}점</span>
+          <span className="text-2xl font-bold text-orange-600">{scores.overall.toFixed(1)}점</span>
         </div>
 
         {/* Name with current name comparison */}

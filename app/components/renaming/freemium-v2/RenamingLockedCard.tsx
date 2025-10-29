@@ -52,7 +52,7 @@ export function RenamingLockedCard({
         <div className="flex items-center justify-between mb-4 pr-12">
           <span className="text-sm font-semibold text-orange-600">{rank}위 · 프리미엄</span>
           <div className="text-right">
-            <span className="text-2xl font-bold text-orange-600">{Math.round(scores.overall)}점</span>
+            <span className="text-2xl font-bold text-orange-600">{scores.overall.toFixed(1)}점</span>
             {improvement && improvement > 0 && (
               <div className="text-xs text-green-600 font-medium">+{improvement}점 ↑</div>
             )}

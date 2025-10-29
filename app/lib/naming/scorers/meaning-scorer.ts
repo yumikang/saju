@@ -4,14 +4,16 @@
  * Evaluates semantic compatibility and cultural appropriateness.
  *
  * Scoring Logic:
- * - Individual quality: Based on character fortune, popularity (40%)
- * - Meaning compatibility: Semantic coherence (30%)
- * - Cultural appropriateness: No negative connotations (30%)
+ * - Individual quality: Based on character fortune, popularity (30%)
+ * - Meaning compatibility: Semantic coherence (20%)
+ * - Cultural appropriateness: No negative connotations (20%)
+ * - Parent value alignment: Match with user's desired values (30%)
  */
 
 import { BaseScorer } from './base-scorer';
 import type { NameCandidate, ScoringContext, HanjaCharacter } from '../types';
 import { getPopularityLevel, getPopularityScore } from '../popular-hanja';
+import { calculateNameValueAlignment } from './value-meaning-map';
 
 export class MeaningScorer extends BaseScorer {
   readonly name = 'meaning-harmony';
@@ -32,21 +34,25 @@ export class MeaningScorer extends BaseScorer {
     const char1 = characters[0];
     const char2 = characters[1];
 
-    // 1. Individual character quality (40%)
+    // 1. Individual character quality (30%)
     const char1Quality = this.scoreCharacterQuality(char1);
     const char2Quality = this.scoreCharacterQuality(char2);
     const averageQuality = (char1Quality + char2Quality) / 2;
-    const qualityScore = averageQuality * 0.4;
+    const qualityScore = averageQuality * 0.3;
 
-    // 2. Meaning compatibility (30%)
+    // 2. Meaning compatibility (20%)
     const compatibility = this.scoreMeaningCompatibility(char1, char2);
-    const compatibilityScore = compatibility * 0.3;
+    const compatibilityScore = compatibility * 0.2;
 
-    // 3. Cultural appropriateness (30%)
+    // 3. Cultural appropriateness (20%)
     const appropriateness = this.scoreCulturalAppropriateness(char1, char2);
-    const appropriatenessScore = appropriateness * 0.3;
+    const appropriatenessScore = appropriateness * 0.2;
 
-    return qualityScore + compatibilityScore + appropriatenessScore;
+    // 4. Parent value alignment (30%)
+    const valueAlignment = this.scoreValueAlignment(characters, context);
+    const valueAlignmentScore = valueAlignment * 0.3;
+
+    return qualityScore + compatibilityScore + appropriatenessScore + valueAlignmentScore;
   }
 
   protected generateExplanation(
@@ -250,5 +256,36 @@ export class MeaningScorer extends BaseScorer {
       (meaning1.includes(word1) && meaning2.includes(word2)) ||
       (meaning1.includes(word2) && meaning2.includes(word1))
     );
+  }
+
+  /**
+   * Score alignment with parent values (부모 가치관)
+   *
+   * This is the KEY differentiator that makes scores vary based on user preferences.
+   * If no parent values are selected, returns base score of 50 (neutral).
+   */
+  private scoreValueAlignment(
+    characters: [HanjaCharacter, HanjaCharacter],
+    context: ScoringContext
+  ): number {
+    // If no parent values selected, return neutral score
+    if (!context.preferences?.parentValues || context.preferences.parentValues.length === 0) {
+      return 50; // Neutral score when no values specified
+    }
+
+    // Calculate alignment using value-meaning map
+    const alignmentScore = calculateNameValueAlignment(
+      characters.map(char => ({
+        character: char.character,
+        meaning: char.meaning
+      })),
+      context.preferences.parentValues
+    );
+
+    // Normalize to 0-100 range
+    // High alignment (80-100) = excellent match
+    // Medium alignment (50-79) = good match
+    // Low alignment (0-49) = weak match
+    return alignmentScore;
   }
 }

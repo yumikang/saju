@@ -339,7 +339,7 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
 
   const pipeline = createNamingPipeline(hanjaService, cacheService);
 
-  // Execute full pipeline
+  // Execute full pipeline with parent values
   const startTime = Date.now();
   const result = await pipeline.execute(
     birthInfo,
@@ -348,6 +348,7 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
     {
       maxCandidates: 10,  // Generate exactly 10 candidates
       minScore: 50,       // Lower threshold for much faster generation
+      parentValues: session.selectedValues as any, // Pass parent values for scoring
     }
   );
   const executionTime = Date.now() - startTime;

@@ -91,7 +91,7 @@ export class ScoringPipeline {
     return {
       ...candidate,
       scores: {
-        overall: Math.round(overall),
+        overall: Number(overall.toFixed(1)), // Keep 1 decimal place for better differentiation
         elementHarmony,
         yinYangBalance,
         numerology,

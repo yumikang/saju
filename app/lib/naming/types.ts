@@ -149,12 +149,15 @@ export interface NamingRequest {
   count?: number;
 }
 
+export type ParentValue = 'success' | 'health' | 'popularity' | 'wealth' | 'peace' | 'wisdom';
+
 export interface NamingPreferences {
   avoidCharacters?: string[];
   preferredElements?: Element[];
   preferredMeanings?: string[];
   minStrokesPerChar?: number;
   maxStrokesPerChar?: number;
+  parentValues?: ParentValue[];  // 부모가 선택한 가치관
 }
 
 export interface NamingResponse {

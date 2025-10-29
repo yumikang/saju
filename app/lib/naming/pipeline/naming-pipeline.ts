@@ -23,6 +23,7 @@ import { SajuCalculator, type SajuResult } from '~/lib/saju/calculator';
 import { YongsinAnalyzer, type CombinedYongsinResult } from '~/lib/saju/yongsin-analyzer';
 import { YinYangValidator, type YinYangAnalysis } from '~/lib/naming/validators/yinyang-validator';
 import { PhoneticMatcher, type PhoneticAnalysis } from '~/lib/naming/validators/phonetic-matcher';
+import { calculateNameValueAlignment, type ParentValue } from '~/lib/naming/scorers/value-meaning-map';
 import {
   calculateFourGrids,
   getDetailedFourGridsAnalysis,
@@ -78,6 +79,9 @@ export interface PipelineConfig {
   minScore: number; // Minimum acceptable score (default: 60)
   requireYongsinMatch: boolean; // Must match Yongsin element (default: true)
   avoidInauspicious: boolean; // Avoid 흉수 (default: true)
+
+  // User preferences
+  parentValues?: string[]; // Parent values for value alignment scoring
 
   // Caching
   cacheEnabled: boolean;
@@ -566,7 +570,7 @@ export class NamingPipeline {
       yongsin: yongsinAnalysis.matchScore,
       yinyang: yinyangAnalysis.balanceScore,
       pronunciation: phoneticAnalysis.overallScore,
-      meaning: this.calculateMeaningScore([combo.firstChar, combo.secondChar]),
+      meaning: this.calculateMeaningScore([combo.firstChar, combo.secondChar], context),
       numerology: numerologyAnalysis.overallScore,
       taboo: 100 - tabooAnalysis.deductionPoints,
     };
@@ -830,19 +834,34 @@ export class NamingPipeline {
   }
 
   /**
-   * Calculate meaning harmony score
+   * Calculate meaning harmony score with parent value alignment
    */
-  private calculateMeaningScore(characters: HanjaCharacter[]): number {
-    // Simple implementation: average of character quality
-    // TODO: Enhance with semantic similarity analysis
+  private calculateMeaningScore(characters: HanjaCharacter[], context: PipelineContext): number {
+    // Base score: average of character quality (70% weight)
     const totalMeaningQuality = characters.reduce((sum, char) => {
       // Heuristic: longer, more detailed meanings are better
       const meaningLength = char.meaning.length;
       const qualityScore = Math.min(100, meaningLength * 10);
       return sum + qualityScore;
     }, 0);
+    const baseScore = (totalMeaningQuality / characters.length) * 0.7;
 
-    return totalMeaningQuality / characters.length;
+    // Parent value alignment score (30% weight) - KEY DIFFERENTIATOR
+    const parentValues = (context.config.parentValues || []) as ParentValue[];
+
+    if (parentValues.length > 0) {
+      const alignmentScore = calculateNameValueAlignment(
+        characters.map(char => ({
+          character: char.character,
+          meaning: char.meaning
+        })),
+        parentValues
+      );
+      return baseScore + (alignmentScore * 0.3);
+    }
+
+    // No parent values = neutral 15 point bonus (50 * 0.3)
+    return baseScore + 15;
   }
 
   /**
