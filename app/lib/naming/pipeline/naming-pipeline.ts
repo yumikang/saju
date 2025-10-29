@@ -24,6 +24,7 @@ import { YongsinAnalyzer, type CombinedYongsinResult } from '~/lib/saju/yongsin-
 import { YinYangValidator, type YinYangAnalysis } from '~/lib/naming/validators/yinyang-validator';
 import { PhoneticMatcher, type PhoneticAnalysis } from '~/lib/naming/validators/phonetic-matcher';
 import { calculateNameValueAlignment, type ParentValue } from '~/lib/naming/scorers/value-meaning-map';
+import { checkCharacterSafety, calculateTabooDeduction } from '~/lib/naming/filters/taboo-rules';
 import {
   calculateFourGrids,
   getDetailedFourGridsAnalysis,
@@ -776,60 +777,44 @@ export class NamingPipeline {
    *
    * 작명에 부적합한 의미를 가진 한자를 감지하고 감점 처리
    */
+  /**
+   * 중앙화된 TABOO_RULES 시스템 사용
+   */
   private checkTaboo(characters: HanjaCharacter[]): TabooAnalysis {
     const tabooReasons: string[] = [];
-    let deductionPoints = 0;
-
-    // 부정적 의미 키워드 (카테고리별)
-    const negativeKeywords = {
-      death: ['죽', '사', '시체', '망', '상', '요절'],
-      illness: ['병', '질병', '아픔', '고통', '괴로', '신음'],
-      disaster: ['재앙', '화', '난', '액', '흉', '불길', '참혹'],
-      unhappiness: ['불행', '슬픔', '비애', '우울', '한탄', '비참'],
-      violence: ['살', '죽이', '베', '찌르', '때리', '해치'],
-      decay: ['썩', '부패', '문드러', '허물어', '무너'],
-      poverty: ['가난', '빈곤', '궁핍', '곤궁'],
-      ugliness: ['추', '못생', '흉', '보기흉'],
-      animals: ['벌레', '쥐', '뱀', '독충', '구더기'],
-      crime: ['도적', '훔치', '속이', '거짓', '사기'],
-      war: ['전쟁', '싸움', '칼', '무기', '살육'],
-      negative: ['나쁜', '악', '흉악', '저주', '원한', '미움'],
-    };
+    let totalDeduction = 0;
 
     for (const char of characters) {
-      const meaning = char.meaning.toLowerCase();
+      // 중앙화된 taboo-rules.ts 사용
+      const safetyCheck = checkCharacterSafety(char.character, char.meaning);
 
-      // 각 카테고리별로 체크
-      for (const [category, keywords] of Object.entries(negativeKeywords)) {
-        for (const keyword of keywords) {
-          if (meaning.includes(keyword)) {
-            let severity = 30; // 기본 감점
-
-            // 심각도에 따라 차등 감점
-            if (category === 'death' || category === 'violence') {
-              severity = 50; // 죽음, 폭력 관련은 더 강하게 감점
-            } else if (category === 'illness' || category === 'disaster') {
-              severity = 40; // 질병, 재앙도 강하게 감점
-            }
-
-            tabooReasons.push(`${char.character}: ${category} 관련 (${char.meaning})`);
-            deductionPoints += severity;
-            break; // 한 카테고리에서 발견되면 다음 카테고리는 체크 안 함
-          }
+      if (!safetyCheck.isSafe) {
+        // 각 이슈별로 이유 추가
+        for (const issue of safetyCheck.issues) {
+          const reason = issue.matchedCharacter
+            ? `${char.character}: ${issue.reason}`
+            : `${char.character}: ${issue.category} 관련 (${issue.matchedKeyword})`;
+          tabooReasons.push(reason);
         }
+
+        // 감점 계산
+        const deduction = calculateTabooDeduction(safetyCheck);
+        totalDeduction += deduction;
       }
 
-      // 한자 자체가 부정적인 경우 (리뷰 상태 체크)
-      if (char.review === 'rejected') {
-        tabooReasons.push(`${char.character}: 작명 부적합 (리뷰 거부됨)`);
-        deductionPoints += 20;
+      // 추가: DB에서 명시적으로 거부된 한자 체크
+      if (char.review === 'rejected' || char.isGoodForNaming === false) {
+        if (!tabooReasons.some(r => r.includes(char.character))) {
+          tabooReasons.push(`${char.character}: 작명 부적합 (DB 검증)`);
+          totalDeduction += 100; // 명시적 거부는 완전 배제
+        }
       }
     }
 
     return {
       hasTaboo: tabooReasons.length > 0,
       tabooReasons,
-      deductionPoints: Math.min(100, deductionPoints), // 최대 100점 감점
+      deductionPoints: Math.min(100, totalDeduction),
     };
   }
 

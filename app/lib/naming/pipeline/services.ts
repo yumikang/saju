@@ -44,8 +44,11 @@ export class DatabaseHanjaService implements HanjaService {
       where.strokes = { ...where.strokes, lte: options.maxStrokes };
     }
 
-    // Quality filter
-    if (options.isGoodForNaming) {
+    // 🔥 CRITICAL: Quality filter - DEFAULT to filtering out bad characters
+    // Only include characters that are explicitly marked as good for naming
+    // This prevents taboo characters (불용한자 301자) from appearing in recommendations
+    if (options.isGoodForNaming !== false) {
+      // Default behavior: exclude bad characters unless explicitly requesting ALL
       where.isGoodForNaming = true;
     }
 
@@ -124,7 +127,8 @@ export class InMemoryHanjaService implements HanjaService {
     if (options.maxStrokes !== undefined) {
       results = results.filter((h) => h.strokes <= options.maxStrokes);
     }
-    if (options.isGoodForNaming) {
+    // 🔥 CRITICAL: Quality filter - DEFAULT to filtering out bad characters
+    if (options.isGoodForNaming !== false) {
       results = results.filter((h) => h.isGoodForNaming);
     }
 
