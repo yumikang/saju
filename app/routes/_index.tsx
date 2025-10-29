@@ -75,23 +75,6 @@ export default function Index() {
 
   return (
     <div className="bg-gradient-to-b from-orange-50 to-orange-100">
-      {/* 네비게이션 헤더 */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            {/* 로고 */}
-            <Link to="/" className="flex items-center">
-              <h1 className="text-xl font-bold text-orange-500">사주명리</h1>
-            </Link>
-            
-            {/* 네비게이션 메뉴 - 빈 상태로 유지 */}
-            <nav className="flex items-center gap-4">
-              {/* 메뉴 제거 */}
-            </nav>
-          </div>
-        </div>
-      </header>
-
       {/* 헤더 섹션 */}
       <section className="container mx-auto px-4 py-20">
         <motion.div
