@@ -57,10 +57,17 @@ export interface TossPaymentResponse {
 // Configuration
 // ============================================================
 
-const TOSS_CLIENT_KEY = process.env.TOSS_CLIENT_KEY || '';
-const TOSS_SECRET_KEY = process.env.TOSS_SECRET_KEY || '';
+// Client-side: Use window.__ENV__ injected by Remix
+// Server-side: Use process.env
+const TOSS_CLIENT_KEY = typeof window !== 'undefined'
+  ? (window as any).__ENV__?.TOSS_CLIENT_KEY || ''
+  : '';
 
-if (!TOSS_CLIENT_KEY) {
+const TOSS_SECRET_KEY = typeof window !== 'undefined'
+  ? (window as any).__ENV__?.TOSS_SECRET_KEY || ''
+  : '';
+
+if (!TOSS_CLIENT_KEY && typeof window !== 'undefined') {
   console.warn('⚠️  TOSS_CLIENT_KEY not configured');
 }
 
@@ -193,25 +200,5 @@ export function generateOrderId(prefix: string = 'ORDER'): string {
   return `${prefix}_${timestamp}_${random}`;
 }
 
-/**
- * Format amount for display
- *
- * @param amount - Amount in KRW
- * @returns string
- */
-export function formatAmount(amount: number): string {
-  return new Intl.NumberFormat('ko-KR', {
-    style: 'currency',
-    currency: 'KRW',
-  }).format(amount);
-}
-
-/**
- * Validate payment amount
- *
- * @param amount - Amount to validate
- * @returns boolean
- */
-export function isValidAmount(amount: number): boolean {
-  return amount > 0 && Number.isInteger(amount);
-}
+// Re-export currency utilities for backwards compatibility
+export { formatAmount, isValidAmount } from '~/lib/utils/currency';

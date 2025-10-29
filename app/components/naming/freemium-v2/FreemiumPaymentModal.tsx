@@ -38,7 +38,7 @@ import {
   AlertCircle,
   TrendingUp,
 } from 'lucide-react';
-import { formatAmount } from '~/lib/payment/toss.client';
+import { formatAmount } from '~/lib/utils/currency';
 import { toast } from 'sonner';
 import type { PsychologicalMetrics } from '~/lib/freemium/classification';
 
