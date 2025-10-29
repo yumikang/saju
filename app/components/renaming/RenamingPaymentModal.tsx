@@ -129,12 +129,8 @@ export function RenamingPaymentModal({
           <div className="rounded-lg bg-muted p-4 space-y-2">
             <p className="text-sm font-medium">프리미엄 혜택 (전략적 freemium)</p>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>✓ 1-10위 최고 점수 개명 10개 조회 가능</li>
-              <li>✓ 현재 이름 대비 개선도 분석</li>
-              <li>✓ 상세 한자 정보 및 획수 분석</li>
-              <li>✓ 사주 오행 조화 분석 결과</li>
-              <li>✓ 개명 신청서 작성 가이드</li>
-              <li>✓ 영구 보관 및 즐겨찾기</li>
+              <li>✓ 더 높은 점수의 이름 추천 9개 조회 및 상세 분석</li>
+              <li>✓ PDF 다운로드 가능</li>
             </ul>
           </div>
 
@@ -156,11 +152,6 @@ export function RenamingPaymentModal({
               {isProcessing ? '처리 중...' : `${formatAmount(amount)} 결제하기`}
             </Button>
           </div>
-
-          {/* 안내 문구 */}
-          <p className="text-xs text-center text-muted-foreground">
-            결제는 토스페이먼츠를 통해 안전하게 처리됩니다.
-          </p>
         </div>
       </DialogContent>
     </Dialog>
