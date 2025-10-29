@@ -246,40 +246,9 @@ export async function searchHanjaFromDB(
     ];
   }
 
-  // 부정적 의미의 한자 블랙리스트 (개명/작명에 부적합) - 299개 한자
-  // 데이터베이스 분석을 통해 부정적 의미 키워드(죽음, 질병, 재앙, 파괴, 슬픔, 고통 등)를 포함한 한자 목록
-  const BAD_CHARACTERS = [
-    '餬', '醐', '蝴', '狐', '濠', '壕', '鋗', '袨', '鉉', '莧',
-    '胘', '睍', '琄', '泫', '晛', '灦', '鰕', '蝦', '瘕', '鞣',
-    '鮪', '磤', '訔', '訢', '鄞', '珥', '痍', '聏', '鉺', '鴯',
-    '准', '綧', '鐏', '陖', '餕', '脂', '矢', '妸', '疴', '婩',
-    '錌', '于', '又', '寓', '庽', '慪', '扝', '旴', '禹', '竽',
-    '迶', '鍝', '雩', '儒', '槱', '煣', '瘐', '聈', '腴', '荽',
-    '褕', '諭', '汿', '芧', '薯', '嬋', '歚', '烍', '騸', '嶲',
-    '浽', '瘦', '膄', '賥', '雖', '弒', '沶', '瑞', '雨', '揟',
-    '圩', '謣', '瀢', '鄃', '鼬', '嶟', '誾', '捈', '棹', '櫂',
-    '燾', '闍', '鞀', '壺', '鎬', '焛', '鱗', '偦', '譃', '釵',
-    '恨', '憪', '晘', '橌', '閒', '鼾', '侐', '焱', '爀', '煂',
-    '宦', '寰', '環', '紈', '鐶', '驩', '鰥', '薳', '褑', '謜',
-    '騵', '燏', '朄', '夈', '才', '材', '溨', '災', '灾', '纔',
-    '財', '賳', '絑', '腠', '裯', '霔', '麈', '桭', '眕', '縝',
-    '紾', '聄', '裖', '鬒', '寨', '蜵', '酀', '嶸', '暎', '碤',
-    '禜', '霙', '勩', '枍', '汭', '瘱', '睨', '藝', '蜺', '鯢',
-    '懊', '襖', '逜', '遨', '郚', '怨', '仝', '同', '曈', '炵',
-    '苳', '菄', '憫', '怋', '泯', '罠', '閔', '檳', '殯', '矉',
-    '馪', '城', '腥', '嘯', '塐', '塑', '樔', '箾', '縤', '繅',
-    '魈', '蠅', '陹', '姸', '壖', '韓', '漢', '榮', '映', '州',
-    '燕', '革', '葵', '旼', '鬢', '犍', '謍', '霱', '巋', '煃',
-    '楑', '逵', '頍', '癩', '騾', '驘', '爹', '形', '滎', '珩',
-    '謑', '譿', '庨', '噫', '欷', '燹', '塽', '嫦', '尙', '峠',
-    '常', '床', '徜', '橡', '殤', '牀', '箱', '賞', '鏛', '壤',
-    '徉', '恙', '輰', '熅', '瘟', '惋', '井', '晸', '珵', '禎',
-    '程', '霆', '靜', '謌', '賈', '韁', '婽', '歌', '珂', '跏',
-    '殭', '腔', '茳', '暘', '涴', '仃', '圢', '俙', '晽', '媄',
-    '咪', '弭', '渼', '溦', '煝', '糜', '縻', '薇', '蘪', '蘼',
-    '郿', '叔', '日', '和', '火', '翠', '菊', '梅', '盾', '黠',
-    '薨', '燬', '虺', '鐍', '兇', '很', '炘', '痕', '洽'
-  ];
+  // ⚠️ 부적절한 한자 필터링은 isGoodForNaming 필드로 통합 관리됨
+  // taboo-rules.ts의 중앙화된 시스템이 DB 스캔을 통해 isGoodForNaming을 설정
+  // 하드코딩된 BAD_CHARACTERS 리스트는 제거하고 DB 필드를 신뢰
 
   // HanjaDict에서 검색
   type HanjaDictRecord = Awaited<ReturnType<typeof prisma.hanjaDict.findMany>>[number];
@@ -290,11 +259,8 @@ export async function searchHanjaFromDB(
     // korean-surnames.data에 정의된 성씨는 모두 유효하므로 nameFrequency 관계없이 표시
     results = await prisma.hanjaDict.findMany({
       where: {
-        character: {
-          in: surnameHanjaList,
-          notIn: BAD_CHARACTERS  // 부정적 한자 제외
-        },
-        isGoodForNaming: true
+        character: { in: surnameHanjaList },
+        isGoodForNaming: true  // DB 스캔으로 관리되는 필드
         // 성씨 모드에서는 nameFrequency 필터 제거
       },
       take: actualLimit,
@@ -310,11 +276,8 @@ export async function searchHanjaFromDB(
       // 1. 해당 읽기의 성씨 한자 먼저 가져오기
       surnameResults = await prisma.hanjaDict.findMany({
         where: {
-          character: {
-            in: surnameCharsForReading,
-            notIn: BAD_CHARACTERS  // 부정적 한자 제외
-          },
-          isGoodForNaming: true,
+          character: { in: surnameCharsForReading },
+          isGoodForNaming: true,  // DB 스캔으로 관리되는 필드
           nameFrequency: { gte: 50 }  // 인기도 필터
         },
         orderBy
@@ -327,10 +290,9 @@ export async function searchHanjaFromDB(
     const otherResults = await prisma.hanjaDict.findMany({
       where: {
         koreanReading: { in: readings },
-        character: { notIn: BAD_CHARACTERS },  // 부정적 한자 제외
-        isGoodForNaming: true,
+        isGoodForNaming: true,  // DB 스캔으로 관리되는 필드
         nameFrequency: { gte: 50 },  // 인기도 필터 (50 이상)
-        ...(surnameCharsForReading && { character: { notIn: [...surnameCharsForReading, ...BAD_CHARACTERS] } })
+        ...(surnameCharsForReading && { character: { notIn: surnameCharsForReading } })
       },
       take: remainingLimit,
       ...(cursor && { skip: 1, cursor: { id: cursor } }),

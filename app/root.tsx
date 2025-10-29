@@ -4,6 +4,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "@remix-run/react"
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node"
 import { json } from "@remix-run/node"
@@ -43,6 +44,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function App() {
+  const location = useLocation();
+  const isKSajuPage = location.pathname === '/k-saju';
+
   return (
     <html lang="ko">
       <head>
@@ -53,11 +57,11 @@ export default function App() {
       </head>
       <body>
         <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-1">
+          {!isKSajuPage && <Header />}
+          <main className={isKSajuPage ? "" : "flex-1"}>
             <Outlet />
           </main>
-          <Footer />
+          {!isKSajuPage && <Footer />}
         </div>
         <Toaster />
         <ScrollRestoration />

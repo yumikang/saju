@@ -129,7 +129,8 @@ export const NEGATIVE_KEYWORD_CATEGORIES: Record<TabooCategory, string[]> = {
     '질병', '아픔', '고통', '괴로', '신음', '장애',
     '불구', '벙어리', '귀머거리', '장님', '앉은뱅이', '절름',
     '말못', '말하지못', '듣지못', '보지못', '걷지못', '허약', '병약',
-    '앓', '신경쇠약', '정신병'
+    '앓', '신경쇠약', '정신병', '병들', '병', '환자', '병자', '질환',
+    '앓다', '아프', '유충', '그리마', '벌레'
   ],
 
   disaster: [
@@ -164,7 +165,7 @@ export const NEGATIVE_KEYWORD_CATEGORIES: Record<TabooCategory, string[]> = {
   crime: [
     '도적', '훔치', '속이', '거짓', '사기', '도둑', '절도',
     '강도', '협잡', '기만', '사취', '횡령', '배임', '범죄',
-    '위법', '불법', '악행', '죄'
+    '위법', '불법', '악행', '죄', '속일', '도적질', '머뭇거릴'
   ],
 
   decay: [
@@ -206,6 +207,17 @@ export interface TabooIssue {
 }
 
 /**
+ * 현대에 흔하게 사용되는 좋은 한자 화이트리스트
+ * 전통 불길문자 301자에 포함되어 있지만 현대에는 긍정적으로 쓰이는 한자들
+ */
+const MODERN_WHITELIST = [
+  '珍', '英', '淑', '順', '美', '善', '愛', '玉', '貞', '花',
+  '秀', '民', '智', '賢', '俊', '恩', '瑞', '麗', '惠', '慧',
+  '雅', '敏', '貴', '榮', '炫', '璿', '瑛', '琳', '妍', '娜',
+  '姸', '婉', '媛', '嬉', '姬', '姝', '娟', '嫣', '娥', '姮'
+];
+
+/**
  * 한자 안전성 검사
  */
 export function checkCharacterSafety(
@@ -213,6 +225,17 @@ export function checkCharacterSafety(
   meaning: string
 ): TabooCheckResult {
   const issues: TabooIssue[] = [];
+
+  // 0. 화이트리스트 체크 - 현대에 흔하게 쓰이는 좋은 한자는 무조건 통과
+  if (MODERN_WHITELIST.includes(character)) {
+    return {
+      character,
+      isSafe: true,
+      issues: [],
+      safetyLevel: 'safe',
+      recommendation: 'approve'
+    };
+  }
 
   // 1. 명시적 불용한자 체크
   const explicitTaboo = EXPLICIT_TABOO_CHARACTERS.find(t => t.character === character);
