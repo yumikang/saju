@@ -32,43 +32,57 @@ export class DatabaseHanjaService implements HanjaService {
       gender?: 'M' | 'F';
     }
   ): Promise<HanjaCharacter[]> {
-    const where: any = {
-      element,
-    };
+    // Build AND conditions
+    const andConditions: any[] = [];
 
-    // Stroke filters
-    if (options.minStrokes !== undefined) {
-      where.strokes = { ...where.strokes, gte: options.minStrokes };
-    }
-    if (options.maxStrokes !== undefined) {
-      where.strokes = { ...where.strokes, lte: options.maxStrokes };
+    // 1. Element filter
+    andConditions.push({ element });
+
+    // 2. Stroke filters
+    if (options.minStrokes !== undefined || options.maxStrokes !== undefined) {
+      const strokeFilter: any = {};
+      if (options.minStrokes !== undefined) {
+        strokeFilter.gte = options.minStrokes;
+      }
+      if (options.maxStrokes !== undefined) {
+        strokeFilter.lte = options.maxStrokes;
+      }
+      andConditions.push({ strokes: strokeFilter });
     }
 
-    // 🔥 CRITICAL: Quality filter - DEFAULT to filtering out bad characters
-    // Only include characters that are explicitly marked as good for naming
+    // 3. 🛡️ SEED PROTECTION: "사람이 고른 것 > 머신이 고른 것"
+    // Only include characters that are explicitly marked as good OR protected
     // This prevents taboo characters (불용한자 301자) from appearing in recommendations
     if (options.isGoodForNaming !== false) {
-      // Default behavior: exclude bad characters unless explicitly requesting ALL
-      where.isGoodForNaming = true;
+      andConditions.push({
+        OR: [
+          { seedProtected: true },  // 사람이 고른 한자 (빈도 관계없이)
+          { isGoodForNaming: true }, // 머신이 고른 한자
+        ],
+      });
     }
 
-    // 🔥 CRITICAL: Surname filter - ALWAYS exclude surnames from first names
+    // 4. 🔥 CRITICAL: Surname filter - ALWAYS exclude surnames from first names
     // This prevents Korean surnames (성씨 132자) from appearing in given names
     // Example: Prevents "김금철" (wrong) instead of correct "김철수"
-    where.isSurname = false;
+    andConditions.push({ isSurname: false });
 
-    // Gender filter
+    // 5. Gender filter
     if (options.gender) {
       const genderFilter = options.gender === 'M' ? 'male' : 'female';
-      where.OR = [
-        { gender: genderFilter },
-        { gender: 'neutral' },
-        { gender: null }
-      ];
+      andConditions.push({
+        OR: [
+          { gender: genderFilter },
+          { gender: 'neutral' },
+          { gender: null }
+        ],
+      });
     }
 
     const results = await this.prisma.hanjaDict.findMany({
-      where,
+      where: {
+        AND: andConditions,
+      },
       take: 500, // Reasonable limit
       orderBy: [
         { nameFrequency: 'desc' }, // Popular names first

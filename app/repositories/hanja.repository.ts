@@ -63,9 +63,21 @@ export class HanjaRepository {
     return this.prisma.hanjaDict.findMany({
       where: {
         isSurname: false,
-        OR: [
-          { meaning: { contains: searchTerm, mode: 'insensitive' } },
-          { koreanReading: { contains: searchTerm, mode: 'insensitive' } },
+        AND: [
+          // 🛡️ SEED PROTECTION: 보호된 한자도 검색 결과에 포함
+          {
+            OR: [
+              { seedProtected: true },
+              { isGoodForNaming: true },
+            ],
+          },
+          // 검색 조건
+          {
+            OR: [
+              { meaning: { contains: searchTerm, mode: 'insensitive' } },
+              { koreanReading: { contains: searchTerm, mode: 'insensitive' } },
+            ],
+          },
         ],
       },
       take: limit,
@@ -79,6 +91,11 @@ export class HanjaRepository {
   ): Promise<HanjaDict[]> {
     return this.prisma.hanjaDict.findMany({
       where: {
+        // 🛡️ SEED PROTECTION: 보호된 한자도 결과에 포함
+        OR: [
+          { seedProtected: true },
+          { isGoodForNaming: true },
+        ],
         element: { in: elements },
         isSurname: false,
       },
@@ -96,10 +113,17 @@ export class HanjaRepository {
 
     return this.prisma.hanjaDict.findMany({
       where: {
+        // 🛡️ SEED PROTECTION: 보호된 한자도 인기 한자에 포함
+        OR: [
+          { seedProtected: true },
+          {
+            isGoodForNaming: true,
+            nameFrequency: { gt: 0 },
+          },
+        ],
         ...(element && { element }),
         ...(gender && { gender }),
         isSurname: false,
-        nameFrequency: { gt: 0 },
       },
       orderBy: { nameFrequency: 'desc' },
       take: limit,
@@ -210,21 +234,28 @@ export class HanjaRepository {
     // WHERE 조건 구성
     const where: Prisma.HanjaDictWhereInput = {
       AND: [
-        // 1. 작명에 적합한 한자만 (부정적 의미 제외)
-        { isGoodForNaming: true },
+        // 0. 🛡️ SEED PROTECTION: "사람이 고른 것 > 머신이 고른 것"
+        {
+          OR: [
+            // 사람이 고른 한자는 빈도 관계없이 무조건 통과
+            { seedProtected: true },
+            // 나머지는 기존 규칙 (빈도 + 적합성)
+            {
+              isGoodForNaming: true,
+              nameFrequency: { gte: minPopularity },
+            },
+          ],
+        },
 
-        // 2. 🔥 CRITICAL: 성씨 제외 (한국 성씨 132자)
+        // 1. 🔥 CRITICAL: 성씨 제외 (한국 성씨 132자)
         { isSurname: false },
 
-        // 3. 인기도 필터 (nameFrequency >= minPopularity)
-        { nameFrequency: { gte: minPopularity } },
-
-        // 4. 부족한 오행 중 하나 (optional)
+        // 2. 부족한 오행 중 하나 (optional)
         lackingElements.length > 0
           ? { element: { in: lackingElements as any } }
           : {},
 
-        // 5. 성별 필터 (male/female + neutral)
+        // 3. 성별 필터 (male/female + neutral)
         gender === 'M'
           ? {
               OR: [
@@ -268,10 +299,16 @@ export class HanjaRepository {
 
     return this.prisma.hanjaDict.findMany({
       where: {
+        // 🛡️ SEED PROTECTION: "사람이 고른 것 > 머신이 고른 것"
+        OR: [
+          { seedProtected: true },
+          {
+            isGoodForNaming: true,
+            nameFrequency: { gte: minPopularity },
+          },
+        ],
         gender: gender,
-        isGoodForNaming: true,
         isSurname: false,
-        nameFrequency: { gte: minPopularity },
       },
       orderBy: [
         { nameFrequency: 'desc' },
@@ -294,10 +331,16 @@ export class HanjaRepository {
 
     return this.prisma.hanjaDict.findMany({
       where: {
+        // 🛡️ SEED PROTECTION: "사람이 고른 것 > 머신이 고른 것"
+        OR: [
+          { seedProtected: true },
+          {
+            isGoodForNaming: true,
+            nameFrequency: { gte: minPopularity },
+          },
+        ],
         element: element as any,
-        isGoodForNaming: true,
         isSurname: false,
-        nameFrequency: { gte: minPopularity },
         ...(gender ? { gender: gender } : {}),
       },
       orderBy: [
