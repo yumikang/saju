@@ -38,6 +38,7 @@ import type {
   NamingResponse,
   ScoringContext,
 } from '~/lib/naming/types';
+import { genderBoost } from '~/lib/naming/utils/gender-boost';
 
 // ============================================================
 // Core Interfaces
@@ -584,13 +585,18 @@ export class NamingPipeline {
       scores.numerology * context.config.weights.numerology +
       scores.taboo * context.config.weights.taboo;
 
+    // 🎯 5번째 축: 한글 음운 기반 성별 보정
+    // "수아" (F) → +6 | "민준" (M) → +6 | "서연" (F) → +3 | 반대 성별 → -2
+    const hangulGenderBoost = genderBoost(combo.firstName, context.birthInfo.gender);
+    const finalTotalScore = totalScore + hangulGenderBoost;
+
     return {
       firstName: combo.firstName,
       fullName,
       hanja,
       firstChar: combo.firstChar,
       secondChar: combo.secondChar,
-      totalScore,
+      totalScore: finalTotalScore,
       scores,
       analysis: {
         yongsinAnalysis,
