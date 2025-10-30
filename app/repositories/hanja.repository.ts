@@ -62,6 +62,7 @@ export class HanjaRepository {
   ): Promise<HanjaDict[]> {
     return this.prisma.hanjaDict.findMany({
       where: {
+        isSurname: false,
         OR: [
           { meaning: { contains: searchTerm, mode: 'insensitive' } },
           { koreanReading: { contains: searchTerm, mode: 'insensitive' } },
@@ -79,6 +80,7 @@ export class HanjaRepository {
     return this.prisma.hanjaDict.findMany({
       where: {
         element: { in: elements },
+        isSurname: false,
       },
       take: limit,
       orderBy: [{ nameFrequency: 'desc' }, { strokes: 'asc' }],
@@ -96,6 +98,7 @@ export class HanjaRepository {
       where: {
         ...(element && { element }),
         ...(gender && { gender }),
+        isSurname: false,
         nameFrequency: { gt: 0 },
       },
       orderBy: { nameFrequency: 'desc' },
@@ -210,15 +213,18 @@ export class HanjaRepository {
         // 1. 작명에 적합한 한자만 (부정적 의미 제외)
         { isGoodForNaming: true },
 
-        // 2. 인기도 필터 (nameFrequency >= minPopularity)
+        // 2. 🔥 CRITICAL: 성씨 제외 (한국 성씨 132자)
+        { isSurname: false },
+
+        // 3. 인기도 필터 (nameFrequency >= minPopularity)
         { nameFrequency: { gte: minPopularity } },
 
-        // 3. 부족한 오행 중 하나 (optional)
+        // 4. 부족한 오행 중 하나 (optional)
         lackingElements.length > 0
           ? { element: { in: lackingElements as any } }
           : {},
 
-        // 4. 성별 필터 (male/female + neutral)
+        // 5. 성별 필터 (male/female + neutral)
         gender === 'M'
           ? {
               OR: [
@@ -264,6 +270,7 @@ export class HanjaRepository {
       where: {
         gender: gender,
         isGoodForNaming: true,
+        isSurname: false,
         nameFrequency: { gte: minPopularity },
       },
       orderBy: [
@@ -289,6 +296,7 @@ export class HanjaRepository {
       where: {
         element: element as any,
         isGoodForNaming: true,
+        isSurname: false,
         nameFrequency: { gte: minPopularity },
         ...(gender ? { gender: gender } : {}),
       },

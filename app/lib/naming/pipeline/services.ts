@@ -52,6 +52,11 @@ export class DatabaseHanjaService implements HanjaService {
       where.isGoodForNaming = true;
     }
 
+    // 🔥 CRITICAL: Surname filter - ALWAYS exclude surnames from first names
+    // This prevents Korean surnames (성씨 132자) from appearing in given names
+    // Example: Prevents "김금철" (wrong) instead of correct "김철수"
+    where.isSurname = false;
+
     // Gender filter
     if (options.gender) {
       const genderFilter = options.gender === 'M' ? 'male' : 'female';
