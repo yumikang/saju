@@ -1,0 +1,722 @@
+[
+  {
+    "char": "明",
+    "element": "火",
+    "korean": "밝을 명",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "光",
+    "element": "火",
+    "korean": "빛 광",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "炳",
+    "element": "火",
+    "korean": "빛날 병",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "煜",
+    "element": "火",
+    "korean": "빛날 욱",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "熙",
+    "element": "火",
+    "korean": "빛날 희",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "煥",
+    "element": "火",
+    "korean": "빛날 환",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "燦",
+    "element": "火",
+    "korean": "찬란할 찬",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "煌",
+    "element": "火",
+    "korean": "빛날 황",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "晟",
+    "element": "火",
+    "korean": "밝을 성",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "昌",
+    "element": "火",
+    "korean": "창성할 창",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "昭",
+    "element": "火",
+    "korean": "밝을 소",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "旭",
+    "element": "火",
+    "korean": "아침해 욱",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "昊",
+    "element": "火",
+    "korean": "클 호(하늘)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "昱",
+    "element": "火",
+    "korean": "빛날 육",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "暉",
+    "element": "火",
+    "korean": "빛 휘",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "暢",
+    "element": "火",
+    "korean": "통할 창",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "晶",
+    "element": "火",
+    "korean": "맑을 정/빛날 정",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "晧",
+    "element": "火",
+    "korean": "흴 호",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "晰",
+    "element": "火",
+    "korean": "밝을 석",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "焜",
+    "element": "火",
+    "korean": "빛날 혼",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "煊",
+    "element": "火",
+    "korean": "빛날 선",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "曄",
+    "element": "火",
+    "korean": "빛날 엽",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "曜",
+    "element": "火",
+    "korean": "빛날 요",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "炫",
+    "element": "火",
+    "korean": "빛날 현",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "朗",
+    "element": "火",
+    "korean": "밝을 랑",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "哲",
+    "element": "火",
+    "korean": "밝을 철(슬기로움)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "智",
+    "element": "火",
+    "korean": "지혜 지",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "悌",
+    "element": "火",
+    "korean": "공경할 제(인의)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "榮",
+    "element": "木",
+    "korean": "영화 영",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "英",
+    "element": "木",
+    "korean": "꽃부리 영/빼어날 영",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "柔",
+    "element": "木",
+    "korean": "부드러울 유",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "栄",
+    "element": "木",
+    "korean": "영화 영(신자)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "東",
+    "element": "木",
+    "korean": "동녘 동",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "林",
+    "element": "木",
+    "korean": "수풀 림",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "森",
+    "element": "木",
+    "korean": "빽빽할 삼",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "柱",
+    "element": "木",
+    "korean": "기둥 주",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "梓",
+    "element": "木",
+    "korean": "가문비/기릴 재",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "桐",
+    "element": "木",
+    "korean": "오동나무 동",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "桂",
+    "element": "木",
+    "korean": "계수나무 계",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "柳",
+    "element": "木",
+    "korean": "버들 류",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "松",
+    "element": "木",
+    "korean": "소나무 송",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "柏",
+    "element": "木",
+    "korean": "측백나무 백",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "桓",
+    "element": "木",
+    "korean": "굳셀 환",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "榻",
+    "element": "木",
+    "korean": "편안할 탑",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "楠",
+    "element": "木",
+    "korean": "녹나무 남",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "梧",
+    "element": "木",
+    "korean": "오동나무 오",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "杭",
+    "element": "木",
+    "korean": "밭들 항/버틸 항",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "植",
+    "element": "木",
+    "korean": "심을 식",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "榺",
+    "element": "木",
+    "korean": "기를 승(희귀, 의미 좋음)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "栽",
+    "element": "木",
+    "korean": "심을 재",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "梁",
+    "element": "木",
+    "korean": "들보 량/다리 량",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "棟",
+    "element": "木",
+    "korean": "마룻대 동",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "梵",
+    "element": "木",
+    "korean": "범/청정할 범",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "圭",
+    "element": "土",
+    "korean": "홀 규/귀할 규",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "基",
+    "element": "土",
+    "korean": "터 기",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "培",
+    "element": "土",
+    "korean": "북돋울 배",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "坤",
+    "element": "土",
+    "korean": "땅 곤(어머니, 대지)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "垣",
+    "element": "土",
+    "korean": "담 원",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "坦",
+    "element": "土",
+    "korean": "평탄할 탄",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "域",
+    "element": "土",
+    "korean": "지경 역",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "城",
+    "element": "土",
+    "korean": "성 성",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "執",
+    "element": "土",
+    "korean": "잡을 집/지킬 집",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "堅",
+    "element": "土",
+    "korean": "굳을 견",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "壽",
+    "element": "土",
+    "korean": "목숨 수/오래 살 수",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "安",
+    "element": "土",
+    "korean": "편안 안",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "泰",
+    "element": "土",
+    "korean": "클 태/평온할 태",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "堂",
+    "element": "土",
+    "korean": "집 당/갖출 당",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "壹",
+    "element": "土",
+    "korean": "한 일(정성, 한결같음)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "寧",
+    "element": "土",
+    "korean": "편안할 녕",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "實",
+    "element": "土",
+    "korean": "열매 실/참될 실",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "宥",
+    "element": "土",
+    "korean": "용서할 유/도울 유",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "容",
+    "element": "土",
+    "korean": "얼굴 용/품을 용",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "宗",
+    "element": "土",
+    "korean": "마루 종/으뜸",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "崇",
+    "element": "土",
+    "korean": "높을 숭",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "堯",
+    "element": "土",
+    "korean": "요 임금 요(성인군자 상징)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "墩",
+    "element": "土",
+    "korean": "받칠 돈/기둥",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "淑",
+    "element": "水",
+    "korean": "곱고 착할 숙",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "淳",
+    "element": "水",
+    "korean": "순수할 순",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "洙",
+    "element": "水",
+    "korean": "물가 수/좋을 수",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "洋",
+    "element": "水",
+    "korean": "큰 바다 양/클 양",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "潤",
+    "element": "水",
+    "korean": "윤택할 윤",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "淸",
+    "element": "水",
+    "korean": "맑을 청",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "潔",
+    "element": "水",
+    "korean": "깨끗할 결",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "涵",
+    "element": "水",
+    "korean": "머금을 함/품을 함",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "泳",
+    "element": "水",
+    "korean": "헤엄칠 영",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "涛",
+    "element": "水",
+    "korean": "물결 도",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "洪",
+    "element": "水",
+    "korean": "클 홍",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "滉",
+    "element": "水",
+    "korean": "넓을 황",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "漢",
+    "element": "水",
+    "korean": "한수 한",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "潗",
+    "element": "水",
+    "korean": "모일 집(물 모임)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "淵",
+    "element": "水",
+    "korean": "못 연/깊을 연",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "滄",
+    "element": "水",
+    "korean": "큰 바다 창",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "渼",
+    "element": "水",
+    "korean": "빛날 미(물결 고움)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "澄",
+    "element": "水",
+    "korean": "맑을 징/맑을 등",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "潯",
+    "element": "水",
+    "korean": "물가 잠",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "汶",
+    "element": "水",
+    "korean": "물이름 문",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鎭",
+    "element": "金",
+    "korean": "누를 진/편안하게 할 진",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鉉",
+    "element": "金",
+    "korean": "솥귀 현/버팀",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "錫",
+    "element": "金",
+    "korean": "줄 석/내릴 석",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "銘",
+    "element": "金",
+    "korean": "새길 명",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鋼",
+    "element": "金",
+    "korean": "강철 강/굳셀 강",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鈺",
+    "element": "金",
+    "korean": "보옥 옥",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鍾",
+    "element": "金",
+    "korean": "쇠북 종/모을 종",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鏡",
+    "element": "金",
+    "korean": "거울 경",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鑫",
+    "element": "金",
+    "korean": "쇠 성할 흠(금 3개, 재물)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鎬",
+    "element": "金",
+    "korean": "도울 호/빛날 호",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "錦",
+    "element": "金",
+    "korean": "비단 금",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鐳",
+    "element": "金",
+    "korean": "우렁찰 뢰",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "銑",
+    "element": "金",
+    "korean": "쇳조각 선/깨끗할 선",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "鎰",
+    "element": "金",
+    "korean": "무게단위 일(귀함)",
+    "isGoodForNaming": true
+  },
+  {
+    "char": "死",
+    "element": "水",
+    "korean": "죽을 사",
+    "isGoodForNaming": false
+  },
+  {
+    "char": "病",
+    "element": "水",
+    "korean": "병 병",
+    "isGoodForNaming": false
+  },
+  {
+    "char": "惡",
+    "element": "火",
+    "korean": "악할 악",
+    "isGoodForNaming": false
+  },
+  {
+    "char": "凶",
+    "element": "水",
+    "korean": "흉할 흉",
+    "isGoodForNaming": false
+  },
+  {
+    "char": "殃",
+    "element": "水",
+    "korean": "재앙 앙",
+    "isGoodForNaming": false
+  },
+  {
+    "char": "災",
+    "element": "火",
+    "korean": "재앙 재",
+    "isGoodForNaming": false
+  },
+  {
+    "char": "害",
+    "element": "水",
+    "korean": "해칠 해",
+    "isGoodForNaming": false
+  },
+  {
+    "char": "屍",
+    "element": "土",
+    "korean": "주검 시",
+    "isGoodForNaming": false
+  },
+  {
+    "char": "殺",
+    "element": "木",
+    "korean": "죽일 살",
+    "isGoodForNaming": false
+  },
+  {
+    "char": "癌",
+    "element": "土",
+    "korean": "암 암",
+    "isGoodForNaming": false
+  }
+]
