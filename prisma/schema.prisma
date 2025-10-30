@@ -131,7 +131,8 @@ model HanjaDict {
   usageFrequency   Int?         @default(0) @map("usage_frequency")
   nameFrequency    Int?         @default(0) @map("name_frequency")
   category         String?
-  gender           String?      // 성별 선호도: 'male', 'female', 'neutral' or null
+  gender           String?      // 성별 선호도: 'male', 'female', 'neutral' or null (레거시)
+  genderHint       String?      @map("gender_hint") // 성별 힌트: 'female', 'male', 'unisex' (큐레이션)
   isGoodForNaming  Boolean?     @map("is_good_for_naming") // 작명 적합성 (null=미정, true=적합, false=부적합)
   isSurname        Boolean      @default(false) @map("is_surname") // 한국 성씨 여부
   seedProtected    Boolean      @default(false) @map("seed_protected") // 사람이 고른 한자 (빈도 낮아도 보호)
@@ -142,7 +143,8 @@ model HanjaDict {
   @@index([strokes])
   @@index([usageFrequency], map: "usage_frequency_idx")
   @@index([element, isGoodForNaming]) // 복합 인덱스 - 오행 기반 필터링 최적화
-  @@index([gender]) // 성별 필터링 최적화
+  @@index([gender]) // 성별 필터링 최적화 (레거시)
+  @@index([genderHint]) // 성별 힌트 필터링 최적화 (큐레이션)
   @@index([nameFrequency]) // 인기도 정렬 최적화
   @@index([isSurname]) // 성씨 필터링 최적화
   @@index([isGoodForNaming]) // 작명 적합성 필터링 최적화

@@ -1,0 +1,18 @@
+[
+  { "char": "明", "element": "火", "korean": "밝을 명", "isGoodForNaming": true, "seedProtected": true, "genderHint": "unisex" },
+  { "char": "恩", "element": "水", "korean": "은혜 은", "isGoodForNaming": true, "seedProtected": true, "genderHint": "unisex" },
+  { "char": "潤", "element": "水", "korean": "윤택할 윤", "isGoodForNaming": true, "genderHint": "unisex" },
+  { "char": "泰", "element": "土", "korean": "클 태/평안할 태", "isGoodForNaming": true, "genderHint": "unisex" },
+  { "char": "安", "element": "土", "korean": "편안할 안", "isGoodForNaming": true, "seedProtected": true, "genderHint": "unisex" },
+  { "char": "晟", "element": "火", "korean": "빛날 성", "isGoodForNaming": true, "genderHint": "unisex" },
+  { "char": "榮", "element": "木", "korean": "영화 영", "isGoodForNaming": true, "genderHint": "unisex" },
+  { "char": "宥", "element": "土", "korean": "너그러울 유", "isGoodForNaming": true, "seedProtected": true, "genderHint": "unisex" },
+  { "char": "梓", "element": "木", "korean": "가래나무 재", "isGoodForNaming": true, "genderHint": "unisex" },
+  { "char": "旭", "element": "火", "korean": "아침 해 욱", "isGoodForNaming": true, "seedProtected": true, "genderHint": "unisex" },
+  { "char": "煜", "element": "火", "korean": "빛날 욱", "isGoodForNaming": true, "seedProtected": true, "genderHint": "unisex" },
+  { "char": "熙", "element": "火", "korean": "빛날 희", "isGoodForNaming": true, "seedProtected": true, "genderHint": "unisex" },
+  { "char": "玟", "element": "金", "korean": "옥돌 민", "isGoodForNaming": true, "genderHint": "unisex" },
+  { "char": "玧", "element": "金", "korean": "옥 윤", "isGoodForNaming": true, "genderHint": "unisex" },
+  { "char": "景", "element": "木", "korean": "경치 경", "isGoodForNaming": true, "genderHint": "unisex" },
+  { "char": "珉", "element": "金", "korean": "옥돌 민", "isGoodForNaming": true, "genderHint": "unisex" }
+]

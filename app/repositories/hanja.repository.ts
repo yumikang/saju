@@ -255,19 +255,19 @@ export class HanjaRepository {
           ? { element: { in: lackingElements as any } }
           : {},
 
-        // 3. 성별 필터 (male/female + neutral)
+        // 3. 🎯 성별 힌트 필터 (genderHint 우선, fallback to legacy gender)
         gender === 'M'
           ? {
               OR: [
-                { gender: 'male' },
-                { gender: 'neutral' },
+                { genderHint: { in: ['male', 'unisex'] } },
+                { genderHint: null }, // genderHint 없으면 포함
               ],
             }
           : gender === 'F'
           ? {
               OR: [
-                { gender: 'female' },
-                { gender: 'neutral' },
+                { genderHint: { in: ['female', 'unisex'] } },
+                { genderHint: null }, // genderHint 없으면 포함
               ],
             }
           : {},
