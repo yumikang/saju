@@ -1,0 +1,27 @@
+{
+  "createdAt": "2025-10-31T04:55:26.105Z",
+  "dbStats": {
+    "total": 8787,
+    "good": 2748,
+    "bad": 6039
+  },
+  "backups": {
+    "fullBackup": {
+      "timestamp": "2025-10-31",
+      "count": 8787,
+      "filename": "hanja-dict-full-2025-10-31.json"
+    },
+    "goodBackup": {
+      "timestamp": "2025-10-31",
+      "count": 2748,
+      "filename": "hanja-good-only-2025-10-31.json"
+    },
+    "meaningSnapshot": {
+      "timestamp": "2025-10-31",
+      "count": 2748,
+      "filename": "meaning-snapshot-2025-10-31.json"
+    }
+  },
+  "purpose": "Pre-meaning-quality-improvement backup",
+  "rollbackCommand": "npx tsx scripts/restore-hanja-db.ts [backup-filename]"
+}
