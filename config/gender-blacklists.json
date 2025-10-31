@@ -1,0 +1,60 @@
+{
+  "$schema": "./gender-blacklists.schema.json",
+  "description": "Hardcoded gender blacklists - hanjas that should NEVER appear in opposite gender names",
+  "version": "1.0.0",
+  "lastUpdated": "2025-10-31",
+
+  "femaleBlacklist": {
+    "description": "Male-only hanjas that should NEVER appear in female names",
+    "reason": "Strongly masculine characters that would make female names inappropriate",
+    "characters": [
+      "俊", "峻", "晙", "準", "浚",
+      "賢", "鉉", "泫", "晛",
+      "豪", "浩", "皓",
+      "昊", "桓", "旭", "宇", "佑", "祐", "珉",
+      "雄", "勇", "武", "剛", "強",
+      "傑", "英", "雅"
+    ],
+    "examples": {
+      "blocked": ["준아", "현서", "석희", "호연"],
+      "reason": "These combinations feel awkward or inappropriate for girls"
+    }
+  },
+
+  "maleBlacklist": {
+    "description": "Female-only hanjas that should NEVER appear in male names",
+    "reason": "Strongly feminine characters that would make male names inappropriate",
+    "characters": [
+      "雅", "嫺", "妃", "姸", "娥",
+      "蓉", "瑛", "淸", "恩", "美",
+      "姬", "嬌", "嬋", "媛", "婉",
+      "麗", "妍", "姝", "娟", "婷"
+    ],
+    "examples": {
+      "blocked": ["민아", "준희", "서연"],
+      "reason": "These combinations feel awkward or inappropriate for boys"
+    }
+  },
+
+  "notes": [
+    "These blacklists override ALL other classification logic",
+    "Add characters here ONLY if they are universally recognized as gender-specific",
+    "When in doubt, rely on statistical classification instead",
+    "These lists should be reviewed annually based on naming trends"
+  ],
+
+  "usage": {
+    "female_query": "WHERE genderHint IN ('female', 'unisex') OR genderHint IS NULL) AND character NOT IN femaleBlacklist",
+    "male_query": "WHERE genderHint IN ('male', 'unisex') OR genderHint IS NULL) AND character NOT IN maleBlacklist"
+  },
+
+  "history": [
+    {
+      "date": "2025-10-31",
+      "version": "1.0.0",
+      "changes": "Initial blacklists based on Korean naming conventions and cultural understanding",
+      "femaleBlacklistSize": 23,
+      "maleBlacklistSize": 20
+    }
+  ]
+}

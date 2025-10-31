@@ -1,0 +1,57 @@
+{
+  "$schema": "./gender-hint-thresholds.schema.json",
+  "description": "Gender hint classification thresholds - adjust these to fine-tune gender classification behavior",
+  "version": "1.0.0",
+  "lastUpdated": "2025-10-31",
+
+  "thresholds": {
+    "femaleRatio": 0.7,
+    "maleRatio": 0.3,
+    "minUsageCount": 3
+  },
+
+  "explanation": {
+    "femaleRatio": "If female usage >= 70%, classify as 'female'",
+    "maleRatio": "If female usage <= 30% (i.e., male >= 70%), classify as 'male'",
+    "minUsageCount": "Minimum number of times a hanja must appear in names to be classified",
+    "unisex": "If 0.3 < femaleRatio < 0.7, classify as 'unisex'"
+  },
+
+  "history": [
+    {
+      "date": "2025-10-31",
+      "version": "1.0.0",
+      "changes": "Initial thresholds based on 2024 name statistics",
+      "femaleRatio": 0.7,
+      "maleRatio": 0.3,
+      "minUsageCount": 3,
+      "results": {
+        "totalClassified": 1414,
+        "female": 241,
+        "male": 558,
+        "unisex": 615
+      }
+    }
+  ],
+
+  "recommendations": {
+    "stricter": {
+      "femaleRatio": 0.85,
+      "maleRatio": 0.15,
+      "minUsageCount": 5,
+      "note": "Use for higher precision, lower coverage"
+    },
+    "balanced": {
+      "femaleRatio": 0.7,
+      "maleRatio": 0.3,
+      "minUsageCount": 3,
+      "note": "Current setting - good balance"
+    },
+    "broader": {
+      "femaleRatio": 0.6,
+      "maleRatio": 0.4,
+      "minUsageCount": 2,
+      "note": "Use for higher coverage, may include more ambiguous cases"
+    }
+  }
+}

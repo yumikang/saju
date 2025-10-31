@@ -1,0 +1,90 @@
+{
+  "timestamp": "2025-10-31T04:27:56.671Z",
+  "operation": "apply-gender-blacklists",
+  "changes": [
+    {
+      "character": "宇",
+      "koreanReading": "우",
+      "previousGenderHint": "female",
+      "newGenderHint": "male",
+      "reason": "femaleBlacklist"
+    },
+    {
+      "character": "珉",
+      "koreanReading": "민",
+      "previousGenderHint": "unisex",
+      "newGenderHint": "male",
+      "reason": "femaleBlacklist"
+    },
+    {
+      "character": "雄",
+      "koreanReading": "웅",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "femaleBlacklist"
+    },
+    {
+      "character": "剛",
+      "koreanReading": "강",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "femaleBlacklist"
+    },
+    {
+      "character": "強",
+      "koreanReading": "강",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "femaleBlacklist"
+    },
+    {
+      "character": "傑",
+      "koreanReading": "걸",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "femaleBlacklist"
+    },
+    {
+      "character": "雅",
+      "koreanReading": "아",
+      "previousGenderHint": "female",
+      "newGenderHint": "male",
+      "reason": "femaleBlacklist"
+    },
+    {
+      "character": "雅",
+      "koreanReading": "아",
+      "previousGenderHint": "male",
+      "newGenderHint": "female",
+      "reason": "maleBlacklist"
+    },
+    {
+      "character": "姬",
+      "koreanReading": "희",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "maleBlacklist"
+    },
+    {
+      "character": "嬌",
+      "koreanReading": "교",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "maleBlacklist"
+    },
+    {
+      "character": "麗",
+      "koreanReading": "려",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "maleBlacklist"
+    },
+    {
+      "character": "婷",
+      "koreanReading": "정",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "maleBlacklist"
+    }
+  ]
+}
