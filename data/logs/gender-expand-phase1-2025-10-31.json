@@ -1,0 +1,1542 @@
+{
+  "timestamp": "2025-10-31T03:55:59.844Z",
+  "phase": "Phase 1: Existing Data",
+  "changes": [
+    {
+      "character": "琇",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "璲",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "綬",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "嫮",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "嫭",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑞",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "媞",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "時",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "亞",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "峨",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "峩",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "桉",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "阭",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "徐",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑜",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "珢",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "睍",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "琄",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "書",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "西",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "宇",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "友",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "玹",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "灦",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑫",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "馟",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "埍",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "呟",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "蕸",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "廈",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "河",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "玄",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "雨",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "浩",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "皓",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "獜",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "焛",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "璘",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "鏻",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "褕",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "蝤",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "蕤",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "于",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "又",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "優",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "玗",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑀",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "羽",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑈",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "埈",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "尹",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "胤",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "號",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "淏",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "我",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "虎",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "兒",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "道",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "桃",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "薾",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "珆",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "藇",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "嬋",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "珗",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "琁",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑄",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "璿",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "灝",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "憂",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 100,
+      "legacyGender": "female"
+    },
+    {
+      "character": "峻",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 100,
+      "legacyGender": "male"
+    },
+    {
+      "character": "宙",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "敏",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "民",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "永",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "映",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "太",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "延",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "珠",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "成",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "聖",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "勳",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "薰",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "歡",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "承",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "勝",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "那",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "娜",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "羅",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "旼",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "娍",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "韺",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑗",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "煃",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "奈",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "秵",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "蘿",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑱",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "哃",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "炵",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "侯",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "愍",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "憫",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "敃",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "暋",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "琘",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "琝",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑉",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "砇",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "閔",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "玭",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "穦",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "霦",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "馪",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "盛",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "珹",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "卲",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "玿",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "璅",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "丞",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "乘",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "堧",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "嬿",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "珚",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑌",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瓀",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "緣",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "碝",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "影",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瀴",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "瑩",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瓔",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "玴",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "蕊",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "蘂",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "珸",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "鰲",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "鼇",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "芫",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "褑",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "黿",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "渽",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "主",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "周",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "姝",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "珎",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "珒",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑨",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "璡",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "縝",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "鉁",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "僩",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "焱",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "峘",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "換",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "瑍",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瓛",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "后",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 90,
+      "legacyGender": "male"
+    },
+    {
+      "character": "珝",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 90,
+      "legacyGender": "female"
+    },
+    {
+      "character": "舸",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "male",
+      "reason": "legacy_gender_field=male",
+      "nameFrequency": 70,
+      "legacyGender": "male"
+    },
+    {
+      "character": "瀅",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "斝",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "瑂",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "煝",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "眉",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "微",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "未",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "媚",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "琳",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "婽",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    },
+    {
+      "character": "嘉",
+      "korean": "",
+      "previousGenderHint": null,
+      "newGenderHint": "female",
+      "reason": "legacy_gender_field=female",
+      "nameFrequency": 70,
+      "legacyGender": "female"
+    }
+  ],
+  "summary": {
+    "totalChanged": 170,
+    "femaleAdded": 124,
+    "maleAdded": 46,
+    "unisexAdded": 0
+  }
+}
