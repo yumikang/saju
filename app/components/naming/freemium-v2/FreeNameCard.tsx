@@ -48,7 +48,10 @@ export function FreeNameCard({
               onClick={() => onCharacterClick?.(char.id)}
               className="flex-1 p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors"
             >
-              <div className="font-semibold text-lg text-gray-900">{char.character}</div>
+              <div className="flex items-center justify-center gap-1">
+                <span className="font-semibold text-lg text-gray-900">{char.character}</span>
+                <span className="text-sm text-gray-600">({char.koreanReading})</span>
+              </div>
               <div className="text-xs text-gray-600 mt-1">{char.meaning}</div>
               <div className="text-xs text-gray-500 mt-1">{char.strokes}획 · {char.element}</div>
             </button>

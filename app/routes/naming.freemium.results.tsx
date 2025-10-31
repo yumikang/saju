@@ -28,6 +28,7 @@ interface NameRecommendation {
   fullName: string;
   characters: Array<{
     character: string;
+    koreanReading: string;
     meaning: string;
     strokes: number;
     element: string;
@@ -113,11 +114,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // Convert API response to ScoredCandidate format
   const candidates: ScoredCandidate[] = result.recommendations.map((rec) => {
     const chars = rec.characters.slice(0, 2);
-    const char1 = chars[0]?.character || '';
-    const char2 = chars[1]?.character || '';
+    const char1Reading = chars[0]?.koreanReading || '';
+    const char2Reading = chars[1]?.koreanReading || '';
 
     return {
-      firstName: [char1, char2] as [string, string],
+      firstName: [char1Reading, char2Reading] as [string, string],
       characters: [
         {
           id: 1,
@@ -126,7 +127,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
           strokes: chars[0]?.strokes || 0,
           element: (chars[0]?.element?.toUpperCase() || 'WOOD') as Element,
           yinYang: 'YANG' as YinYang,
-          koreanReading: '',
+          koreanReading: char1Reading,
         },
         {
           id: 2,
@@ -135,7 +136,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
           strokes: chars[1]?.strokes || 0,
           element: (chars[1]?.element?.toUpperCase() || 'WOOD') as Element,
           yinYang: 'YIN' as YinYang,
-          koreanReading: '',
+          koreanReading: char2Reading,
         },
       ] as [HanjaCharacter, HanjaCharacter],
       score: rec.scores.overall,

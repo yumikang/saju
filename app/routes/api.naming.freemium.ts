@@ -128,6 +128,7 @@ interface NameRecommendation {
   fullName: string;
   characters: Array<{
     character: string;
+    koreanReading: string;
     meaning: string;
     strokes: number;
     element: string;
@@ -374,9 +375,10 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
   // Format ALL 10 names for response (Freemium V2)
   const recommendations: NameRecommendation[] = top10.map((candidate, index) => ({
     rank: index + 1,
-    fullName: `${session.lastName}${candidate.firstName.join('')}`,
+    fullName: `${session.lastName}${candidate.characters.map(c => c.koreanReading).join('')}`,
     characters: candidate.characters.map((char) => ({
       character: char.character,
+      koreanReading: char.koreanReading,
       meaning: char.meaning,
       strokes: char.strokes,
       element: char.element,
