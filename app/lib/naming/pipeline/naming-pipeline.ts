@@ -18,6 +18,15 @@
  * 8. Ranking & Return (Top 10-20개)
  */
 
+// ============================================================
+// Feature Flags (안전 롤백용)
+// ============================================================
+export const FEATURES = {
+  enableLinguisticScorerInLegacy: true,   // 언어적 자연스러움 패널티 (같은 음절 반복, 의미 중복)
+  disableNumerologyInLegacy: true,        // 획수/81수리 영향 0% (데이터 부정확)
+  stage3VerboseLog: true,                 // Stage 3 디버그 로그
+};
+
 import type { Element } from '@prisma/client';
 import { SajuCalculator, type SajuResult } from '~/lib/saju/calculator';
 import { YongsinAnalyzer, type CombinedYongsinResult } from '~/lib/saju/yongsin-analyzer';
@@ -100,12 +109,12 @@ export const DEFAULT_PIPELINE_CONFIG: PipelineConfig = {
   batchSize: 50,          // PERFORMANCE: Reduced from 100 to 50 for faster batching
   timeout: 10000,
   weights: {
-    yongsin: 0.35,
-    yinyang: 0.25,
+    yongsin: 0.32,     // 오행 편향 완화 (35% → 32%)
+    yinyang: 0.20,     // 음양 균형 (25% → 20%)
     pronunciation: 0.20,
-    meaning: 0.10,
-    numerology: 0.05,
-    taboo: 0.05,
+    meaning: 0.20,     // 의미 강화 (10% → 20%)
+    numerology: FEATURES.disableNumerologyInLegacy ? 0 : 0.03,  // 획수 비활성화 (5% → 0%)
+    taboo: 0.08,       // 금기 강화 (5% → 8%)
   },
   minScore: 60,
   requireYongsinMatch: true,
@@ -577,7 +586,7 @@ export class NamingPipeline {
       taboo: 100 - tabooAnalysis.deductionPoints,
     };
 
-    const totalScore =
+    let totalScore =
       scores.yongsin * context.config.weights.yongsin +
       scores.yinyang * context.config.weights.yinyang +
       scores.pronunciation * context.config.weights.pronunciation +
@@ -585,7 +594,24 @@ export class NamingPipeline {
       scores.numerology * context.config.weights.numerology +
       scores.taboo * context.config.weights.taboo;
 
-    // 🎯 5번째 축: 한글 음운 기반 성별 보정
+    // 🎯 언어적 자연스러움 패널티 (같은 음절 반복, 의미 중복)
+    if (FEATURES.enableLinguisticScorerInLegacy) {
+      const linguisticPenaltyScore = this.linguisticPenalty(
+        combo.firstChar,
+        combo.secondChar,
+        context.birthInfo.gender
+      );
+      totalScore += linguisticPenaltyScore;
+
+      if (FEATURES.stage3VerboseLog && linguisticPenaltyScore < 0) {
+        console.log(
+          `[Stage 3][LinguisticScorer] ${combo.firstName} (${combo.firstChar.character}${combo.secondChar.character}): ` +
+          `총 패널티 ${linguisticPenaltyScore}점`
+        );
+      }
+    }
+
+    // 🎯 한글 음운 기반 성별 보정
     // "수아" (F) → +6 | "민준" (M) → +6 | "서연" (F) → +3 | 반대 성별 → -2
     const hangulGenderBoost = genderBoost(combo.firstName, context.birthInfo.gender);
     const finalTotalScore = totalScore + hangulGenderBoost;
@@ -704,6 +730,93 @@ export class NamingPipeline {
   }
 
   // ===== HELPER METHODS =====
+
+  /**
+   * Calculate meaning similarity using Jaccard similarity
+   *
+   * @returns 0.0 (완전히 다름) ~ 1.0 (동일)
+   */
+  private meaningSimilarity(meaning1: string, meaning2: string): number {
+    // Tokenize: 한글/영문/숫자만 추출하여 공백 기준 분할
+    const tokenize = (s: string): Set<string> => {
+      const cleaned = s.replace(/[^\p{L}\p{N}\s]/gu, '');
+      const tokens = cleaned.split(/\s+/).filter(Boolean);
+      return new Set(tokens);
+    };
+
+    const tokensA = tokenize(meaning1);
+    const tokensB = tokenize(meaning2);
+
+    // Jaccard similarity: |A ∩ B| / |A ∪ B|
+    const intersection = new Set([...tokensA].filter(x => tokensB.has(x)));
+    const union = new Set([...tokensA, ...tokensB]);
+
+    return union.size === 0 ? 0 : intersection.size / union.size;
+  }
+
+  /**
+   * Calculate linguistic naturalness penalty
+   *
+   * 패널티 항목:
+   * 1. 같은 음절 반복 (서서, 준준) → -50점
+   * 2. 의미 매우 유사 (similarity ≥ 0.7) → -20점
+   * 3. 의미 부분 유사 (similarity ≥ 0.4) → -10점
+   * 4. 음운 다양성 부족 (자음+모음 동일) → -6점
+   */
+  private linguisticPenalty(
+    firstChar: HanjaCharacter,
+    secondChar: HanjaCharacter,
+    _gender?: 'M' | 'F' | null
+  ): number {
+    let penalty = 0;
+
+    // 1. 같은 음절 반복 감지
+    const syllable1 = firstChar.koreanReading;
+    const syllable2 = secondChar.koreanReading;
+
+    if (syllable1 === syllable2) {
+      penalty -= 50;
+      if (FEATURES.stage3VerboseLog) {
+        console.log(`[LinguisticPenalty] ⚠️ 같은 음절 반복: ${syllable1} === ${syllable2} → -50점`);
+      }
+    }
+
+    // 2. 의미 유사도 패널티
+    const meaning1 = firstChar.meaning || '';
+    const meaning2 = secondChar.meaning || '';
+
+    if (meaning1 && meaning2) {
+      const similarity = this.meaningSimilarity(meaning1, meaning2);
+
+      if (similarity >= 0.7) {
+        penalty -= 20;
+        if (FEATURES.stage3VerboseLog) {
+          console.log(`[LinguisticPenalty] 의미 매우 유사 (${similarity.toFixed(2)}): ${meaning1} / ${meaning2} → -20점`);
+        }
+      } else if (similarity >= 0.4) {
+        penalty -= 10;
+        if (FEATURES.stage3VerboseLog) {
+          console.log(`[LinguisticPenalty] 의미 부분 유사 (${similarity.toFixed(2)}): ${meaning1} / ${meaning2} → -10점`);
+        }
+      }
+    }
+
+    // 3. 음운 다양성 (선택 사항 - 약한 패널티)
+    if (syllable1 && syllable2 && syllable1.length > 0 && syllable2.length > 0) {
+      // 초성(첫 글자)과 종성(마지막 글자) 비교
+      const sameOnset = syllable1[0] === syllable2[0];
+      const sameVowel = syllable1[syllable1.length - 1] === syllable2[syllable2.length - 1];
+
+      if (sameOnset && sameVowel) {
+        penalty -= 6;
+        if (FEATURES.stage3VerboseLog) {
+          console.log(`[LinguisticPenalty] 음운 다양성 부족: ${syllable1}/${syllable2} → -6점`);
+        }
+      }
+    }
+
+    return penalty;
+  }
 
   /**
    * Analyze numerology (81수리)

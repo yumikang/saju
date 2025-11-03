@@ -1,5 +1,5 @@
 /**
- * Element Harmony Scorer (40% weight)
+ * Element Harmony Scorer (30% weight, reduced from 40%)
  *
  * Evaluates five elements relationships between characters and saju compatibility.
  *
@@ -23,7 +23,7 @@ import {
 
 export class ElementScorer extends BaseScorer {
   readonly name = 'element-harmony';
-  readonly weight = 0.40;
+  readonly weight = 0.30; // Reduced from 0.40 to balance with linguistic criteria
 
   protected async calculateRawScore(
     candidate: NameCandidate,

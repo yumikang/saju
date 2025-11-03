@@ -53,8 +53,9 @@ export interface ScoredCandidate extends NameCandidate {
     overall: number;
     elementHarmony: DetailedScore;
     yinYangBalance: DetailedScore;
-    numerology: DetailedScore;
+    numerology: DetailedScore | null;  // DISABLED: 획수 데이터 부정확
     meaningHarmony: DetailedScore;
+    linguistic: DetailedScore;  // NEW: 언어적 자연스러움 (같은 음절 반복, 의미 중복)
   };
   confidenceScore: number;
 }

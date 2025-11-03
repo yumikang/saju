@@ -8,8 +8,9 @@
 import type { NameCandidate, ScoredCandidate, ScoringContext } from '../types';
 import { ElementScorer } from './element-scorer';
 import { YinYangScorer } from './yinyang-scorer';
-import { NumerologyScorer } from './numerology-scorer';
+// import { NumerologyScorer } from './numerology-scorer'; // DISABLED: 획수 데이터 신뢰도 문제
 import { MeaningScorer } from './meaning-scorer';
+import { LinguisticScorer } from './linguistic-scorer';
 import type { BaseScorer } from './base-scorer';
 
 export class ScoringPipeline {
@@ -18,10 +19,11 @@ export class ScoringPipeline {
   constructor(scorers?: BaseScorer[]) {
     // Use provided scorers or default scorers
     this.scorers = scorers || [
-      new ElementScorer(),      // 40%
+      new ElementScorer(),      // 30% (reduced from 40%)
       new YinYangScorer(),      // 20%
-      new NumerologyScorer(),   // 20%
+      // new NumerologyScorer(), // DISABLED: 획수 데이터 부정확 (蕕=12획→18획, 有=12획→6획)
       new MeaningScorer(),      // 20%
+      new LinguisticScorer(),   // 30% (NEW: 언어적 자연스러움)
     ];
 
     // Validate weights sum to 1.0
@@ -75,15 +77,11 @@ export class ScoringPipeline {
       this.scorers.map(scorer => scorer.score(candidate, context))
     );
 
-    // Map scores to named fields
-    const [elementHarmony, yinYangBalance, numerology, meaningHarmony] = detailedScores;
+    // Map scores to named fields based on current 4 scorers
+    const [elementHarmony, yinYangBalance, meaningHarmony, linguistic] = detailedScores;
 
     // Calculate overall score (weighted sum)
-    const overall =
-      elementHarmony.weightedScore +
-      yinYangBalance.weightedScore +
-      numerology.weightedScore +
-      meaningHarmony.weightedScore;
+    const overall = detailedScores.reduce((sum, score) => sum + score.weightedScore, 0);
 
     // Calculate confidence score
     const confidenceScore = this.calculateConfidence(detailedScores);
@@ -94,8 +92,9 @@ export class ScoringPipeline {
         overall: Number(overall.toFixed(1)), // Keep 1 decimal place for better differentiation
         elementHarmony,
         yinYangBalance,
-        numerology,
+        numerology: null, // DISABLED (획수 데이터 부정확)
         meaningHarmony,
+        linguistic, // NEW: 언어적 자연스러움 (같은 음절 반복, 의미 중복)
       },
       confidenceScore,
     };
