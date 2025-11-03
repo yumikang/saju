@@ -57,7 +57,7 @@ export class DatabaseHanjaService implements HanjaService {
       andConditions.push({
         OR: [
           { seedProtected: true },  // 사람이 고른 한자 (빈도 관계없이)
-          { isGoodForNaming: true }, // 머신이 고른 한자
+          { isGoodForNaming: { not: false } }, // NULL(미정) + true(적합) 허용, false(부적합) 차단
         ],
       });
     }
@@ -148,7 +148,7 @@ export class InMemoryHanjaService implements HanjaService {
     }
     // 🔥 CRITICAL: Quality filter - DEFAULT to filtering out bad characters
     if (options.isGoodForNaming !== false) {
-      results = results.filter((h) => h.isGoodForNaming);
+      results = results.filter((h) => h.isGoodForNaming !== false);
     }
 
     // Sort by popularity
