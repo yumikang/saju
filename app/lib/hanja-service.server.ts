@@ -272,39 +272,58 @@ export async function searchHanjaFromDB(
       orderBy
     });
   } else {
-    // 이름 모드: 성씨 한자를 우선적으로 가져오기
-    const surnameCharsForReading = getSurnameHanja(reading);
-    let surnameResults: HanjaDictRecord[] = [];
+    // 이름 모드: 3단계 하이브리드 (출생 데이터 검증 → 기타 TRUE → NULL fallback)
+    const targetLimit = actualLimit * 2; // 충분한 선택지
+    let allResults: HanjaDictRecord[] = [];
 
-    if (surnameCharsForReading) {
-      // 1. 해당 읽기의 성씨 한자 먼저 가져오기
-      surnameResults = await prisma.hanjaDict.findMany({
-        where: {
-          character: { in: surnameCharsForReading },
-          isGoodForNaming: true,  // DB 스캔으로 관리되는 필드
-          nameFrequency: { gte: 50 }  // 인기도 필터
-        },
-        orderBy
-      });
-    }
-
-    // 2. 나머지 한자 가져오기 (충분한 선택지 제공)
-    const remainingLimit = Math.max(actualLimit * 2, 40); // 상용한자 포함을 위해 여유있게
-
-    const otherResults = await prisma.hanjaDict.findMany({
+    // STAGE 1: 출생 데이터 검증된 한자 (inferredNameFrequency > 0)
+    const verifiedResults = await prisma.hanjaDict.findMany({
       where: {
         koreanReading: { in: readings },
-        isGoodForNaming: true,  // DB 스캔으로 관리되는 필드
-        nameFrequency: { gte: 50 },  // 인기도 필터 (50 이상)
-        ...(surnameCharsForReading && { character: { notIn: surnameCharsForReading } })
+        isGoodForNaming: true,
+        inferredNameFrequency: { gt: 0 },  // 2024년 출생 데이터로 검증됨
+        nameFrequency: { gte: 50 }
       },
-      take: remainingLimit,
+      take: targetLimit,
       ...(cursor && { skip: 1, cursor: { id: cursor } }),
       orderBy
     });
 
-    // 3. 성씨 한자 먼저, 그 다음 일반 한자
-    results = [...surnameResults, ...otherResults];
+    allResults = verifiedResults;
+
+    // STAGE 2: 부족하면 기타 TRUE 한자 보충 (inferredNameFrequency = 0)
+    if (allResults.length < targetLimit) {
+      const otherTrueResults = await prisma.hanjaDict.findMany({
+        where: {
+          koreanReading: { in: readings },
+          isGoodForNaming: true,
+          OR: [
+            { inferredNameFrequency: 0 },
+            { inferredNameFrequency: null }
+          ],
+          nameFrequency: { gte: 50 }
+        },
+        take: targetLimit - allResults.length,
+        orderBy
+      });
+      allResults = [...allResults, ...otherTrueResults];
+    }
+
+    // STAGE 3: 그래도 부족하면 NULL에서 보충 (최후 fallback)
+    if (allResults.length < targetLimit) {
+      const nullResults = await prisma.hanjaDict.findMany({
+        where: {
+          koreanReading: { in: readings },
+          isGoodForNaming: null,
+          nameFrequency: { gte: 50 }
+        },
+        take: targetLimit - allResults.length,
+        orderBy
+      });
+      allResults = [...allResults, ...nullResults];
+    }
+
+    results = allResults;
   }
   
   // 후처리: nameFrequency < 50인 한자 제거 (캐시 이슈 방지)
