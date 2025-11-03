@@ -50,14 +50,16 @@ export class DatabaseHanjaService implements HanjaService {
       andConditions.push({ strokes: strokeFilter });
     }
 
-    // 3. 🛡️ SEED PROTECTION: "사람이 고른 것 > 머신이 고른 것"
-    // Only include characters that are explicitly marked as good OR protected
-    // This prevents taboo characters (불용한자 301자) from appearing in recommendations
+    // 3. 🛡️ QUALITY FILTER: Hybrid mode (TRUE 우선, 부족하면 NULL 보충)
+    // - 1순위: isGoodForNaming = true (2,402자) - 출생 데이터 검증된 한자
+    // - 2순위: isGoodForNaming = null (6,189자) - 미분류 (fallback)
+    // - ❌ 차단: isGoodForNaming = false (64자) - 부정적 한자 (절대 사용 안함)
     if (options.isGoodForNaming !== false) {
       andConditions.push({
         OR: [
-          { seedProtected: true },  // 사람이 고른 한자 (빈도 관계없이)
-          { isGoodForNaming: { not: false } }, // NULL(미정) + true(적합) 허용, false(부적합) 차단
+          { seedProtected: true },       // 사람이 고른 한자 (빈도 관계없이)
+          { isGoodForNaming: true },     // 1순위: 검증된 한자
+          { isGoodForNaming: null },     // 2순위: 미분류 (fallback)
         ],
       });
     }
@@ -85,8 +87,10 @@ export class DatabaseHanjaService implements HanjaService {
       },
       take: 500, // Reasonable limit
       orderBy: [
-        { nameFrequency: 'desc' }, // Popular names first
-        { usageFrequency: 'desc' },
+        // 1순위: 검증된 한자 먼저 (TRUE > NULL)
+        { inferredNameFrequency: 'desc' }, // 2024년 출생 데이터 빈도 높은 순
+        { nameFrequency: 'desc' },         // 기존 이름 빈도
+        { usageFrequency: 'desc' },        // 일반 사용 빈도
       ],
     });
 

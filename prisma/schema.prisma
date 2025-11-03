@@ -128,9 +128,10 @@ model HanjaDict {
   koreanReading    String?      @map("korean_reading")
   chineseReading   String?      @map("chinese_reading")
   radical          String?
-  usageFrequency   Int?         @default(0) @map("usage_frequency")
-  nameFrequency    Int?         @default(0) @map("name_frequency")
-  category         String?
+  usageFrequency        Int?         @default(0) @map("usage_frequency")
+  nameFrequency         Int?         @default(0) @map("name_frequency")
+  inferredNameFrequency Int?         @default(0) @map("inferred_name_frequency") // 2024년 출생 데이터 기반 추론 빈도
+  category              String?
   gender           String?      // 성별 선호도: 'male', 'female', 'neutral' or null (레거시)
   genderHint       String?      @map("gender_hint") // 성별 힌트: 'female', 'male', 'unisex' (큐레이션)
   isGoodForNaming  Boolean?     @map("is_good_for_naming") // 작명 적합성 (null=미정, true=적합, false=부적합)
