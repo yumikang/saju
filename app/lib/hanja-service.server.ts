@@ -257,10 +257,14 @@ export async function searchHanjaFromDB(
   if (isSurname && surnameHanjaList) {
     // 성씨 모드: 큐레이션된 성씨 목록만 (빈도수 필터 없음)
     // korean-surnames.data에 정의된 성씨는 모두 유효하므로 nameFrequency 관계없이 표시
+    // 하이브리드 필터: NULL(미분류)도 허용, FALSE(부정적 한자)만 차단
     results = await prisma.hanjaDict.findMany({
       where: {
         character: { in: surnameHanjaList },
-        isGoodForNaming: true  // DB 스캔으로 관리되는 필드
+        OR: [
+          { isGoodForNaming: true },   // 1순위: 검증된 한자
+          { isGoodForNaming: null }    // 2순위: 미분류 (성씨는 대부분 이름 빈도가 낮아 NULL)
+        ]
         // 성씨 모드에서는 nameFrequency 필터 제거
       },
       take: actualLimit,

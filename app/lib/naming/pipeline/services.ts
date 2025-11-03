@@ -50,19 +50,10 @@ export class DatabaseHanjaService implements HanjaService {
       andConditions.push({ strokes: strokeFilter });
     }
 
-    // 3. 🛡️ QUALITY FILTER: Hybrid mode (TRUE 우선, 부족하면 NULL 보충)
+    // 3. 🛡️ QUALITY FILTER: 2-stage hybrid (TRUE 먼저, 부족하면 NULL 보충)
     // - 1순위: isGoodForNaming = true (2,402자) - 출생 데이터 검증된 한자
-    // - 2순위: isGoodForNaming = null (6,189자) - 미분류 (fallback)
+    // - 2순위: isGoodForNaming = null (6,189자) - 미분류 (부족할 때만!)
     // - ❌ 차단: isGoodForNaming = false (64자) - 부정적 한자 (절대 사용 안함)
-    if (options.isGoodForNaming !== false) {
-      andConditions.push({
-        OR: [
-          { seedProtected: true },       // 사람이 고른 한자 (빈도 관계없이)
-          { isGoodForNaming: true },     // 1순위: 검증된 한자
-          { isGoodForNaming: null },     // 2순위: 미분류 (fallback)
-        ],
-      });
-    }
 
     // 4. 🔥 CRITICAL: Surname filter - ALWAYS exclude surnames from first names
     // This prevents Korean surnames (성씨 132자) from appearing in given names
@@ -81,18 +72,46 @@ export class DatabaseHanjaService implements HanjaService {
       });
     }
 
-    const results = await this.prisma.hanjaDict.findMany({
+    const targetLimit = 500;
+    const orderBy = [
+      { inferredNameFrequency: 'desc' }, // 2024년 출생 데이터 빈도 높은 순 (TRUE 우선)
+      { nameFrequency: 'desc' },         // 기존 이름 빈도
+      { usageFrequency: 'desc' },        // 일반 사용 빈도
+    ];
+
+    // STAGE 1: 먼저 검증된 한자만 (TRUE + seedProtected)
+    let primaryResults = await this.prisma.hanjaDict.findMany({
       where: {
-        AND: andConditions,
+        AND: [
+          ...andConditions,
+          {
+            OR: [
+              { seedProtected: true },     // 사람이 고른 한자
+              { isGoodForNaming: true }    // 출생 데이터 검증된 한자
+            ]
+          }
+        ]
       },
-      take: 500, // Reasonable limit
-      orderBy: [
-        // 1순위: 검증된 한자 먼저 (TRUE > NULL)
-        { inferredNameFrequency: 'desc' }, // 2024년 출생 데이터 빈도 높은 순
-        { nameFrequency: 'desc' },         // 기존 이름 빈도
-        { usageFrequency: 'desc' },        // 일반 사용 빈도
-      ],
+      take: targetLimit,
+      orderBy,
     });
+
+    // STAGE 2: 부족하면 NULL에서 보충 (fallback)
+    let results = primaryResults;
+    if (options.isGoodForNaming !== false && primaryResults.length < targetLimit) {
+      const fallbackResults = await this.prisma.hanjaDict.findMany({
+        where: {
+          AND: [
+            ...andConditions,
+            { isGoodForNaming: null },  // NULL만 (부족할 때만!)
+            { seedProtected: { not: true } }  // seedProtected는 이미 stage 1에서 가져옴
+          ]
+        },
+        take: targetLimit - primaryResults.length,
+        orderBy,
+      });
+      results = [...primaryResults, ...fallbackResults];
+    }
 
     return results.map(this.mapToHanjaCharacter);
   }
