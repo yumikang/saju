@@ -13,8 +13,9 @@ export function Header() {
   const navItems = [
     { label: "신생아 작명", href: "/naming/freemium" },
     { label: "개명 서비스", href: "/renaming" },
-    { label: "사주 궁합", href: "/saju" },
-    { label: "K-사주 작명", href: "/ai-naming" },
+    // MVP에서 숨김 - 향후 활성화 예정
+    // { label: "사주 궁합", href: "/saju" },
+    // { label: "K-사주 작명", href: "/ai-naming" },
   ]
 
   return (

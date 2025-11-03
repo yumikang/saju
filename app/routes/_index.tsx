@@ -15,7 +15,7 @@ export default function Index() {
       discount: '30%',
       icon: Sparkles,
       color: 'from-blue-500 to-purple-500',
-      features: ['AI 빅데이터 분석', '5개 이름 추천', '전문가 검토'],
+      features: ['최근 5년 빅데이터 분석', '10개 이름 추천', '상세 분석 PDF 제공'],
       href: '/naming'
     },
     {
@@ -27,21 +27,22 @@ export default function Index() {
       discount: '20%',
       icon: Crown,
       color: 'from-yellow-500 to-orange-500',
-      features: ['현재 운세 분석', '개명 효과 예측', '법적 절차 안내'],
+      features: ['현재 이름 오행 진단', '기운 변화 분석 PDF 제공', '개명 절차 가이드'],
       href: '/renaming'
     },
-    {
-      id: 'saju',
-      title: '사주 궁합',
-      description: '예비 부부, 커플 사주 궁합 분석',
-      price: '80,000',
-      originalPrice: '100,000',
-      discount: '20%',
-      icon: Users,
-      color: 'from-pink-500 to-rose-500',
-      features: ['궁합 분석', '결혼 운세', '개명 제안'],
-      href: '/saju'
-    }
+    // MVP에서 숨김 - 향후 활성화 예정
+    // {
+    //   id: 'saju',
+    //   title: '사주 궁합',
+    //   description: '예비 부부, 커플 사주 궁합 분석',
+    //   price: '80,000',
+    //   originalPrice: '100,000',
+    //   discount: '20%',
+    //   icon: Users,
+    //   color: 'from-pink-500 to-rose-500',
+    //   features: ['궁합 분석', '결혼 운세', '개명 제안'],
+    //   href: '/saju'
+    // }
   ]
 
   return (
@@ -57,7 +58,7 @@ export default function Index() {
             사주로 찾는 완벽한 이름
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
-            신생아 작명부터 개명, 사주 궁합까지<br />
+            신생아 작명부터 개명까지<br />
             전문가의 사주 분석으로 최적의 이름을 찾아보세요
           </p>
         </motion.div>
@@ -130,7 +131,7 @@ export default function Index() {
       {/* 서비스 카드 섹션 */}
       <section className="container mx-auto px-4 py-16">
         <h2 className="text-3xl font-bold text-center mb-12">서비스 선택</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {services.map((service, index) => (
             <motion.div
               key={service.id}
@@ -152,7 +153,7 @@ export default function Index() {
                     {service.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-8">
                   {/* 가격 정보 */}
                   <div>
                     <p className="text-sm text-gray-500 line-through">
@@ -163,9 +164,9 @@ export default function Index() {
                       {service.id === 'group' && <span className="text-base font-normal">부터</span>}
                     </p>
                   </div>
-                  
+
                   {/* 특징 리스트 */}
-                  <ul className="space-y-2">
+                  <ul className="space-y-2 mb-2">
                     {service.features.map((feature, i) => (
                       <li key={i} className="flex items-center gap-2 text-sm">
                         <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
@@ -173,14 +174,16 @@ export default function Index() {
                       </li>
                     ))}
                   </ul>
-                  
+
                   {/* CTA 버튼 */}
-                  <Link to={service.href}>
-                    <Button className="w-full bg-orange-500 hover:bg-orange-600">
-                      자세히 보기
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
-                  </Link>
+                  <div className="pt-8">
+                    <Link to={service.href}>
+                      <Button className="w-full bg-orange-500 hover:bg-orange-600">
+                        자세히 보기
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
