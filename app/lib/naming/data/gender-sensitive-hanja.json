@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "version": "2025-11-04",
+    "description": "성별 감성 충돌 방지용 한자 필터링 데이터",
+    "note": "남성/여성 이름에 부적합한 한자 리스트"
+  },
+  "masculine": {
+    "description": "남성적 감성의 한자 (여아 이름에 부적합)",
+    "hanja": [
+      {
+        "char": "俊",
+        "reading": "준",
+        "reason": "뛰어날 준 - 강한 남성성"
+      },
+      {
+        "char": "豪",
+        "reading": "호",
+        "reason": "호걸 호 - 강한 남성성"
+      },
+      {
+        "char": "皓",
+        "reading": "호",
+        "reason": "밝을 호 - 남성적 이미지"
+      },
+      {
+        "char": "玄",
+        "reading": "현",
+        "reason": "검을 현 - 남성적 이미지"
+      },
+      {
+        "char": "碩",
+        "reading": "석",
+        "reason": "클 석 - 남성적 이미지"
+      },
+      {
+        "char": "煥",
+        "reading": "환",
+        "reason": "빛날 환 - 남성적 이미지"
+      },
+      {
+        "char": "赫",
+        "reading": "혁",
+        "reason": "빛날 혁 - 남성적 이미지"
+      },
+      {
+        "char": "雄",
+        "reading": "웅",
+        "reason": "수컷 웅 - 명시적 남성성"
+      },
+      {
+        "char": "雷",
+        "reading": "뢰",
+        "reason": "우레 뢰 - 강한 남성성"
+      },
+      {
+        "char": "剛",
+        "reading": "강",
+        "reason": "굳셀 강 - 명시적 남성성"
+      }
+    ]
+  },
+  "feminine": {
+    "description": "여성적 감성의 한자 (남아 이름에 부적합)",
+    "hanja": [
+      {
+        "char": "雅",
+        "reading": "아",
+        "reason": "우아할 아 - 강한 여성성"
+      },
+      {
+        "char": "婉",
+        "reading": "완",
+        "reason": "곱을 완 - 강한 여성성"
+      },
+      {
+        "char": "姸",
+        "reading": "연",
+        "reason": "고울 연 - 강한 여성성"
+      },
+      {
+        "char": "柔",
+        "reading": "유",
+        "reason": "부드러울 유 - 강한 여성성"
+      },
+      {
+        "char": "淑",
+        "reading": "숙",
+        "reason": "맑을 숙 - 강한 여성성"
+      },
+      {
+        "char": "嬉",
+        "reading": "희",
+        "reason": "기쁠 희 - 여성성"
+      },
+      {
+        "char": "嬪",
+        "reading": "빈",
+        "reason": "빈첩 빈 - 여성성"
+      },
+      {
+        "char": "娥",
+        "reading": "아",
+        "reason": "아름다울 아 - 여성성"
+      },
+      {
+        "char": "嫻",
+        "reading": "한",
+        "reason": "얌전할 한 - 여성성"
+      },
+      {
+        "char": "姬",
+        "reading": "희",
+        "reason": "여자 희 - 명시적 여성성"
+      }
+    ]
+  },
+  "severity": {
+    "high": {
+      "description": "절대 사용 금지 (완전 차단)",
+      "masculine": ["雄", "剛", "雷"],
+      "feminine": ["婉", "姸", "姬", "嬪"]
+    },
+    "medium": {
+      "description": "강한 감점 (-40점)",
+      "masculine": ["俊", "豪", "皓", "碩"],
+      "feminine": ["雅", "柔", "淑", "娥"]
+    },
+    "low": {
+      "description": "약한 감점 (-20점)",
+      "masculine": ["玄", "煥", "赫"],
+      "feminine": ["嬉", "嫻"]
+    }
+  }
+}

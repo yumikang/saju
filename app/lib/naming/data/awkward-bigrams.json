@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "version": "2025-11-04",
+    "note": "낯설거나 부자연스러운 음절 조합 (패널티 적용)"
+  },
+  "awkwardPairs": [
+    { "pair": ["도", "호"], "penalty": -30 },
+    { "pair": ["호", "도"], "penalty": -30 },
+    { "pair": ["로", "이"], "penalty": -20 },
+    { "pair": ["뢰", "서"], "penalty": -30 },
+    { "pair": ["쇠", "연"], "penalty": -30 }
+  ]
+}
