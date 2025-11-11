@@ -110,12 +110,13 @@ export const DEFAULT_PIPELINE_CONFIG: PipelineConfig = {
   batchSize: 50,          // PERFORMANCE: Reduced from 100 to 50 for faster batching
   timeout: 10000,
   weights: {
-    yongsin: 0.45,     // 🎯 오행 매칭 최우선 (32% → 45%, 차별화 강화)
-    yinyang: 0.15,     // 음양 균형 (20% → 15%)
-    pronunciation: 0.15, // 발음 (20% → 15%)
-    meaning: 0.15,     // 의미 (20% → 15%)
-    numerology: FEATURES.disableNumerologyInLegacy ? 0 : 0.03,  // 획수 비활성화
-    taboo: 0.10,       // 🎯 금기 강화 (8% → 10%, 강력한 페널티)
+    // 🎯 가중치 합 = 90% (금기는 별도 감점 처리)
+    yongsin: 0.45,     // 오행 매칭 최우선
+    yinyang: 0.15,     // 음양 균형
+    pronunciation: 0.15, // 발음 자연스러움
+    meaning: 0.15,     // 의미 + 부모 가치
+    numerology: FEATURES.disableNumerologyInLegacy ? 0 : 0.03,  // 획수 (비활성화)
+    taboo: 0,          // 금기는 가중합산 후 직접 감점 (가중치 사용 안 함)
   },
   minScore: 60,
   requireYongsinMatch: true,
@@ -583,55 +584,57 @@ export class NamingPipeline {
     // 5. Taboo check
     const tabooAnalysis = this.checkTaboo([combo.firstChar, combo.secondChar]);
 
-    // Calculate weighted scores
+    // 🎯 올바른 점수 계산 순서: 가중합산 → 감점 → 보너스 → 클램프
+
+    // 1) 개별 점수 (taboo는 제외, 나중에 감점으로 적용)
     const scores = {
       yongsin: yongsinAnalysis.matchScore,
       yinyang: yinyangAnalysis.balanceScore,
       pronunciation: phoneticAnalysis.overallScore,
       meaning: this.calculateMeaningScore([combo.firstChar, combo.secondChar], context),
       numerology: numerologyAnalysis.overallScore,
-      taboo: 100 - tabooAnalysis.deductionPoints,
+      taboo: 100 - tabooAnalysis.deductionPoints, // 표시용 (가중합산에는 미포함)
     };
 
-    let totalScore =
-      scores.yongsin * context.config.weights.yongsin +
-      scores.yinyang * context.config.weights.yinyang +
-      scores.pronunciation * context.config.weights.pronunciation +
-      scores.meaning * context.config.weights.meaning +
-      scores.numerology * context.config.weights.numerology +
-      scores.taboo * context.config.weights.taboo;
+    // 2) 가중합산 (taboo 제외, 가중치 합 = 90%)
+    // 용신 45% + 음양 15% + 발음 15% + 의미 15% = 90%
+    let baseScore =
+      scores.yongsin * 0.45 +
+      scores.yinyang * 0.15 +
+      scores.pronunciation * 0.15 +
+      scores.meaning * 0.15;
 
-    // 🎯 언어적 자연스러움 패널티 (같은 음절 반복, 의미 중복)
+    // 3) 언어적 자연스러움 패널티 (같은 음절 반복, 의미 중복)
     if (FEATURES.enableLinguisticScorerInLegacy) {
       const linguisticPenaltyScore = this.linguisticPenalty(
         combo.firstChar,
         combo.secondChar,
         context.birthInfo.gender
       );
-      totalScore += linguisticPenaltyScore;
+      baseScore += linguisticPenaltyScore;
 
       if (FEATURES.stage3VerboseLog && linguisticPenaltyScore < 0) {
         console.log(
-          `[Stage 3][LinguisticScorer] ${combo.firstName} (${combo.firstChar.character}${combo.secondChar.character}): ` +
-          `총 패널티 ${linguisticPenaltyScore}점`
+          `[LinguisticScorer] ${combo.firstName} (${combo.firstChar.character}${combo.secondChar.character}): ` +
+          `패널티 ${linguisticPenaltyScore.toFixed(1)}점`
         );
       }
     }
 
-    // 🎯 한글 음운 기반 성별 보정
-    // "수아" (F) → +6 | "민준" (M) → +6 | "서연" (F) → +3 | 반대 성별 → -2
+    // 4) 성별 보정
     const hangulGenderBoost = genderBoost(combo.firstName, context.birthInfo.gender);
-    let finalTotalScore = totalScore + hangulGenderBoost;
+    baseScore += hangulGenderBoost;
 
-    // 🎯 완벽한 이름 보너스 시스템 (+5점)
-    // 조건: 1) 용신 완벽 매칭 (주 용신 2개 OR 주+보조 각 1개)
-    //       2) 음양 균형 우수 (85점 이상)
-    //       3) 부모 가치 반영 (alignment score 80점 이상)
+    // 5) 금기 감점 (가중합산 후 직접 차감)
+    const tabooDeduction = tabooAnalysis.deductionPoints;
+    baseScore -= tabooDeduction;
+
+    // 6) 완벽한 이름 보너스 (+5~10점)
     let bonusScore = 0;
-    const perfectYongsinMatch = yongsinAnalysis.matchScore >= 90; // 100 or 90점
+    const perfectYongsinMatch = yongsinAnalysis.matchScore >= 90;
     const excellentYinYang = yinyangAnalysis.balanceScore >= 85;
 
-    // Parent value alignment 점수 계산 (부모 가치가 있는 경우에만)
+    // Parent value alignment 점수 계산
     const parentValues = (context.config.parentValues || []) as ParentValue[];
     let hasGoodParentAlignment = false;
 
@@ -647,16 +650,21 @@ export class NamingPipeline {
     }
 
     if (perfectYongsinMatch && excellentYinYang && hasGoodParentAlignment) {
-      bonusScore = 5;
+      bonusScore = 10; // 5 → 10점으로 상향 (최대 100점 도달 가능)
       if (FEATURES.stage3VerboseLog) {
         console.log(
           `[PerfectBonus] ${combo.firstName} (${combo.firstChar.character}${combo.secondChar.character}): ` +
-          `+5점 보너스 (용신:${yongsinAnalysis.matchScore}, 음양:${yinyangAnalysis.balanceScore})`
+          `+10점 보너스 (용신:${yongsinAnalysis.matchScore}, 음양:${yinyangAnalysis.balanceScore})`
         );
       }
     }
 
-    finalTotalScore += bonusScore;
+    // 7) 최종 점수 = 가중합 + 보너스, 클램프 [0, 100]
+    let rawScore = baseScore + bonusScore;
+    let finalTotalScore = Math.max(0, Math.min(100, rawScore));
+
+    // 8) 소수점 반올림
+    finalTotalScore = Math.round(finalTotalScore);
 
     // 🎯 Tie-breaker 필드 추가
     const strokeCount = combo.firstChar.strokes + combo.secondChar.strokes;
