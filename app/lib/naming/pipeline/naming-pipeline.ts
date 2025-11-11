@@ -621,7 +621,42 @@ export class NamingPipeline {
     // 🎯 한글 음운 기반 성별 보정
     // "수아" (F) → +6 | "민준" (M) → +6 | "서연" (F) → +3 | 반대 성별 → -2
     const hangulGenderBoost = genderBoost(combo.firstName, context.birthInfo.gender);
-    const finalTotalScore = totalScore + hangulGenderBoost;
+    let finalTotalScore = totalScore + hangulGenderBoost;
+
+    // 🎯 완벽한 이름 보너스 시스템 (+5점)
+    // 조건: 1) 용신 완벽 매칭 (주 용신 2개 OR 주+보조 각 1개)
+    //       2) 음양 균형 우수 (85점 이상)
+    //       3) 부모 가치 반영 (alignment score 80점 이상)
+    let bonusScore = 0;
+    const perfectYongsinMatch = yongsinAnalysis.matchScore >= 90; // 100 or 90점
+    const excellentYinYang = yinyangAnalysis.balanceScore >= 85;
+
+    // Parent value alignment 점수 계산 (부모 가치가 있는 경우에만)
+    const parentValues = (context.config.parentValues || []) as ParentValue[];
+    let hasGoodParentAlignment = false;
+
+    if (parentValues.length > 0) {
+      const alignmentScore = calculateNameValueAlignment(
+        [combo.firstChar, combo.secondChar].map(char => ({
+          character: char.character,
+          meaning: char.meaning
+        })),
+        parentValues
+      );
+      hasGoodParentAlignment = alignmentScore >= 80;
+    }
+
+    if (perfectYongsinMatch && excellentYinYang && hasGoodParentAlignment) {
+      bonusScore = 5;
+      if (FEATURES.stage3VerboseLog) {
+        console.log(
+          `[PerfectBonus] ${combo.firstName} (${combo.firstChar.character}${combo.secondChar.character}): ` +
+          `+5점 보너스 (용신:${yongsinAnalysis.matchScore}, 음양:${yinyangAnalysis.balanceScore})`
+        );
+      }
+    }
+
+    finalTotalScore += bonusScore;
 
     // 🎯 Tie-breaker 필드 추가
     const strokeCount = combo.firstChar.strokes + combo.secondChar.strokes;
