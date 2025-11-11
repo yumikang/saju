@@ -348,7 +348,7 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
     session.lastNameStrokes,
     {
       maxCandidates: 10,  // Generate exactly 10 candidates
-      minScore: 50,       // Lower threshold for much faster generation
+      minScore: 75,       // 🎯 최소 75점 이상 (우수한 이름만 추천)
       parentValues: session.selectedValues as any, // Pass parent values for scoring
     }
   );
