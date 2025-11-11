@@ -356,6 +356,12 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
 
   console.log(`[Stage 3] Generated ${result.candidates.length} names in ${executionTime}ms`);
 
+  // 🔍 DEBUG: Check if scores are diverse
+  console.log('[Stage 3] Top 10 candidate scores:');
+  result.candidates.slice(0, 10).forEach((c, i) => {
+    console.log(`  ${i + 1}. ${c.characters.map(ch => ch.character).join('')} - Score: ${c.score.toFixed(2)}`);
+  });
+
   // Freemium V2 structure: 상위 10개만 생성 (1-9위 잠금, 10위 무료)
   const allCandidates = result.candidates;
   const top10 = allCandidates.slice(0, 10); // 1-10위만 사용
@@ -384,11 +390,11 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
       element: char.element,
     })),
     scores: {
-      overall: Math.round(candidate.score),
-      element: Math.round(candidate.breakdown.element),
-      yinyang: Math.round(candidate.breakdown.yinyang),
-      numerology: Math.round(candidate.breakdown.numerology),
-      meaning: Math.round(candidate.breakdown.meaning),
+      overall: Math.round(candidate.score * 10) / 10, // 소수점 1자리 유지
+      element: Math.round(candidate.breakdown.element * 10) / 10,
+      yinyang: Math.round(candidate.breakdown.yinyang * 10) / 10,
+      numerology: Math.round(candidate.breakdown.numerology * 10) / 10,
+      meaning: Math.round(candidate.breakdown.meaning * 10) / 10,
     },
     aiExplanation: `이 이름은 ${session.selectedValues.join(', ')} 가치를 반영하여 선택되었습니다.`,
   }));
