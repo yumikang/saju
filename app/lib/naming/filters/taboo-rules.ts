@@ -354,19 +354,20 @@ export function batchCheckCharacters(
 export function calculateTabooDeduction(result: TabooCheckResult): number {
   let deduction = 0;
 
+  // 🎯 감점 강화로 점수 차별화 확대
   for (const issue of result.issues) {
     switch (issue.severity) {
       case 'critical':
         deduction += 100; // 완전 배제
         break;
       case 'high':
-        deduction += 50;
+        deduction += 70;  // 50 → 70 (강력한 페널티)
         break;
       case 'medium':
-        deduction += 30;
+        deduction += 45;  // 30 → 45 (차별화 강화)
         break;
       case 'low':
-        deduction += 10;
+        deduction += 20;  // 10 → 20 (차별화 강화)
         break;
     }
   }

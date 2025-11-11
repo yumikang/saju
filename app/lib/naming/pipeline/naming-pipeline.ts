@@ -48,6 +48,7 @@ import type {
   ScoringContext,
 } from '~/lib/naming/types';
 import { genderBoost } from '~/lib/naming/utils/gender-boost';
+import { tieBreakSort } from '~/lib/naming/utils/tie-breaker';
 
 // ============================================================
 // Core Interfaces
@@ -109,12 +110,12 @@ export const DEFAULT_PIPELINE_CONFIG: PipelineConfig = {
   batchSize: 50,          // PERFORMANCE: Reduced from 100 to 50 for faster batching
   timeout: 10000,
   weights: {
-    yongsin: 0.32,     // 오행 편향 완화 (35% → 32%)
-    yinyang: 0.20,     // 음양 균형 (25% → 20%)
-    pronunciation: 0.20,
-    meaning: 0.20,     // 의미 강화 (10% → 20%)
-    numerology: FEATURES.disableNumerologyInLegacy ? 0 : 0.03,  // 획수 비활성화 (5% → 0%)
-    taboo: 0.08,       // 금기 강화 (5% → 8%)
+    yongsin: 0.45,     // 🎯 오행 매칭 최우선 (32% → 45%, 차별화 강화)
+    yinyang: 0.15,     // 음양 균형 (20% → 15%)
+    pronunciation: 0.15, // 발음 (20% → 15%)
+    meaning: 0.15,     // 의미 (20% → 15%)
+    numerology: FEATURES.disableNumerologyInLegacy ? 0 : 0.03,  // 획수 비활성화
+    taboo: 0.10,       // 🎯 금기 강화 (8% → 10%, 강력한 페널티)
   },
   minScore: 60,
   requireYongsinMatch: true,
@@ -208,6 +209,12 @@ export interface ScoredNameCandidate {
 
   // Rankings
   rank?: number;
+
+  // Tie-breaker fields
+  nameFrequency?: number | null;
+  usageFrequency?: number | null;
+  strokeCount?: number | null;
+  stableId?: string;
 }
 
 /**
@@ -616,6 +623,10 @@ export class NamingPipeline {
     const hangulGenderBoost = genderBoost(combo.firstName, context.birthInfo.gender);
     const finalTotalScore = totalScore + hangulGenderBoost;
 
+    // 🎯 Tie-breaker 필드 추가
+    const strokeCount = combo.firstChar.strokes + combo.secondChar.strokes;
+    const stableId = `${combo.firstChar.character}${combo.secondChar.character}`;
+
     return {
       firstName: combo.firstName,
       fullName,
@@ -631,6 +642,11 @@ export class NamingPipeline {
         numerologyAnalysis,
         tabooAnalysis,
       },
+      // Tie-breaker fields
+      nameFrequency: null, // TODO: Add name frequency data
+      usageFrequency: null, // TODO: Add usage frequency data
+      strokeCount,
+      stableId,
     };
   }
 
@@ -695,8 +711,8 @@ export class NamingPipeline {
     }
 
     try {
-      // Sort by total score descending
-      const sorted = context.candidates.sort((a, b) => b.totalScore - a.totalScore);
+      // 🎯 Tie-breaker 정렬 적용 (totalScore → nameFreq → usageFreq → strokes → id)
+      const sorted = tieBreakSort(context.candidates);
 
       // Take top N
       const topCandidates = sorted.slice(0, context.config.maxCandidates);
@@ -873,13 +889,14 @@ export class NamingPipeline {
     const primaryMatch = primaryMatches > 0;
     const secondaryMatch = secondaryMatches > 0;
 
+    // 🎯 용신 매칭 점수 차별화 강화 (점수 범위 확대)
     let matchScore = 0;
-    if (primaryMatches === 2) matchScore = 100;
-    else if (primaryMatches === 1 && secondaryMatches === 1) matchScore = 95;
-    else if (primaryMatches === 1) matchScore = 85;
-    else if (secondaryMatches === 2) matchScore = 80;
-    else if (secondaryMatches === 1) matchScore = 70;
-    else matchScore = 50;
+    if (primaryMatches === 2) matchScore = 100;           // 완벽한 매칭
+    else if (primaryMatches === 1 && secondaryMatches === 1) matchScore = 90; // 95 → 90 (차이 확대)
+    else if (primaryMatches === 1) matchScore = 75;       // 85 → 75 (차이 확대)
+    else if (secondaryMatches === 2) matchScore = 65;     // 80 → 65 (차이 확대)
+    else if (secondaryMatches === 1) matchScore = 50;     // 70 → 50 (차이 확대)
+    else matchScore = 30;                                  // 50 → 30 (페널티 강화)
 
     const explanation = `용신 ${primaryElement} ${primaryMatches}개, 희신 ${secondaryElement || 'N/A'} ${secondaryMatches}개`;
 
@@ -953,6 +970,8 @@ export class NamingPipeline {
     // Parent value alignment score (30% weight) - KEY DIFFERENTIATOR
     const parentValues = (context.config.parentValues || []) as ParentValue[];
 
+    console.log(`[MeaningScore] Parent Values:`, parentValues.length > 0 ? parentValues : 'NONE');
+
     if (parentValues.length > 0) {
       const alignmentScore = calculateNameValueAlignment(
         characters.map(char => ({
@@ -961,9 +980,11 @@ export class NamingPipeline {
         })),
         parentValues
       );
+      console.log(`[MeaningScore] ${characters[0].character}${characters[1].character}: baseScore=${baseScore.toFixed(1)}, alignmentScore=${alignmentScore.toFixed(1)}, final=${(baseScore + alignmentScore * 0.3).toFixed(1)}`);
       return baseScore + (alignmentScore * 0.3);
     }
 
+    console.log(`[MeaningScore] ${characters[0].character}${characters[1].character}: baseScore=${baseScore.toFixed(1)}, NO PARENT VALUES, final=${(baseScore + 15).toFixed(1)}`);
     // No parent values = neutral 15 point bonus (50 * 0.3)
     return baseScore + 15;
   }
