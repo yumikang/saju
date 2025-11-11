@@ -118,7 +118,7 @@ export const DEFAULT_PIPELINE_CONFIG: PipelineConfig = {
     numerology: FEATURES.disableNumerologyInLegacy ? 0 : 0.03,  // 획수 (비활성화)
     taboo: 0,          // 금기는 가중합산 후 직접 감점 (가중치 사용 안 함)
   },
-  minScore: 75,      // 🎯 최소 75점 이상만 추천 (우수한 이름 이상)
+  minScore: 80,      // 🎯 최소 80점 이상만 추천 (우수한 이름만)
   requireYongsinMatch: true,
   avoidInauspicious: true,
   cacheEnabled: true,
