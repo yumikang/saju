@@ -55,7 +55,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <div className="min-h-screen flex flex-col">
           {!isKSajuPage && <Header />}
           <main className={isKSajuPage ? "" : "flex-1"}>

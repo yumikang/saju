@@ -37,6 +37,15 @@ const ELEMENT_KOREAN = {
   WATER: '수(水)',
 };
 
+// Element display names (for yongsin display)
+const ELEMENT_DISPLAY = {
+  WOOD: '목',
+  FIRE: '화',
+  EARTH: '토',
+  METAL: '금',
+  WATER: '수',
+};
+
 interface SajuPillar {
   stem: string;
   branch: string;
@@ -284,16 +293,27 @@ export default function FreemiumAnalysisPage() {
                         보완이 필요한 오행
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {saju.lackingElements.map((element) => (
-                          <span
-                            key={element}
-                            className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                              ELEMENT_COLORS[element as keyof typeof ELEMENT_COLORS]
-                            }`}
-                          >
-                            {ELEMENT_KOREAN[element as keyof typeof ELEMENT_KOREAN]}
-                          </span>
-                        ))}
+                        {saju.lackingElements.map((element, index) => {
+                          // API already returns Korean text like "목(木)", so use directly
+                          // Extract the element type for color mapping
+                          const elementType = element.includes('목') ? 'WOOD'
+                            : element.includes('화') ? 'FIRE'
+                            : element.includes('토') ? 'EARTH'
+                            : element.includes('금') ? 'METAL'
+                            : element.includes('수') ? 'WATER'
+                            : null;
+
+                          return (
+                            <span
+                              key={index}
+                              className={`px-3 py-1 rounded-full text-sm font-medium border ${
+                                elementType ? ELEMENT_COLORS[elementType as keyof typeof ELEMENT_COLORS] : 'bg-gray-100 text-gray-800 border-gray-300'
+                              }`}
+                            >
+                              {element}
+                            </span>
+                          );
+                        })}
                       </div>
                       <p className="text-sm text-orange-700 mt-2">
                         이름에서 이 오행을 보완하면 좋습니다
@@ -318,21 +338,21 @@ export default function FreemiumAnalysisPage() {
               <CardDescription>사주의 핵심 에너지</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
+              <div className="flex flex-col items-center py-8">
                 <div className="inline-block bg-gradient-to-br from-yellow-100 to-orange-100 border-4 border-yellow-400 rounded-full w-32 h-32 flex items-center justify-center">
                   <div className="text-5xl font-bold text-yellow-900">
-                    {saju.yongsin.primary}
+                    {ELEMENT_DISPLAY[saju.yongsin.primary as keyof typeof ELEMENT_DISPLAY] || saju.yongsin.primary}
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold mt-6 mb-2">
-                  주 용신: {saju.yongsin.primary}
+                  주 용신: {ELEMENT_KOREAN[saju.yongsin.primary as keyof typeof ELEMENT_KOREAN] || saju.yongsin.primary}
                 </h3>
                 {saju.yongsin.secondary && (
                   <p className="text-gray-600">
-                    보조 용신: {saju.yongsin.secondary}
+                    보조 용신: {ELEMENT_KOREAN[saju.yongsin.secondary as keyof typeof ELEMENT_KOREAN] || saju.yongsin.secondary}
                   </p>
                 )}
-                <p className="text-sm text-gray-500 mt-4 max-w-md mx-auto">
+                <p className="text-sm text-gray-500 mt-4 max-w-md text-center">
                   용신은 사주의 균형을 맞추는 가장 중요한 오행입니다.
                   이름에 용신을 잘 반영하면 좋은 이름이 됩니다.
                 </p>
