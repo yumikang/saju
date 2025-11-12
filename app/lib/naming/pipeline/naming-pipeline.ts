@@ -557,6 +557,23 @@ export class NamingPipeline {
     const fullName = context.lastName + combo.firstName;
     const hanja = combo.firstChar.character + combo.secondChar.character;
 
+    // 🛡️ 0. Early taboo check - critical/high severity는 즉시 제거
+    // checkCharacterSafety를 사용하여 각 한자 개별 검사
+    for (const char of [combo.firstChar, combo.secondChar]) {
+      const safetyCheck = checkCharacterSafety(char.character, char.meaning);
+      if (!safetyCheck.isSafe) {
+        // critical 또는 high severity issue가 있으면 즉시 reject
+        const hasCriticalOrHigh = safetyCheck.issues.some(
+          issue => issue.severity === 'critical' || issue.severity === 'high'
+        );
+        if (hasCriticalOrHigh) {
+          throw new Error(
+            `Taboo character rejected: ${char.character} - ${safetyCheck.issues.map(i => i.reason).join(', ')}`
+          );
+        }
+      }
+    }
+
     // 1. Numerology (81수리)
     const numerologyAnalysis = this.analyzeNumerology(
       context.lastNameStrokes,
