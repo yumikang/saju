@@ -89,9 +89,10 @@ export function RenamingFreeCard({
             <div className="text-xs text-gray-600">음양</div>
             <div className="text-sm font-bold text-orange-600">{Math.round(scores.yinYangBalance.score)}</div>
           </div>
-          <div className="text-center p-2 bg-gray-50 rounded">
-            <div className="text-xs text-gray-600">수리</div>
+          <div className="text-center p-2 bg-gray-50 rounded opacity-50">
+            <div className="text-xs text-gray-600">수리 (참고)</div>
             <div className="text-sm font-bold text-orange-600">{Math.round(scores.numerology.score)}</div>
+            <div className="text-[10px] text-amber-600">미반영</div>
           </div>
           <div className="text-center p-2 bg-gray-50 rounded">
             <div className="text-xs text-gray-600">의미</div>

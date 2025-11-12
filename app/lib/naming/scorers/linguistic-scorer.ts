@@ -19,6 +19,7 @@
 import { BaseScorer } from './base-scorer';
 import type { NameCandidate, ScoringContext } from '../types';
 import { analyzeMeaningSimilarity } from '../utils/meaning-similarity';
+import { scorePhoneticNaturalness, explainPhoneticNaturalness } from '../utils/phonetic-naturalness';
 
 export class LinguisticScorer extends BaseScorer {
   readonly name = 'linguistic';
@@ -32,39 +33,62 @@ export class LinguisticScorer extends BaseScorer {
 
     console.log(`[LinguisticScorer] 평가 중: ${firstName[0]}${firstName[1]} (${characters[0].character}${characters[1].character})`);
 
-    let score = 70; // Base score
     const issues: string[] = [];
 
-    // 1. Same syllable repetition penalty
-    if (firstName[0] === firstName[1]) {
-      console.log(`[LinguisticScorer] ⚠️ 같은 음절 반복 감지: ${firstName[0]} === ${firstName[1]} → -50점`);
-      score -= 50;
-      issues.push('같은 음절 반복');
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 1. 🆕 발음 자연스러움 (50% 가중치)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const phoneticScore = scorePhoneticNaturalness(firstName);
+    const phoneticWeighted = phoneticScore * 0.5;
+
+    if (phoneticScore < 70) {
+      issues.push(explainPhoneticNaturalness(firstName, phoneticScore));
     }
 
-    // 2. Meaning similarity penalty
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 2. 음절 반복 체크 (30% 가중치)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    let repetitionScore = 100;
+    if (firstName[0] === firstName[1]) {
+      console.log(`[LinguisticScorer] ⚠️ 같은 음절 반복 감지: ${firstName[0]} === ${firstName[1]}`);
+      repetitionScore = 0; // 완전 감점
+      issues.push('같은 음절 반복');
+    }
+    const repetitionWeighted = repetitionScore * 0.3;
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 3. 의미 유사도 체크 (20% 가중치)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     const char1 = characters[0];
     const char2 = characters[1];
 
+    let similarityScore = 100;
     if (char1.meaning && char2.meaning) {
       const similarity = analyzeMeaningSimilarity(char1.meaning, char2.meaning);
 
       if (similarity.similarity >= 0.7) {
-        // Very similar meanings
-        score -= 20;
+        similarityScore = 20; // 매우 유사 → 20점
         issues.push('의미 매우 유사');
       } else if (similarity.similarity >= 0.4) {
-        // Partially similar meanings
-        score -= 10;
+        similarityScore = 60; // 부분 유사 → 60점
         issues.push('의미 부분 유사');
       }
-      // else: diverse meanings, no penalty
+      // else: diverse meanings, 100점
     }
+    const similarityWeighted = similarityScore * 0.2;
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 최종 점수 계산
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const finalScore = phoneticWeighted + repetitionWeighted + similarityWeighted;
 
     // Store issues for explanation
     (candidate as any).__linguisticIssues = issues;
+    (candidate as any).__phoneticScore = phoneticScore;
 
-    return Math.max(0, score);
+    console.log(`[LinguisticScorer] 발음=${phoneticScore.toFixed(1)}, 반복=${repetitionScore}, 유사=${similarityScore.toFixed(1)} → 최종=${finalScore.toFixed(1)}`);
+
+    return Math.max(0, Math.min(100, finalScore));
   }
 
   protected generateExplanation(

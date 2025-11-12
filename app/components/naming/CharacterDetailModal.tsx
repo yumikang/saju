@@ -136,18 +136,20 @@ export function CharacterDetailModal({
               {/* 획수 */}
               {hanja.strokes !== null && (
                 <div className="border rounded-lg p-3">
-                  <p className="text-sm text-muted-foreground mb-1">획수</p>
+                  <p className="text-sm text-muted-foreground mb-1">획수 (참고용)</p>
                   <p className="text-lg font-semibold">{hanja.strokes}획</p>
+                  <p className="text-xs text-amber-600 mt-1">※ 점수에 미반영</p>
                 </div>
               )}
 
               {/* 오행 */}
               {hanja.element && (
                 <div className="border rounded-lg p-3">
-                  <p className="text-sm text-muted-foreground mb-1">오행</p>
+                  <p className="text-sm text-muted-foreground mb-1">오행 (참고용)</p>
                   <p className={`text-lg font-semibold ${getElementColor(hanja.element)}`}>
                     {getElementLabel(hanja.element)}
                   </p>
+                  <p className="text-xs text-amber-600 mt-1">※ 점수에 미반영</p>
                 </div>
               )}
 

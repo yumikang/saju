@@ -597,12 +597,13 @@ export class NamingPipeline {
     };
 
     // 2) 가중합산 (taboo 제외, 가중치 합 = 90%)
-    // 용신 45% + 음양 15% + 발음 15% + 의미 15% = 90%
+    // 🎯 용신 중심으로 더 극단적 차별화: 용신 60%, 나머지 각 10%
+    // 용신 60% + 음양 10% + 발음 10% + 의미 10% = 90%
     let baseScore =
-      scores.yongsin * 0.45 +
-      scores.yinyang * 0.15 +
-      scores.pronunciation * 0.15 +
-      scores.meaning * 0.15;
+      scores.yongsin * 0.60 +
+      scores.yinyang * 0.10 +
+      scores.pronunciation * 0.10 +
+      scores.meaning * 0.10;
 
     // 3) 언어적 자연스러움 패널티 (같은 음절 반복, 의미 중복)
     if (FEATURES.enableLinguisticScorerInLegacy) {

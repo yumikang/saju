@@ -21,8 +21,8 @@ const MODE_DEFAULTS = {
   },
   general: {
     isSurname: false,
-    sort: 'strokes' as const,
-    limit: 50,
+    sort: 'popularity' as const,
+    limit: 30, // 점수 기반 정렬된 상위 30개만
     placeholderSuffix: '한자'
   }
 } as const
@@ -416,7 +416,7 @@ export function HanjaSelector({
                     <div className="flex-1">
                       <div className="text-sm font-medium">{hanja.meaning}</div>
                       <div className="text-xs text-gray-500">
-                        {hanja.strokes ? `${hanja.strokes}획` : '획수 준비 중'} • {getElementKorean(hanja.element)}행
+                        {hanja.strokes ? `${hanja.strokes}획` : '획수 준비 중'} • {getElementKorean(hanja.element)}행 (참고)
                       </div>
                     </div>
                   </div>

@@ -1,0 +1,21 @@
+character,meaning,reading,current_strokes,current_element,kangxi_strokes,ziyuan_element,comment,source
+有,있을,유,12,FIRE,6,WATER,'있다/가지다' 월(月) 파생·액체/생명 유지 상징,user_verified
+美,아름다울,미,13,WOOD,9,EARTH,부수 羊(양)·풍요/온화/안정 → 土로 처리,user_verified
+宥,너그러울,유,13,WOOD,9,METAL,규범/관용/법(질서) 계열 → 金,user_verified
+柔,부드러울,유,13,WOOD,9,METAL,'절제/예의/유순'의 사회적 규범성,user_verified
+瑜,구슬,유,17,FIRE,13,METAL,王(옥) 계열은 통상 金,user_verified
+民,백성,민,10,EARTH,5,EARTH,'백성/땅/터전' 맥락,user_verified
+敏,민첩할,민,15,EARTH,11,WATER,신속/민첩(흐름/지혜/변화),user_verified
+準,준할,준,17,FIRE,13,WATER,기본 水 (예외 木 허용),user_verified
+俊,준걸,준,13,WOOD,9,METAL,재능/탁월/장인성,user_verified
+書,글,서,14,METAL,10,EARTH,문서/기록,user_verified
+瑞,상서로울,서,17,FIRE,13,WOOD,玉부 상서로움,user_verified
+賢,어질,현,19,METAL,15,EARTH,德/능력,user_verified
+玄,검을,현,10,EARTH,5,EARTH,현묘/깊음,user_verified
+眞,참,진,14,METAL,10,EARTH,참됨/진리,user_verified
+振,떨칠,진,14,METAL,10,EARTH,떨쳐일으킴,user_verified
+智,지혜,지,unknown,unknown,12,FIRE,부수 日(해) → 火. 지혜/지식,web_verified
+志,뜻,지,unknown,unknown,7,FIRE,부수 心(마음) → 火. 의지/뜻,web_verified
+秀,빼어날,수,unknown,unknown,7,WOOD,부수 禾(벼) → 木. 수려함/뛰어남,web_verified
+英,꽃부리,영,unknown,unknown,9,WOOD,부수 艸(풀) → 木. 영웅/뛰어남,web_verified
+珍,보배,진,unknown,unknown,9,METAL,부수 玉(옥) → 金. 보배/귀함,web_verified

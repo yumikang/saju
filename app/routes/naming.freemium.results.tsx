@@ -78,16 +78,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw new Response('세션 ID가 없습니다', { status: 400 });
   }
 
-  // Check cache first
-  const cached = resultsCache.get(sessionId);
-  const now = Date.now();
+  // 🔍 TEMP: Disable cache to test new scoring logic
+  // const cached = resultsCache.get(sessionId);
+  const now = Date.now(); // Keep for loaderData timestamp
+  // if (cached && (now - cached.timestamp) < CACHE_TTL) {
+  //   console.log('[Results Loader] Returning cached data for session:', sessionId);
+  //   return json<LoaderData>(cached.data);
+  // }
 
-  if (cached && (now - cached.timestamp) < CACHE_TTL) {
-    console.log('[Results Loader] Returning cached data for session:', sessionId);
-    return json<LoaderData>(cached.data);
-  }
-
-  console.log('[Results Loader] Fetching fresh data for session:', sessionId);
+  console.log('[Results Loader] Fetching FRESH data (cache disabled) for session:', sessionId);
 
   try {
     // Call Stage 3 API
@@ -215,15 +214,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     metrics,
   };
 
-  // Cache the result
-  resultsCache.set(sessionId, { data: loaderData, timestamp: now });
-
-  // Clean up old cache entries
-  for (const [key, value] of resultsCache.entries()) {
-    if (now - value.timestamp > CACHE_TTL) {
-      resultsCache.delete(key);
-    }
-  }
+  // 🔍 TEMP: Cache disabled for testing
+  // resultsCache.set(sessionId, { data: loaderData, timestamp: now });
+  // for (const [key, value] of resultsCache.entries()) {
+  //   if (now - value.timestamp > CACHE_TTL) {
+  //     resultsCache.delete(key);
+  //   }
+  // }
 
   return json<LoaderData>(loaderData);
   } catch (error) {

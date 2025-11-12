@@ -8,30 +8,28 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  email         String         @unique
-  name          String?
-  phone         String?
-  avatarUrl     String?        @map("avatar_url")
-  // Admin fields  
-  role          Role           @default(USER)
-  status        UserStatus     @default(ACTIVE)
-  emailVerified Boolean        @default(false) @map("email_verified")
-  lastLoginAt   DateTime?      @map("last_login_at") @db.Timestamptz(3)
-  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt     DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
-  // Relations
-  oauthAccounts UserOAuth[]
-  favorites     Favorite[]
-  namingResults NamingResult[]
-  sajuData      SajuData[]
-  sessions      UserSession[]
-  auditLogs     AdminAuditLog[] @relation("Actor")
-  profile       UserProfile?
-  termsConsents TermsConsent[]
-  payments      Payment[]
-  serviceOrders ServiceOrder[]
+  id             String          @id @default(uuid())
+  email          String          @unique
+  name           String?
+  phone          String?
+  avatarUrl      String?         @map("avatar_url")
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  emailVerified  Boolean         @default(false) @map("email_verified")
+  lastLoginAt    DateTime?       @map("last_login_at") @db.Timestamptz(3)
+  role           Role            @default(USER)
+  status         UserStatus      @default(ACTIVE)
+  auditLogs      AdminAuditLog[] @relation("Actor")
+  favorites      Favorite[]
   namingPayments NamingPayment[]
+  namingResults  NamingResult[]
+  payments       Payment[]
+  sajuData       SajuData[]
+  serviceOrders  ServiceOrder[]
+  termsConsents  TermsConsent[]
+  oauthAccounts  UserOAuth[]
+  profile        UserProfile?
+  sessions       UserSession[]
 
   @@index([email])
   @@index([role])
@@ -40,7 +38,7 @@ model User {
 
 model SajuData {
   id               String         @id @default(uuid())
-  userId           String?        @map("user_id") // Optional for anonymous users
+  userId           String?        @map("user_id")
   name             String
   birthDate        DateTime       @map("birth_date") @db.Date
   birthTime        String         @map("birth_time")
@@ -72,7 +70,7 @@ model SajuData {
 
 model NamingResult {
   id               String     @id @default(uuid())
-  userId           String?    @map("user_id") // Optional for anonymous users
+  userId           String?    @map("user_id")
   sajuDataId       String     @map("saju_data_id")
   lastName         String     @map("last_name")
   firstName        String     @map("first_name")
@@ -86,9 +84,9 @@ model NamingResult {
   overallScore     Float      @map("overall_score")
   generationMethod String     @map("generation_method")
   aiModel          String?    @map("ai_model")
-  aiPrompt         String?    @map("ai_prompt") @db.Text
+  aiPrompt         String?    @map("ai_prompt")
   preferredValues  Json?      @map("preferred_values")
-  notes            String?    @db.Text
+  notes            String?
   createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
   favorites        Favorite[]
   sajuData         SajuData   @relation(fields: [sajuDataId], references: [id], onDelete: Cascade)
@@ -104,7 +102,7 @@ model Favorite {
   userId         String       @map("user_id")
   namingResultId String       @map("naming_result_id")
   rating         Int?
-  comment        String?      @db.Text
+  comment        String?
   createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
   namingResult   NamingResult @relation(fields: [namingResultId], references: [id], onDelete: Cascade)
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -114,42 +112,34 @@ model Favorite {
 }
 
 model HanjaDict {
-  id               String       @id @default(uuid())
-  character        String       @unique
-  meaning          String?
-  strokes          Int?
-  element          Element?
-  yinYang          YinYang?     @map("yin_yang")
-  review           ReviewStatus @default(ok)
-  evidenceJSON     Json?        @map("evidence_json")
-  decidedBy        String?      @map("decided_by")
-  ruleset          String?
-  codepoint        Int?
-  koreanReading    String?      @map("korean_reading")
-  chineseReading   String?      @map("chinese_reading")
-  radical          String?
-  usageFrequency        Int?         @default(0) @map("usage_frequency")
-  nameFrequency         Int?         @default(0) @map("name_frequency")
-  inferredNameFrequency Int?         @default(0) @map("inferred_name_frequency") // 2024년 출생 데이터 기반 추론 빈도
-  category              String?
-  gender           String?      // 성별 선호도: 'male', 'female', 'neutral' or null (레거시)
-  genderHint       String?      @map("gender_hint") // 성별 힌트: 'female', 'male', 'unisex' (큐레이션)
-  isGoodForNaming  Boolean?     @map("is_good_for_naming") // 작명 적합성 (null=미정, true=적합, false=부적합)
-  isSurname        Boolean      @default(false) @map("is_surname") // 한국 성씨 여부
-  seedProtected    Boolean      @default(false) @map("seed_protected") // 사람이 고른 한자 (빈도 낮아도 보호)
-  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt        DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id              String       @id @default(uuid())
+  character       String       @unique
+  meaning         String?
+  strokes         Int?
+  element         Element?
+  yinYang         YinYang?     @map("yin_yang")
+  review          ReviewStatus @default(ok)
+  evidenceJSON    Json?        @map("evidence_json")
+  decidedBy       String?      @map("decided_by")
+  ruleset         String?
+  codepoint       Int?
+  koreanReading   String?      @map("korean_reading")
+  chineseReading  String?      @map("chinese_reading")
+  radical         String?
+  usageFrequency  Int?         @default(0) @map("usage_frequency")
+  nameFrequency   Int?         @default(0) @map("name_frequency")
+  category        String?
+  gender          String?
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  isGoodForNaming Boolean      @default(true) @map("is_good_for_naming")
 
   @@index([element])
   @@index([strokes])
   @@index([usageFrequency], map: "usage_frequency_idx")
-  @@index([element, isGoodForNaming]) // 복합 인덱스 - 오행 기반 필터링 최적화
-  @@index([gender]) // 성별 필터링 최적화 (레거시)
-  @@index([genderHint]) // 성별 힌트 필터링 최적화 (큐레이션)
-  @@index([nameFrequency]) // 인기도 정렬 최적화
-  @@index([isSurname]) // 성씨 필터링 최적화
-  @@index([isGoodForNaming]) // 작명 적합성 필터링 최적화
-  @@index([seedProtected]) // Seed 보호 한자 필터링 최적화
+  @@index([element, isGoodForNaming])
+  @@index([gender])
+  @@index([nameFrequency])
   @@map("hanja_dict")
 }
 
@@ -178,6 +168,215 @@ model UserSession {
   @@map("user_sessions")
 }
 
+model UserOAuth {
+  id             String       @id @default(uuid())
+  userId         String       @map("user_id")
+  provider       AuthProvider
+  providerUserId String       @map("provider_user_id")
+  email          String?
+  emailVerified  Boolean      @default(false) @map("email_verified")
+  name           String?
+  profileImage   String?      @map("profile_image")
+  profileRaw     Json?        @map("profile_raw")
+  accessToken    String?      @map("access_token")
+  refreshToken   String?      @map("refresh_token")
+  expiresAt      DateTime?    @map("expires_at") @db.Timestamptz(3)
+  linkedAt       DateTime     @default(now()) @map("linked_at") @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+  @@index([email])
+  @@map("user_oauth")
+}
+
+model AdminAuditLog {
+  id          String   @id @default(uuid())
+  actorId     String   @map("actor_id")
+  action      String
+  targetType  String?  @map("target_type")
+  targetId    String?  @map("target_id")
+  beforeValue Json?    @map("before_value")
+  afterValue  Json?    @map("after_value")
+  metadata    Json?
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  actor       User     @relation("Actor", fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([action])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+  @@map("admin_audit_logs")
+}
+
+model UserProfile {
+  userId    String    @id @map("user_id")
+  nickname  String?
+  gender    Gender?
+  birthDate DateTime? @map("birth_date") @db.Date
+  phone     String?
+  bio       String?
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model TermsConsent {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  version         String
+  tosAgreed       Boolean   @map("tos_agreed")
+  privacyAgreed   Boolean   @map("privacy_agreed")
+  marketingAgreed Boolean   @default(false) @map("marketing_agreed")
+  agreedAt        DateTime  @default(now()) @map("agreed_at") @db.Timestamptz(3)
+  revokedAt       DateTime? @map("revoked_at") @db.Timestamptz(3)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, version])
+  @@index([agreedAt])
+  @@map("terms_consents")
+}
+
+model Payment {
+  id             String         @id @default(uuid())
+  userId         String         @map("user_id")
+  serviceOrderId String         @unique @map("service_order_id")
+  provider       String
+  transactionId  String         @map("transaction_id")
+  method         PaymentMethod
+  status         PaymentStatus
+  amount         Int
+  currency       Currency       @default(KRW)
+  paidAt         DateTime?      @map("paid_at") @db.Timestamptz(3)
+  failedAt       DateTime?      @map("failed_at") @db.Timestamptz(3)
+  refundedAt     DateTime?      @map("refunded_at") @db.Timestamptz(3)
+  cancelledAt    DateTime?      @map("cancelled_at") @db.Timestamptz(3)
+  metadata       Json?
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  paymentEvents  PaymentEvent[]
+  serviceOrder   ServiceOrder   @relation(fields: [serviceOrderId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, transactionId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, status, createdAt(sort: Desc)])
+  @@index([transactionId])
+  @@map("payments")
+}
+
+model PaymentEvent {
+  id        String           @id @default(uuid())
+  paymentId String           @map("payment_id")
+  eventType PaymentEventType @map("event_type")
+  status    PaymentStatus?
+  amount    Int?
+  currency  Currency?
+  message   String?
+  metadata  Json?
+  ipAddress String?          @map("ip_address")
+  userAgent String?          @map("user_agent")
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  payment   Payment          @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId, createdAt(sort: Desc)])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("payment_events")
+}
+
+model ServiceOrder {
+  id          String      @id @default(uuid())
+  userId      String      @map("user_id")
+  serviceType ServiceType @map("service_type")
+  status      OrderStatus
+  price       Int
+  resultData  Json?       @map("result_data")
+  completedAt DateTime?   @map("completed_at") @db.Timestamptz(3)
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  payment     Payment?
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([serviceType])
+  @@index([status])
+  @@index([createdAt])
+  @@map("service_orders")
+}
+
+model NamingSession {
+  id               String   @id @default(uuid())
+  lastName         String   @map("last_name")
+  lastNameStrokes  Int      @map("last_name_strokes")
+  gender           String
+  birthDate        DateTime @map("birth_date") @db.Date
+  birthTime        String   @map("birth_time")
+  isLunar          Boolean  @map("is_lunar")
+  selectedValues   Json     @map("selected_values")
+  saju             Json?
+  yongsin          Json?
+  top2             Json?    @map("top_2")
+  locked8          Json?    @map("locked_8")
+  allCandidates    Json?    @map("all_candidates")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  expiresAt        DateTime @default(dbgenerated("(now() + '24:00:00'::interval)")) @map("expires_at") @db.Timestamptz(3)
+
+  @@map("naming_sessions")
+}
+
+model NamingPayment {
+  id             String            @id @default(uuid())
+  userId         String            @map("user_id")
+  sajuId         String            @map("saju_id")
+  orderId        String            @unique @map("order_id")
+  paymentKey     String?           @unique @map("payment_key")
+  amount         Int
+  status         TossPaymentStatus
+  method         String?
+  orderName      String            @default("사주 작명 결과 프리미엄 조회") @map("order_name")
+  requestedAt    DateTime          @default(now()) @map("requested_at") @db.Timestamptz(3)
+  approvedAt     DateTime?         @map("approved_at") @db.Timestamptz(3)
+  cancelledAt    DateTime?         @map("cancelled_at") @db.Timestamptz(3)
+  failedAt       DateTime?         @map("failed_at") @db.Timestamptz(3)
+  expiresAt      DateTime?         @map("expires_at") @db.Timestamptz(3)
+  failureCode    String?           @map("failure_code")
+  failureMessage String?           @map("failure_message")
+  receiptUrl     String?           @map("receipt_url")
+  cardInfo       Json?             @map("card_info")
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sajuId])
+  @@index([userId, status])
+  @@index([sajuId])
+  @@index([orderId])
+  @@index([paymentKey])
+  @@index([status])
+  @@index([requestedAt(sort: Desc)])
+  @@map("naming_payments")
+}
+
+model RenamingAnalysis {
+  id               String   @id @default(uuid())
+  birthDate        String   @map("birth_date")
+  birthTime        String   @map("birth_time")
+  isLunar          Boolean  @map("is_lunar")
+  currentNameHanja String   @map("current_name_hanja")
+  currentScore     Float    @map("current_score")
+  sajuData         Json     @map("saju_data")
+  analysisData     Json     @map("analysis_data")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([createdAt])
+  @@map("renaming_analyses")
+}
+
 enum Element {
   METAL @map("金")
   WOOD  @map("木")
@@ -196,7 +395,6 @@ enum ReviewStatus {
   needs_review
 }
 
-// Admin related enums
 enum AuthProvider {
   GOOGLE @map("google")
   KAKAO  @map("kakao")
@@ -215,108 +413,26 @@ enum UserStatus {
   SUSPENDED @map("suspended")
 }
 
-// OAuth Account Linking
-model UserOAuth {
-  id             String       @id @default(uuid())
-  userId         String       @map("user_id")
-  provider       AuthProvider
-  providerUserId String       @map("provider_user_id")
-  email          String?
-  emailVerified  Boolean      @default(false) @map("email_verified")
-  name           String?
-  profileImage   String?      @map("profile_image")
-  profileRaw     Json?        @map("profile_raw") // Store complete profile from provider
-  accessToken    String?      @map("access_token") @db.Text // Encrypted in production
-  refreshToken   String?      @map("refresh_token") @db.Text // Encrypted in production
-  expiresAt      DateTime?    @map("expires_at") @db.Timestamptz(3)
-  linkedAt       DateTime     @default(now()) @map("linked_at") @db.Timestamptz(3)
-  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerUserId])
-  @@index([userId])
-  @@index([email])
-  @@map("user_oauth")
-}
-
-// Admin Audit Log
-model AdminAuditLog {
-  id          String   @id @default(uuid())
-  actorId     String   @map("actor_id")
-  actor       User     @relation("Actor", fields: [actorId], references: [id])
-  action      String   // e.g., "USER_SUSPEND", "JOB_RETRY", "HANJA_REVIEW_TOGGLE"
-  targetType  String?  @map("target_type") // e.g., "User", "HanjaDict", "Job"
-  targetId    String?  @map("target_id")
-  beforeValue Json?    @map("before_value")
-  afterValue  Json?    @map("after_value")
-  metadata    Json?    // Additional context
-  ipAddress   String?  @map("ip_address")
-  userAgent   String?  @map("user_agent")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-
-  @@index([actorId])
-  @@index([action])
-  @@index([targetType, targetId])
-  @@index([createdAt])
-  @@map("admin_audit_logs")
-}
-
-// User Profile - 사용자 추가 정보
-model UserProfile {
-  userId    String    @id @map("user_id")
-  nickname  String?
-  gender    Gender?
-  birthDate DateTime? @map("birth_date") @db.Date
-  phone     String?
-  bio       String?   @db.Text
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
-  
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@map("user_profiles")
-}
-
-// Terms Consent - 약관 동의 이력
-model TermsConsent {
-  id              String   @id @default(uuid())
-  userId          String   @map("user_id")
-  version         String   // e.g., "2025-08-24"
-  tosAgreed       Boolean  @map("tos_agreed")
-  privacyAgreed   Boolean  @map("privacy_agreed")
-  marketingAgreed Boolean  @default(false) @map("marketing_agreed")
-  agreedAt        DateTime @default(now()) @map("agreed_at") @db.Timestamptz(3)
-  revokedAt       DateTime? @map("revoked_at") @db.Timestamptz(3) // 동의 철회 시각
-  
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([userId, version])
-  @@index([agreedAt])
-  @@map("terms_consents")
-}
-
-// Gender enum
 enum Gender {
   MALE   @map("M")
   FEMALE @map("F")
   OTHER  @map("X")
 }
 
-// Payment related enums
 enum PaymentMethod {
-  CARD           @map("card")
-  BANK_TRANSFER  @map("bank_transfer")
-  KAKAO_PAY      @map("kakao_pay")
-  NAVER_PAY      @map("naver_pay")
-  TOSS           @map("toss")
+  CARD          @map("card")
+  BANK_TRANSFER @map("bank_transfer")
+  KAKAO_PAY     @map("kakao_pay")
+  NAVER_PAY     @map("naver_pay")
+  TOSS          @map("toss")
 }
 
 enum PaymentStatus {
-  PENDING    @map("pending")
-  COMPLETED  @map("completed")
-  FAILED     @map("failed")
-  REFUNDED   @map("refunded")
-  CANCELLED  @map("cancelled")
+  PENDING   @map("pending")
+  COMPLETED @map("completed")
+  FAILED    @map("failed")
+  REFUNDED  @map("refunded")
+  CANCELLED @map("cancelled")
 }
 
 enum Currency {
@@ -325,331 +441,34 @@ enum Currency {
 }
 
 enum PaymentEventType {
-  REQUESTED         @map("requested")
-  APPROVED          @map("approved")
-  FAILED            @map("failed")
-  CANCELLED         @map("cancelled")
-  REFUNDED          @map("refunded")
-  WEBHOOK_RECEIVED  @map("webhook_received")
+  REQUESTED        @map("requested")
+  APPROVED         @map("approved")
+  FAILED           @map("failed")
+  CANCELLED        @map("cancelled")
+  REFUNDED         @map("refunded")
+  WEBHOOK_RECEIVED @map("webhook_received")
 }
 
-// Service related enums
 enum ServiceType {
-  NAMING              @map("naming")
-  RENAMING            @map("renaming")
-  SAJU_COMPATIBILITY  @map("saju_compatibility")
+  NAMING             @map("naming")
+  RENAMING           @map("renaming")
+  SAJU_COMPATIBILITY @map("saju_compatibility")
 }
 
 enum OrderStatus {
-  PENDING      @map("pending")
-  PAID         @map("paid")
-  IN_PROGRESS  @map("in_progress")
-  COMPLETED    @map("completed")
-  CANCELLED    @map("cancelled")
+  PENDING     @map("pending")
+  PAID        @map("paid")
+  IN_PROGRESS @map("in_progress")
+  COMPLETED   @map("completed")
+  CANCELLED   @map("cancelled")
 }
 
-// Payment model - 결제 정보
-model Payment {
-  id              String        @id @default(uuid())
-  userId          String        @map("user_id")
-  serviceOrderId  String        @unique @map("service_order_id")
-  provider        String        // PG사: tosspayments, kakaopay, naverpay 등
-  transactionId   String        @map("transaction_id") // 외부 결제 시스템 거래 ID (required for idempotency)
-  method          PaymentMethod // 결제 수단
-  status          PaymentStatus // 결제 상태
-  amount          Int           // 결제 금액 (최소 단위: 원)
-  currency        Currency      @default(KRW) // 통화
-  paidAt          DateTime?     @map("paid_at") @db.Timestamptz(3) // 결제 완료 시각
-  failedAt        DateTime?     @map("failed_at") @db.Timestamptz(3) // 결제 실패 시각
-  refundedAt      DateTime?     @map("refunded_at") @db.Timestamptz(3) // 환불 시각
-  cancelledAt     DateTime?     @map("cancelled_at") @db.Timestamptz(3) // 취소 시각
-  metadata        Json?         // 추가 결제 정보 (PG사 응답, 에러 메시지 등)
-  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
-  
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  serviceOrder    ServiceOrder  @relation(fields: [serviceOrderId], references: [id], onDelete: Cascade)
-  paymentEvents   PaymentEvent[]
-  
-  @@unique([provider, transactionId]) // 멱등성 보장 (중복 결제 방지)
-  @@index([userId, createdAt(sort: Desc)])
-  @@index([userId, status, createdAt(sort: Desc)])
-  @@index([transactionId])
-  @@map("payments")
-}
-
-// PaymentEvent model - 결제 이벤트 로그 (감사 추적)
-model PaymentEvent {
-  id            String            @id @default(uuid())
-  paymentId     String            @map("payment_id")
-  eventType     PaymentEventType  @map("event_type") // 이벤트 종류
-  status        PaymentStatus?    // 이벤트 결과 상태
-  amount        Int?              // 이벤트 관련 금액
-  currency      Currency?         // 통화
-  message       String?           // 이벤트 메시지
-  metadata      Json?             // 추가 이벤트 데이터 (웹훅 응답 등)
-  ipAddress     String?           @map("ip_address") // 요청 IP
-  userAgent     String?           @map("user_agent") // 요청 User-Agent  
-  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
-  
-  payment       Payment           @relation(fields: [paymentId], references: [id], onDelete: Cascade)
-  
-  @@index([paymentId, createdAt(sort: Desc)])
-  @@index([eventType])
-  @@index([createdAt])
-  @@map("payment_events")
-}
-
-// ServiceOrder model - 서비스 주문 정보
-model ServiceOrder {
-  id              String       @id @default(uuid())
-  userId          String       @map("user_id")
-  serviceType     ServiceType  @map("service_type") // 서비스 종류
-  status          OrderStatus  // 주문 상태
-  price           Int          // 서비스 가격 (원 단위)
-  resultData      Json?        @map("result_data") // 서비스 결과 데이터
-  completedAt     DateTime?    @map("completed_at") @db.Timestamptz(3) // 서비스 완료 시각
-  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
-  
-  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  payment         Payment?     // 1:1 관계
-  
-  @@index([userId])
-  @@index([serviceType])
-  @@index([status])
-  @@index([createdAt])
-  @@map("service_orders")
-}
-
-// ============================================================
-// Freemium Payment System (TossPayments 전용)
-// ============================================================
-
-// TossPaymentStatus - 토스페이먼츠 결제 상태
 enum TossPaymentStatus {
-  PENDING      @map("pending")       // 결제 요청 생성됨
-  READY        @map("ready")         // 결제창 열림 (사용자 대기)
-  IN_PROGRESS  @map("in_progress")   // 결제 진행 중
-  DONE         @map("done")          // 결제 완료
-  CANCELED     @map("canceled")      // 결제 취소
-  FAILED       @map("failed")        // 결제 실패
-  EXPIRED      @map("expired")       // 결제 만료
-}
-
-// NamingPayment - Freemium 작명 결제 (TossPayments)
-model NamingPayment {
-  id              String            @id @default(uuid())
-
-  // 기존 서비스용 (optional)
-  userId          String?           @map("user_id")
-  sajuId          String?           @map("saju_id")  // 구매한 사주 데이터 ID
-
-  // Freemium 서비스용 (optional)
-  sessionId       String?           @unique @map("session_id")  // NamingSession ID
-
-  // TossPayments 전용 필드
-  orderId         String            @unique @map("order_id")       // 주문 ID (merchantId)
-  paymentKey      String?           @unique @map("payment_key")    // 결제 키 (승인 후 생성)
-
-  // 결제 정보
-  amount          Int                                              // 결제 금액 (원 단위)
-  currency        String            @default("KRW")                // 통화
-  status          TossPaymentStatus                                // 결제 상태
-  method          String?                                          // 결제 수단 (카드, 계좌이체 등)
-  orderName       String            @default("사주 작명 결과 프리미엄 조회") @map("order_name") // 주문명
-
-  // 고객 정보 (Freemium용)
-  customerName    String?           @map("customer_name")
-  customerEmail   String?           @map("customer_email")
-  customerPhone   String?           @map("customer_phone")
-
-  // TossPayments 추가 필드
-  tossCheckoutUrl String?           @map("toss_checkout_url")      // 결제 페이지 URL
-  tossPaymentKey  String?           @map("toss_payment_key")       // 결제 키 (승인 후)
-  tossApprovedAt  DateTime?         @map("toss_approved_at") @db.Timestamptz(3)
-  tossErrorCode   String?           @map("toss_error_code")
-  tossErrorMessage String?          @map("toss_error_message")
-
-  // 타임스탬프
-  requestedAt     DateTime          @default(now()) @map("requested_at") @db.Timestamptz(3)
-  approvedAt      DateTime?         @map("approved_at") @db.Timestamptz(3)
-  cancelledAt     DateTime?         @map("cancelled_at") @db.Timestamptz(3)
-  failedAt        DateTime?         @map("failed_at") @db.Timestamptz(3)
-  expiresAt       DateTime?         @map("expires_at") @db.Timestamptz(3)  // 결제 만료 시각
-
-  // 메타데이터 (기존)
-  failureCode     String?           @map("failure_code")                   // 실패 코드
-  failureMessage  String?           @map("failure_message")                // 실패 메시지
-  receiptUrl      String?           @map("receipt_url")                    // 영수증 URL
-  cardInfo        Json?             @map("card_info")                      // 카드 정보 (마스킹된 번호 등)
-
-  // Freemium fields
-  unlocked        Boolean           @default(false)                    // 이름 잠금 해제 여부
-  unlockedAt      DateTime?         @map("unlocked_at") @db.Timestamptz(3)  // 잠금 해제 시각
-
-  // Relations
-  user            User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  session         NamingSession?    @relation(fields: [sessionId], references: [id], onDelete: SetNull)
-
-  // Indexes
-  @@index([userId, status])
-  @@index([sessionId])
-  @@index([sajuId])
-  @@index([orderId])
-  @@index([paymentKey])
-  @@index([status])
-  @@index([unlocked])
-  @@index([requestedAt(sort: Desc)])
-  @@map("naming_payments")
-}
-
-// NamingSession - Freemium 작명 세션 데이터
-model NamingSession {
-  id              String    @id @default(uuid())
-  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  expiresAt       DateTime  @default(dbgenerated("NOW() + interval '7 days'")) @map("expires_at") @db.Timestamptz(3)
-
-  // 입력 정보
-  lastName        String    @map("last_name")
-  lastNameStrokes Int       @map("last_name_strokes")
-  gender          String
-  birthDate       DateTime  @map("birth_date") @db.Date
-  birthTime       String    @map("birth_time")           // HH:MM format
-  isLunar         Boolean   @map("is_lunar")
-  selectedValues  String[]  @map("selected_values")     // ["health", "wisdom"]
-
-  // 분석 결과
-  saju            Json                                 // SajuResult
-  yongsin         Json                                 // YongsinResult
-
-  // 추천 이름 (2+8 구조)
-  top2            Json      @default("{}")             // 무료 제공 (2개)
-  locked8         Json      @default("{}")             // 결제 후 제공 (8개)
-  allCandidates   Json                                 // 전체 50개
-
-  // 결제 연동
-  payment         NamingPayment?
-
-  // Indexes
-  @@index([createdAt])
-  @@index([expiresAt])
-  @@map("naming_sessions")
-}
-
-// RenamingAnalysis - 개명 서비스 현재 이름 분석 결과
-model RenamingAnalysis {
-  id               String   @id @default(uuid())
-  birthDate        String   @map("birth_date")
-  birthTime        String   @map("birth_time")
-  isLunar          Boolean  @map("is_lunar")
-  currentNameHanja String   @map("current_name_hanja")  // 현재 이름 한자 (성+이름)
-  currentScore     Float    @map("current_score")       // 현재 이름 점수
-  sajuData         Json     @map("saju_data")           // 사주 데이터 (JSON)
-  analysisData     Json     @map("analysis_data")       // 분석 결과 (문제점, 개선사항 등)
-  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
-
-  @@index([createdAt])
-  @@map("renaming_analyses")
-}
-
-// ============================================================
-// Korean Lunar Calendar Data Model (만세력)
-// ============================================================
-// Source: MySQL databases converted to PostgreSQL
-// - Schema 1: 1900-2100 (detailed data with moon phases, lunar mansions)
-// - Schema 2: 1841-2110 (extended date range with basic data)
-// ============================================================
-
-// CalendarData - 음양력 변환 및 만세력 데이터
-model CalendarData {
-  id                Int       @id @default(autoincrement()) @map("cd_no")
-
-  // Year information
-  dangiYear         Int       @map("cd_sgi")                    // 단기년도
-  solarYear         Int       @map("cd_sy")                     // 양력 년
-  solarMonth        Int       @map("cd_sm")                     // 양력 월 (1-12)
-  solarDay          Int       @map("cd_sd")                     // 양력 일 (1-31)
-  lunarYear         Int       @map("cd_ly")                     // 음력 년
-  lunarMonth        Int       @map("cd_lm")                     // 음력 월 (1-12)
-  lunarDay          Int       @map("cd_ld")                     // 음력 일 (1-30)
-
-  // Stem-Branch (간지) - Year
-  yearGanjiHanja    String?   @map("cd_hyganjee") @db.VarChar(6)   // 년주 간지 한문
-  yearGanjiKorean   String?   @map("cd_kyganjee") @db.VarChar(6)   // 년주 간지 한글
-
-  // Stem-Branch (간지) - Month (Schema 1 only)
-  monthGanjiHanja   String?   @map("cd_hmganjee") @db.VarChar(6)   // 월주 간지 한문
-  monthGanjiKorean  String?   @map("cd_kmganjee") @db.VarChar(6)   // 월주 간지 한글
-
-  // Stem-Branch (간지) - Day
-  dayGanjiHanja     String?   @map("cd_hdganjee") @db.VarChar(6)   // 일주 간지 한문
-  dayGanjiKorean    String?   @map("cd_kdganjee") @db.VarChar(6)   // 일주 간지 한글
-
-  // Day of week
-  weekdayHanja      String?   @map("cd_hweek") @db.Char(3)         // 요일 한문 (Schema 1)
-  weekdayKorean     String?   @map("cd_kweek") @db.Char(3)         // 요일 한글 (Schema 1)
-  weekday           String?   @map("cd_week") @db.Char(3)          // 요일 (Schema 2 combined)
-
-  // Lunar mansions and moon data (Schema 1 only)
-  lunarMansion      String?   @map("cd_stars") @db.Char(3)         // 28수
-  moonState         String?   @map("cd_moon_state") @db.Char(3)    // 달 상태 (삭/망 등)
-  moonTime          String?   @map("cd_moon_time") @db.VarChar(12) // 달 시간
-
-  // Lunar month information (Schema 1 only)
-  isLeapMonth       Boolean   @default(false) @map("cd_leap_month") // 윤달 여부
-  monthSize         Int       @default(0) @map("cd_month_size")    // 월 크기 (대월/소월)
-
-  // Solar terms (24절기)
-  solarTermHanja    String?   @map("cd_hterms") @db.VarChar(6)     // 절기 한문
-  solarTermKorean   String?   @map("cd_kterms") @db.VarChar(6)     // 절기 한글
-  solarTermTime     String?   @map("cd_terms_time") @db.VarChar(12) // 절기 시간
-
-  // Special days
-  specialDayKorean  String?   @map("cd_keventday") @db.VarChar(6)  // 특수일 한글 (Schema 1)
-  dogDay            String?   @map("cd_dogday") @db.VarChar(6)     // 복날 표시 (Schema 2)
-
-  // Zodiac animal
-  zodiacAnimal      ZodiacAnimal @map("cd_ddi")                    // 띠
-
-  // Holidays and events
-  solarHoliday      String?   @map("cd_sol_plan") @db.VarChar(50)  // 양력 기념일
-  lunarHoliday      String?   @map("cd_lun_plan") @db.VarChar(50)  // 음력 기념일
-  holidayType       Int       @default(0) @map("holiday")          // 공휴일 구분 (0=평일, 1=공휴일, 2=법정공휴일)
-
-  // Metadata
-  isLunarDate       Boolean   @default(false) @map("cd_kk")        // 음력 여부 (Schema 2)
-  dataSource        String?   @map("data_source") @db.VarChar(20)  // Track which source (schema1/schema2/merged)
-
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
-
-  // Indexes for efficient querying
-  @@unique([solarYear, solarMonth, solarDay], name: "solar_date_unique")
-  @@index([solarYear, solarMonth, solarDay], name: "solar_date_idx")
-  @@index([lunarYear, lunarMonth, lunarDay], name: "lunar_date_idx")
-  @@index([solarYear])
-  @@index([lunarYear])
-  @@index([holidayType])
-  @@index([zodiacAnimal])
-  @@index([solarTermKorean])
-  @@index([isLeapMonth])
-  @@map("calendar_data")
-}
-
-// Zodiac Animal Enum (12지지)
-enum ZodiacAnimal {
-  RAT      @map("쥐")
-  OX       @map("소")
-  TIGER    @map("호랑이")
-  RABBIT   @map("토끼")
-  DRAGON   @map("용")
-  SNAKE    @map("뱀")
-  HORSE    @map("말")
-  SHEEP    @map("양")
-  MONKEY   @map("원숭이")
-  ROOSTER  @map("닭")
-  DOG      @map("개")
-  PIG      @map("돼지")
+  PENDING     @map("pending")
+  READY       @map("ready")
+  IN_PROGRESS @map("in_progress")
+  DONE        @map("done")
+  CANCELED    @map("canceled")
+  FAILED      @map("failed")
+  EXPIRED     @map("expired")
 }

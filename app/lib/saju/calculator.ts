@@ -310,11 +310,15 @@ export class SajuCalculator {
    * 입춘 계산 (CalendarData DB 사용)
    */
   private async calculateLichun(year: number): Promise<Date> {
-    const calendarService = getCalendarDataService();
-    const lichun = await calendarService.getLichun(year);
+    try {
+      const calendarService = getCalendarDataService();
+      const lichun = await calendarService.getLichun(year);
 
-    if (lichun) {
-      return lichun;
+      if (lichun) {
+        return lichun;
+      }
+    } catch (error) {
+      console.warn(`⚠️  입춘 데이터 조회 실패 (${year}년):`, error);
     }
 
     // Fallback: approximate calculation if data not available
@@ -327,17 +331,21 @@ export class SajuCalculator {
    * 음력→양력 변환 (CalendarData DB 사용)
    */
   private async convertToSolar(lunarDate: Date): Promise<Date> {
-    const calendarService = getCalendarDataService();
+    try {
+      const calendarService = getCalendarDataService();
 
-    const solarDate = await calendarService.lunarToSolar(
-      lunarDate.getFullYear(),
-      lunarDate.getMonth() + 1,
-      lunarDate.getDate(),
-      false // isLeapMonth - could be parameter if needed
-    );
+      const solarDate = await calendarService.lunarToSolar(
+        lunarDate.getFullYear(),
+        lunarDate.getMonth() + 1,
+        lunarDate.getDate(),
+        false // isLeapMonth - could be parameter if needed
+      );
 
-    if (solarDate) {
-      return new Date(solarDate.year, solarDate.month - 1, solarDate.day);
+      if (solarDate) {
+        return new Date(solarDate.year, solarDate.month - 1, solarDate.day);
+      }
+    } catch (error) {
+      console.warn(`⚠️  음력 변환 조회 실패:`, error);
     }
 
     // Fallback: return as-is with warning

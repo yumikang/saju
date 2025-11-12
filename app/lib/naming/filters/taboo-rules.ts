@@ -113,6 +113,12 @@ export const EXPLICIT_TABOO_CHARACTERS: TabooCharacter[] = [
   { character: '貧', category: 'poverty', reason: '가난', severity: 'critical', source: 'manual' },
   { character: '窮', category: 'poverty', reason: '궁핍', severity: 'critical', source: 'manual' },
   { character: '乞', category: 'poverty', reason: '구걸', severity: 'critical', source: 'manual' },
+
+  // === 2025-11-12 추가: 부정적 의미 한자 ===
+  { character: '愚', category: 'negative', reason: '어리석음', severity: 'high', source: 'manual' },
+  { character: '滯', category: 'negative', reason: '막힘, 체류, 정체', severity: 'high', source: 'manual' },
+  { character: '重', category: 'misfortune', reason: '무거움, 부담스러움', severity: 'medium', source: 'manual' },
+  { character: '尤', category: 'misfortune', reason: '허물, 원망, 꾸짖음', severity: 'medium', source: 'manual' },
 ];
 
 /**
@@ -177,13 +183,16 @@ export const NEGATIVE_KEYWORD_CATEGORIES: Record<TabooCategory, string[]> = {
   negative: [
     '나쁜', '악', '흉악', '저주', '원한', '미움', '증오',
     '악독', '간악', '악랄', '심술', '못된', '비열', '더러',
-    '추잡', '부정', '음흉', '사악', '흉악', '잔인', '잔혹'
+    '추잡', '부정', '음흉', '사악', '흉악', '잔인', '잔혹',
+    '어리석', '우둔', '둔하', '미련', '멍청', '바보', '멍한',
+    '막히', '체류', '지체', '정체', '막히다', '멈추', '흐를', '철철', '늦추', '더디'
   ],
 
   misfortune: [
     '불운', '불길', '액', '재수없', '운없', '팔자', '불우',
     '기구', '기박', '신세', '고생', '곤란', '어려', '힘든',
-    '난관', '역경', '시련', '고초', '험난'
+    '난관', '역경', '시련', '고초', '험난', '무거', '짐', '부담',
+    '허물', '원망', '탓', '꾸짖', '책망'
   ]
 };
 

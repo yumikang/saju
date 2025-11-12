@@ -14,6 +14,7 @@ import { BaseScorer } from './base-scorer';
 import type { NameCandidate, ScoringContext, HanjaCharacter } from '../types';
 import { getPopularityLevel, getPopularityScore } from '../popular-hanja';
 import { calculateNameValueAlignment } from './value-meaning-map';
+import { calculateNameBucketScore, normalizeBucketScore } from './meaning-buckets';
 
 export class MeaningScorer extends BaseScorer {
   readonly name = 'meaning-harmony';
@@ -34,25 +35,32 @@ export class MeaningScorer extends BaseScorer {
     const char1 = characters[0];
     const char2 = characters[1];
 
-    // 1. Individual character quality (30%)
+    // 1. Individual character quality (25%)
     const char1Quality = this.scoreCharacterQuality(char1);
     const char2Quality = this.scoreCharacterQuality(char2);
     const averageQuality = (char1Quality + char2Quality) / 2;
-    const qualityScore = averageQuality * 0.3;
+    const qualityScore = averageQuality * 0.25;
 
-    // 2. Meaning compatibility (20%)
+    // 2. Meaning compatibility (15%)
     const compatibility = this.scoreMeaningCompatibility(char1, char2);
-    const compatibilityScore = compatibility * 0.2;
+    const compatibilityScore = compatibility * 0.15;
 
-    // 3. Cultural appropriateness (20%)
+    // 3. Cultural appropriateness (15%)
     const appropriateness = this.scoreCulturalAppropriateness(char1, char2);
-    const appropriatenessScore = appropriateness * 0.2;
+    const appropriatenessScore = appropriateness * 0.15;
 
     // 4. Parent value alignment (30%)
     const valueAlignment = this.scoreValueAlignment(characters, context);
     const valueAlignmentScore = valueAlignment * 0.3;
 
-    return qualityScore + compatibilityScore + appropriatenessScore + valueAlignmentScore;
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 5. 🆕 Contextual meaning bucket score (15%)
+    // 중립적 의미에 대한 가치 기반 가중치
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const bucketScore = this.scoreMeaningBucket(characters, context);
+    const bucketWeightedScore = bucketScore * 0.15;
+
+    return qualityScore + compatibilityScore + appropriatenessScore + valueAlignmentScore + bucketWeightedScore;
   }
 
   protected generateExplanation(
@@ -287,5 +295,37 @@ export class MeaningScorer extends BaseScorer {
     // Medium alignment (50-79) = good match
     // Low alignment (0-49) = weak match
     return alignmentScore;
+  }
+
+  /**
+   * 🆕 Score meaning bucket alignment (중립적 의미 가치 기반 가중치)
+   *
+   * 중립적 의미의 한자들(한가할, 빠를, 고귀할 등)을
+   * 부모의 가치관에 따라 차등 점수 부여.
+   *
+   * 예시:
+   * - "한가할" + peace 선택 → +8점
+   * - "한가할" + success 선택 → -5점
+   * - "빠를" + success 선택 → +7점
+   * - "빠를" + peace 선택 → -3점
+   */
+  private scoreMeaningBucket(
+    characters: [HanjaCharacter, HanjaCharacter],
+    context: ScoringContext
+  ): number {
+    const parentValues = context.preferences?.parentValues || [];
+
+    // Calculate bucket score (-10 ~ +10)
+    const bucketScore = calculateNameBucketScore(
+      characters.map(char => ({
+        meaning: char.meaning
+      })),
+      parentValues
+    );
+
+    // Normalize to 0-100 range
+    const normalizedScore = normalizeBucketScore(bucketScore);
+
+    return normalizedScore;
   }
 }

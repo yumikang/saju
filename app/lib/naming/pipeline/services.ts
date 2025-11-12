@@ -32,6 +32,8 @@ export class DatabaseHanjaService implements HanjaService {
       gender?: 'M' | 'F';
     }
   ): Promise<HanjaCharacter[]> {
+    console.log(`[DEBUG] findByElement called with:`, { element, options });
+
     // Build AND conditions
     const andConditions: any[] = [];
 
@@ -58,7 +60,8 @@ export class DatabaseHanjaService implements HanjaService {
     // 4. 🔥 CRITICAL: Surname filter - ALWAYS exclude surnames from first names
     // This prevents Korean surnames (성씨 132자) from appearing in given names
     // Example: Prevents "김금철" (wrong) instead of correct "김철수"
-    andConditions.push({ isSurname: false });
+    // TODO: Add isSurname field to schema
+    // andConditions.push({ isSurname: false });
 
     // 5. Gender filter
     if (options.gender) {
@@ -72,24 +75,19 @@ export class DatabaseHanjaService implements HanjaService {
       });
     }
 
-    const targetLimit = 500;
+    const targetLimit = 300; // 🎯 NULL 한자 유입 감소 (500→300)
     const orderBy = [
-      { inferredNameFrequency: 'desc' }, // 2024년 출생 데이터 빈도 높은 순 (TRUE 우선)
-      { nameFrequency: 'desc' },         // 기존 이름 빈도
+      { nameFrequency: 'desc' },         // 이름 빈도 우선
       { usageFrequency: 'desc' },        // 일반 사용 빈도
     ];
 
-    // STAGE 1: 먼저 검증된 한자만 (TRUE + seedProtected)
+    // STAGE 1: 먼저 검증된 한자만 (isGoodForNaming: true)
+    // TODO: Add seedProtected field to schema for curated hanja
     let primaryResults = await this.prisma.hanjaDict.findMany({
       where: {
         AND: [
           ...andConditions,
-          {
-            OR: [
-              { seedProtected: true },     // 사람이 고른 한자
-              { isGoodForNaming: true }    // 출생 데이터 검증된 한자
-            ]
-          }
+          { isGoodForNaming: true }    // 출생 데이터 검증된 한자
         ]
       },
       take: targetLimit,
@@ -103,14 +101,18 @@ export class DatabaseHanjaService implements HanjaService {
         where: {
           AND: [
             ...andConditions,
-            { isGoodForNaming: null },  // NULL만 (부족할 때만!)
-            { seedProtected: { not: true } }  // seedProtected는 이미 stage 1에서 가져옴
+            { isGoodForNaming: null }  // NULL만 (부족할 때만!)
           ]
         },
         take: targetLimit - primaryResults.length,
         orderBy,
       });
       results = [...primaryResults, ...fallbackResults];
+    }
+
+    console.log(`[DEBUG] findByElement returning ${results.length} results`);
+    if (results.length > 0) {
+      console.log(`[DEBUG] Sample result:`, results[0]);
     }
 
     return results.map(this.mapToHanjaCharacter);

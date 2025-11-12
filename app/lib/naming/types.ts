@@ -69,6 +69,8 @@ export interface ScoringContext {
   config?: {
     batchSize?: number;
   };
+  /** 점수 계산 모드 (균형형/의미형/하이브리드) */
+  scoringMode?: import('./types/scoring-mode').ScoringMode;
 }
 
 export interface NameAnalysis {

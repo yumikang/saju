@@ -87,8 +87,8 @@ export function RenamingLockedCard({
             <div className="text-xs text-gray-400">음양</div>
             <div className="text-sm font-bold text-gray-400">{Math.round(scores.yinYangBalance.score)}</div>
           </div>
-          <div className="text-center p-2 bg-gray-100 rounded">
-            <div className="text-xs text-gray-400">수리</div>
+          <div className="text-center p-2 bg-gray-100 rounded opacity-50">
+            <div className="text-xs text-gray-400">수리 (참고)</div>
             <div className="text-sm font-bold text-gray-400">{Math.round(scores.numerology.score)}</div>
           </div>
           <div className="text-center p-2 bg-gray-100 rounded">

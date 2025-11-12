@@ -21,6 +21,7 @@ import {
   DatabaseHanjaService,
   RedisCacheService,
   InMemoryCacheService,
+  NullCacheService,
   type BirthInfo,
 } from '~/lib/naming/pipeline';
 import { SajuCalculator } from '~/lib/saju/calculator';
@@ -333,10 +334,8 @@ async function handleStage3(sessionId: string): Promise<Stage3Response> {
 
   // Initialize services
   const hanjaService = new DatabaseHanjaService(prisma);
-  const redisClient = await getRedisClient();
-  const cacheService = redisClient
-    ? new RedisCacheService(redisClient)
-    : new InMemoryCacheService();
+  // 🔍 TEMP: Disable ALL caching to test new scoring logic
+  const cacheService = new NullCacheService(); // No caching at all
 
   const pipeline = createNamingPipeline(hanjaService, cacheService);
 

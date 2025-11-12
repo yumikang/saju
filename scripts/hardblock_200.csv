@@ -1,0 +1,154 @@
+한자,의미,카테고리,차단사유
+屎,똥,excrement,비위생적 의미
+尿,오줌,excrement,비위생적 의미
+糞,분뇨,excrement,부정/비위생
+膿,고름,excrement,부정/비위생
+汙,더러울,filth,부정/비위생
+垢,때,filth,부정/비위생
+死,죽음,death,극단적 부정
+殺,죽이다,death,폭력/극단적 부정
+屍,주검,death,장례 관련
+殯,빈소,death,장례 관련
+墓,무덤,death,장례 관련
+髑,해골,death,부정적 상징
+病,병,disease,질병/부정
+疾,질병,disease,질병/부정
+癌,암,disease,질병/부정
+瘡,종기,disease,질병/부정
+毒,독,disease,독/해악
+災,재앙,disaster,흉의/재난
+禍,화(재앙),disaster,흉의/재난
+凶,흉할,disaster,흉의/불길
+鬼,귀신,taboo,음습/부정
+魔,마귀,taboo,부정/악마
+邪,사악,taboo,사악/부정
+淫,음란,taboo,음란/부정
+恨,한,taboo,부정 감정
+怨,원망,taboo,부정 감정
+悲,슬픔,taboo,부정 감정
+哀,슬픔,taboo,부정 감정
+孤,외로움,taboo,부정/고립
+貧,가난,poverty,결핍/부정
+卑,낮음,poverty,비천/부정
+賤,천함,poverty,비천/부정
+乞,구걸,poverty,빈궁/구걸
+刃,칼날,violence,폭력/위험
+刑,형벌,violence,형벌/부정
+戈,창,violence,무기/폭력
+戰,전쟁,violence,전쟁/폭력
+鬥,싸움,violence,폭력/다툼
+兵,병사,violence,전쟁/폭력
+宰,도살,violence,도살 의미
+屠,도살,violence,잔혹/부정
+蟲,벌레,vermin,비위생/부정
+蛆,구더기,vermin,비위생/부정
+虱,이,vermin,비위생/부정
+蚤,벼룩,vermin,비위생/부정
+莠,가라지,coarse_plant,부정 식물
+蓚,꼴(수초),coarse_plant,비일상/부정적
+榇,두릅나무(관),coarse_plant,관짝 연상
+腐,썩다,decay,부패/부정
+朽,썩다,decay,부패/부정
+敗,패하다,decay,실패/부정
+毀,훼손,decay,파괴/부정
+孱,약함,weakness,무기력/부정
+憂,근심,taboo,부정 감정
+愁,수심,taboo,부정 감정
+怒,성냄,taboo,부정 감정
+怯,겁,fear,두려움/부정
+恐,두려움,fear,부정 감정
+懼,공포,fear,부정 감정
+厭,싫음,misfortune,부정적 감정
+厄,액운,misfortune,재앙/부정
+殃,재앙,misfortune,흉의/부정
+厲,사나움,misfortune,부정/병 의미
+罰,벌,violence,형벌/부정
+懲,징계,violence,형벌/부정
+戾,거스름,misfortune,부정/불화
+傷,상처,disease,부정/부상
+殘,잔혹,violence,폭력/부정
+醜,추함,offensive,모욕적 의미
+丑,못생김,offensive,모욕적 의미
+愚,어리석음,offensive,부정 성품
+惰,게으름,offensive,부정 성향
+狡,간사,offensive,부정 성향
+貪,탐욕,offensive,부정 성향
+詐,속임,offensive,부정 성향
+騙,속이다,offensive,부정 행위
+妬,질투,offensive,부정 감정
+嫉,시기,offensive,부정 감정
+痴,어리석음,offensive,부정 성향
+癲,광증,disease,정신질환
+瘋,미침,disease,정신질환
+癖,버릇(나쁜),offensive,부정 습성
+賭,도박,offensive,비행/부정
+賂,뇌물,offensive,비리/부정
+窮,가난,poverty,결핍/부정
+囚,죄수,misfortune,구금/부정
+罪,죄,misfortune,형벌/부정
+牢,우리,misfortune,구금/부정
+獄,감옥,misfortune,구금/부정
+鬱,울적,taboo,우울/부정
+悶,답답,taboo,부정 감정
+憤,분노,taboo,부정 감정
+憎,미움,taboo,부정 감정
+煩,번뇌,taboo,부정 감정
+逼,핍박,violence,폭압/부정
+脅,협박,violence,폭력/부정
+絞,교살,violence,폭력/부정
+殤,요절,death,불운/단명
+吊,매달다,death,상복/부정
+梟,올빼미,taboo,흉조/부정
+魑,요괴,occult,음습/부정
+魅,매혹귀,occult,음습/부정
+魍,도깨비,occult,음습/부정
+魎,도깨비,occult,음습/부정
+魘,악몽,occult,음습/부정
+妖,요사,occult,부정/요사
+祟,재앙,disaster,부정/재앙
+乏,모자람,poverty,결핍/부정
+拙,졸렬,poverty,부정 의미
+陋,누추,poverty,비천/부정
+侮,모욕,offensive,치욕/부정
+恥,부끄러움,offensive,치욕/부정
+辱,욕됨,offensive,치욕/부정
+俗,속됨,offensive,세속/부정
+劣,열등,offensive,부정 성향
+粗,조잡,offensive,품질저하/부정
+痕,흉터,disease,부정적 흔적
+腥,비릴,filth,비위생/부정
+臭,냄새,filth,불쾌/부정
+濁,흐림,filth,부정/탁함
+魚,물고기,taboo,일부 문화권에서 불길
+蛇,뱀,taboo,혐오/음습
+鼠,쥐,taboo,비위생/혐오
+豕,돼지,taboo,비위생/혐오
+犬,개,taboo,모욕적 의미 가능
+狼,이리,taboo,잔혹/부정
+虎,호랑이,taboo,흉포/공포 상징
+鹿,사슴,taboo,사치/속됨
+鳶,솔개,taboo,흉조/부정
+鴉,까마귀,taboo,흉조/부정
+禿,벗어짐,offensive,외모비하 가능
+瞎,눈멀,offensive,비하 가능
+跛,절뚝,offensive,비하 가능
+盲,맹인,offensive,비하 가능
+痲,마비,disease,질병/부정
+癬,버짐,disease,질병/부정
+瘤,종양,disease,질병/부정
+斃,죽음,death,사망/부정
+絕,끊김,misfortune,단절/부정
+塌,무너짐,misfortune,붕괴/부정
+潰,무너짐,misfortune,붕괴/부정
+崩,붕괴,misfortune,붕괴/부정
+焚,불사름,misfortune,파괴/부정
+溺,빠짐,misfortune,사고/부정
+窒,막힘,misfortune,질식/부정
+焦,탈,misfortune,손상/부정
+灼,데임,misfortune,상처/부정
+霉,곰팡이,filth,비위생/부정
+髏,해골,death,부정적 상징
+骸,뼈,death,부정적 상징
+鬧,떠들,offensive,품격 저하
+怠,게으름,offensive,부정 성향
+懊,후회,taboo,부정 감정

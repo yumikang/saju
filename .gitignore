@@ -22,3 +22,4 @@ ops/prometheus/data/
 # Playwright E2E test results
 playwright-report/
 test-results/
+pay/

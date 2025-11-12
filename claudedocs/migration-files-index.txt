@@ -1,0 +1,239 @@
+================================================================================
+MIGRATION FILES INDEX - Database Schema Mismatch Fix
+================================================================================
+
+Created: 2025-11-03
+Purpose: Fix schema-database mismatch causing negative hanja in names
+Status: Ready for implementation
+
+================================================================================
+QUICK START
+================================================================================
+
+1. Read this first:
+   📄 claudedocs/MIGRATION-README.md (START HERE)
+
+2. Run migration:
+   🚀 ./scripts/migrate-negative-hanja.sh
+
+3. Update code:
+   ✏️  app/lib/naming/pipeline/services.ts (line 60)
+
+================================================================================
+DOCUMENT INDEX
+================================================================================
+
+📁 /Users/blee/Downloads/saju/saju/
+
+├── claudedocs/
+│   ├── MIGRATION-README.md (7.7 KB)
+│   │   └── Executive summary - START HERE
+│   │       Quick overview, implementation steps, success criteria
+│   │
+│   ├── migration-summary.md (8.7 KB)
+│   │   └── Comprehensive summary document
+│   │       Problem, solution, statistics, implementation checklist
+│   │
+│   ├── migration-strategy-hanja-filtering.md (19 KB)
+│   │   └── Complete strategic analysis
+│   │       Root cause analysis, 119 negative hanja identified
+│   │       SQL migrations, validation procedures, rollback strategies
+│   │       Risk assessment, implementation checklist
+│   │
+│   ├── migration-visual-diagram.md (28 KB)
+│   │   └── Visual flow diagrams
+│   │       Problem flow, solution flow, data distribution
+│   │       Timeline, success metrics, quick reference
+│   │
+│   └── migration-files-index.txt (THIS FILE)
+│       └── Index of all migration documents
+│
+└── scripts/
+    ├── migrate-negative-hanja.sh (5.5 KB, executable)
+    │   └── Automated migration script
+    │       Backup creation, schema migration, data updates
+    │       Built-in validation, error handling
+    │
+    └── migration-queries.sql (8.6 KB)
+        └── Manual SQL execution option
+            Commented SQL statements, validation queries
+            Rollback queries, ongoing curation queries
+
+================================================================================
+FILE SIZES
+================================================================================
+
+Total documentation:  ~70 KB
+Total scripts:        ~14 KB
+Combined:             ~84 KB
+
+MIGRATION-README.md:                    7.7 KB  ⭐ START HERE
+migration-summary.md:                   8.7 KB  📊 Overview
+migration-strategy-hanja-filtering.md: 19.0 KB  📖 Deep dive
+migration-visual-diagram.md:           28.0 KB  📊 Visualizations
+migrate-negative-hanja.sh:              5.5 KB  🚀 Execute
+migration-queries.sql:                  8.6 KB  📝 SQL reference
+
+================================================================================
+KEY STATISTICS
+================================================================================
+
+Database:
+- Total hanja:           8,787
+- Surnames (filtered):     132
+- Non-surnames:          8,655
+- Negative identified:     119
+- Marked FALSE:             65 (severe negatives)
+- Unreviewed (NULL):     8,722 (safe by default)
+
+Migration Impact:
+- Columns added:             3 (is_good_for_naming, seed_protected, gender_hint)
+- Indexes created:           4 (performance optimization)
+- Characters blocked:       65 (negative meanings)
+- Execution time:        ~5 sec
+- Risk level:            LOW
+- Impact:                HIGH
+
+================================================================================
+IMPLEMENTATION STEPS
+================================================================================
+
+Step 1: Backup (REQUIRED)
+  cd /Users/blee/Downloads/saju/saju
+  cp prisma/dev.db prisma/backups/backup-$(date +%Y%m%d-%H%M%S).db
+
+Step 2: Run Migration
+  ./scripts/migrate-negative-hanja.sh
+
+Step 3: Update Service Code
+  File: app/lib/naming/pipeline/services.ts
+  Line: 60
+  Change: { isGoodForNaming: true }
+  To:     { isGoodForNaming: { not: false } }
+
+Step 4: Test
+  npm run dev
+  # Visit naming page, verify no negative hanja in names
+
+Step 5: Validate
+  sqlite3 prisma/dev.db < scripts/migration-queries.sql
+
+================================================================================
+NEGATIVE HANJA CATEGORIES (65 marked)
+================================================================================
+
+Category             Count  Examples
+─────────────────────────────────────────────────────────────
+Death/Killing          17   死(die), 殺(kill), 夭(die young)
+Disease/Illness         9   病(disease), 痛(pain), 疾(illness)
+Disaster/Calamity       8   災(disaster), 禍(calamity), 厄(hardship)
+Deceit/Fraud           10   僞(fake), 欺(deceive), 騙(cheat)
+Extreme Sorrow          6   愁(worry), 憂(anxiety), 悲(sad), 哀(grief)
+Destruction/Ruin        5   敗(defeat), 罪(crime)
+Danger/Harm             4   殆(danger), 忮(harm)
+Evil/Wickedness         3   凶(evil), 兇(vicious)
+Poverty                 2   貧(poor), 窶(impoverished)
+─────────────────────────────────────────────────────────────
+TOTAL                  65
+
+================================================================================
+READING GUIDE
+================================================================================
+
+For Quick Implementation (15 minutes):
+  1. MIGRATION-README.md          - Overview (5 min)
+  2. migrate-negative-hanja.sh    - Execute (5 min)
+  3. Validation queries            - Verify (5 min)
+
+For Complete Understanding (1 hour):
+  1. MIGRATION-README.md                    - Overview (10 min)
+  2. migration-visual-diagram.md            - Visual guide (15 min)
+  3. migration-strategy-hanja-filtering.md  - Deep analysis (30 min)
+  4. migration-queries.sql                  - SQL reference (5 min)
+
+For Strategic Planning (2 hours):
+  1. Read all documents above
+  2. Team review and discussion
+  3. Risk assessment and mitigation planning
+  4. Implementation scheduling
+
+================================================================================
+SUCCESS CRITERIA
+================================================================================
+
+Immediate (Day 1):
+  ✅ Migration script runs without errors
+  ✅ 65 negative hanja marked as FALSE
+  ✅ Columns exist in database
+  ✅ Service code updated
+  ✅ Test names have no negative hanja
+
+Week 1:
+  ✅ No user reports of negative names
+  ✅ Name generation rate stable
+  ✅ Query performance unchanged
+
+Month 1:
+  ✅ Manual review of remaining 54 negatives
+  ✅ Start marking positive hanja (top 500)
+  ✅ User satisfaction metrics tracked
+
+================================================================================
+VALIDATION QUERIES
+================================================================================
+
+Check migration success:
+  sqlite3 prisma/dev.db "PRAGMA table_info(hanja_dict);" | grep is_good_for_naming
+
+Count negative hanja:
+  sqlite3 prisma/dev.db "SELECT COUNT(*) FROM hanja_dict WHERE is_good_for_naming = false;"
+  # Expected: 65
+
+Test filter (should be empty):
+  sqlite3 prisma/dev.db "SELECT COUNT(*) FROM hanja_dict WHERE character IN ('愁','殺','病') AND is_good_for_naming != false;"
+  # Expected: 0
+
+================================================================================
+ROLLBACK PROCEDURE
+================================================================================
+
+If migration fails:
+  cp prisma/backups/backup-TIMESTAMP.db prisma/dev.db
+  # Restore from most recent backup
+
+If data issues:
+  sqlite3 prisma/dev.db "UPDATE hanja_dict SET is_good_for_naming = NULL;"
+  # Reset all to unreviewed state
+
+================================================================================
+CONTACT & SUPPORT
+================================================================================
+
+Documentation:
+  - Strategy: claudedocs/migration-strategy-hanja-filtering.md
+  - Visual:   claudedocs/migration-visual-diagram.md
+  - Summary:  claudedocs/migration-summary.md
+  - README:   claudedocs/MIGRATION-README.md
+
+Scripts:
+  - Execute:  scripts/migrate-negative-hanja.sh
+  - SQL:      scripts/migration-queries.sql
+
+Support:
+  - Review all documents before proceeding
+  - Test in staging before production
+  - Monitor user feedback after deployment
+
+================================================================================
+CREATED BY
+================================================================================
+
+Analysis Tool:   Sequential thinking analysis (planned)
+Created:         2025-11-03
+Prepared by:     Claude Code
+Review Status:   Ready for implementation
+Approval Status: Awaiting team review
+
+================================================================================
+END OF INDEX
+================================================================================
