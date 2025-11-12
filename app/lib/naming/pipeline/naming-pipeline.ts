@@ -630,18 +630,15 @@ export class NamingPipeline {
     const tabooDeduction = tabooAnalysis.deductionPoints;
     baseScore -= tabooDeduction;
 
-    // 6) 완벽한 이름 보너스 (+10점, 3개 중 2개 충족)
+    // 6) 완벽한 이름 보너스 (+5점, 3개 모두 충족 필수)
     let bonusScore = 0;
 
-    // 조건 1: 용신 한자가 실제로 들어갔는가? (주 용신 OR 보조 용신)
+    // 조건 1: 용신 한자가 실제로 들어갔는가? (주 용신만!)
     const primaryElement = context.yongsinResult?.primary;
-    const secondaryElement = context.yongsinResult?.secondary;
     const hasPrimaryChar = [combo.firstChar, combo.secondChar].some(c => c.element === primaryElement);
-    const hasSecondaryChar = [combo.firstChar, combo.secondChar].some(c => c.element === secondaryElement);
-    const hasYongsinChar = hasPrimaryChar || hasSecondaryChar;
 
-    // 조건 2: 음양 균형이 우수한가?
-    const hasGoodYinYang = yinyangAnalysis.balanceScore >= 85;
+    // 조건 2: 음양 균형이 매우 우수한가?
+    const hasGoodYinYang = yinyangAnalysis.balanceScore >= 90; // 85 → 90
 
     // 조건 3: 부모 가치 한자가 들어갔는가?
     const parentValues = (context.config.parentValues || []) as ParentValue[];
@@ -654,17 +651,17 @@ export class NamingPipeline {
         })),
         parentValues
       );
-      hasParentValueChar = alignmentScore >= 70; // 기준 완화: 80 → 70
+      hasParentValueChar = alignmentScore >= 80; // 70 → 80 (기준 강화)
     }
 
-    // 3개 중 2개 이상 충족 시 보너스
-    const bonusConditions = [hasYongsinChar, hasGoodYinYang, hasParentValueChar].filter(Boolean).length;
-    if (bonusConditions >= 2) {
-      bonusScore = 10;
+    // 🎯 3개 모두 충족해야 보너스 (매우 까다롭게)
+    const bonusConditions = [hasPrimaryChar, hasGoodYinYang, hasParentValueChar].filter(Boolean).length;
+    if (bonusConditions === 3) {
+      bonusScore = 5; // 10 → 5 (보너스 감소)
       if (FEATURES.stage3VerboseLog) {
         console.log(
           `[PerfectBonus] ${combo.firstName} (${combo.firstChar.character}${combo.secondChar.character}): ` +
-          `+10점 보너스 (용신:${hasYongsinChar}, 음양:${hasGoodYinYang}, 부모:${hasParentValueChar})`
+          `+5점 보너스 (주용신:${hasPrimaryChar}, 음양≥90:${hasGoodYinYang}, 부모≥80:${hasParentValueChar})`
         );
       }
     }
@@ -680,10 +677,10 @@ export class NamingPipeline {
     if (FEATURES.stage3VerboseLog) {
       console.log(
         `[ScoreDebug] ${combo.firstName} (${combo.firstChar.character}${combo.secondChar.character}):\n` +
-        `  용신: ${scores.yongsin.toFixed(1)} (×0.45 = ${(scores.yongsin * 0.45).toFixed(1)})\n` +
-        `  음양: ${scores.yinyang.toFixed(1)} (×0.15 = ${(scores.yinyang * 0.15).toFixed(1)})\n` +
-        `  발음: ${scores.pronunciation.toFixed(1)} (×0.15 = ${(scores.pronunciation * 0.15).toFixed(1)})\n` +
-        `  의미: ${scores.meaning.toFixed(1)} (×0.15 = ${(scores.meaning * 0.15).toFixed(1)})\n` +
+        `  용신: ${scores.yongsin.toFixed(1)} (×0.60 = ${(scores.yongsin * 0.60).toFixed(1)})\n` +
+        `  음양: ${scores.yinyang.toFixed(1)} (×0.10 = ${(scores.yinyang * 0.10).toFixed(1)})\n` +
+        `  발음: ${scores.pronunciation.toFixed(1)} (×0.10 = ${(scores.pronunciation * 0.10).toFixed(1)})\n` +
+        `  의미: ${scores.meaning.toFixed(1)} (×0.10 = ${(scores.meaning * 0.10).toFixed(1)})\n` +
         `  성별보정: ${hangulGenderBoost}\n` +
         `  금기감점: -${tabooDeduction}\n` +
         `  보너스: +${bonusScore}\n` +
