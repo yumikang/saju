@@ -629,15 +629,22 @@ export class NamingPipeline {
     const tabooDeduction = tabooAnalysis.deductionPoints;
     baseScore -= tabooDeduction;
 
-    // 6) 완벽한 이름 보너스 (+5~10점)
+    // 6) 완벽한 이름 보너스 (+10점, 3개 중 2개 충족)
     let bonusScore = 0;
-    const perfectYongsinMatch = yongsinAnalysis.matchScore >= 90;
-    const excellentYinYang = yinyangAnalysis.balanceScore >= 85;
 
-    // Parent value alignment 점수 계산
+    // 조건 1: 용신 한자가 실제로 들어갔는가? (주 용신 OR 보조 용신)
+    const primaryElement = context.yongsinResult?.primary;
+    const secondaryElement = context.yongsinResult?.secondary;
+    const hasPrimaryChar = [combo.firstChar, combo.secondChar].some(c => c.element === primaryElement);
+    const hasSecondaryChar = [combo.firstChar, combo.secondChar].some(c => c.element === secondaryElement);
+    const hasYongsinChar = hasPrimaryChar || hasSecondaryChar;
+
+    // 조건 2: 음양 균형이 우수한가?
+    const hasGoodYinYang = yinyangAnalysis.balanceScore >= 85;
+
+    // 조건 3: 부모 가치 한자가 들어갔는가?
     const parentValues = (context.config.parentValues || []) as ParentValue[];
-    let hasGoodParentAlignment = false;
-
+    let hasParentValueChar = false;
     if (parentValues.length > 0) {
       const alignmentScore = calculateNameValueAlignment(
         [combo.firstChar, combo.secondChar].map(char => ({
@@ -646,15 +653,17 @@ export class NamingPipeline {
         })),
         parentValues
       );
-      hasGoodParentAlignment = alignmentScore >= 80;
+      hasParentValueChar = alignmentScore >= 70; // 기준 완화: 80 → 70
     }
 
-    if (perfectYongsinMatch && excellentYinYang && hasGoodParentAlignment) {
-      bonusScore = 10; // 5 → 10점으로 상향 (최대 100점 도달 가능)
+    // 3개 중 2개 이상 충족 시 보너스
+    const bonusConditions = [hasYongsinChar, hasGoodYinYang, hasParentValueChar].filter(Boolean).length;
+    if (bonusConditions >= 2) {
+      bonusScore = 10;
       if (FEATURES.stage3VerboseLog) {
         console.log(
           `[PerfectBonus] ${combo.firstName} (${combo.firstChar.character}${combo.secondChar.character}): ` +
-          `+10점 보너스 (용신:${yongsinAnalysis.matchScore}, 음양:${yinyangAnalysis.balanceScore})`
+          `+10점 보너스 (용신:${hasYongsinChar}, 음양:${hasGoodYinYang}, 부모:${hasParentValueChar})`
         );
       }
     }
@@ -665,6 +674,21 @@ export class NamingPipeline {
 
     // 8) 소수점 반올림
     finalTotalScore = Math.round(finalTotalScore);
+
+    // 🔍 DEBUG: 상세 점수 로그
+    if (FEATURES.stage3VerboseLog) {
+      console.log(
+        `[ScoreDebug] ${combo.firstName} (${combo.firstChar.character}${combo.secondChar.character}):\n` +
+        `  용신: ${scores.yongsin.toFixed(1)} (×0.45 = ${(scores.yongsin * 0.45).toFixed(1)})\n` +
+        `  음양: ${scores.yinyang.toFixed(1)} (×0.15 = ${(scores.yinyang * 0.15).toFixed(1)})\n` +
+        `  발음: ${scores.pronunciation.toFixed(1)} (×0.15 = ${(scores.pronunciation * 0.15).toFixed(1)})\n` +
+        `  의미: ${scores.meaning.toFixed(1)} (×0.15 = ${(scores.meaning * 0.15).toFixed(1)})\n` +
+        `  성별보정: ${hangulGenderBoost}\n` +
+        `  금기감점: -${tabooDeduction}\n` +
+        `  보너스: +${bonusScore}\n` +
+        `  → 최종: ${finalTotalScore}점`
+      );
+    }
 
     // 🎯 Tie-breaker 필드 추가
     const strokeCount = combo.firstChar.strokes + combo.secondChar.strokes;
@@ -932,14 +956,14 @@ export class NamingPipeline {
     const primaryMatch = primaryMatches > 0;
     const secondaryMatch = secondaryMatches > 0;
 
-    // 🎯 용신 매칭 점수 차별화 강화 (점수 범위 확대)
+    // 🎯 용신 매칭 점수 극단적 차별화 (명확한 구분)
     let matchScore = 0;
-    if (primaryMatches === 2) matchScore = 100;           // 완벽한 매칭
-    else if (primaryMatches === 1 && secondaryMatches === 1) matchScore = 90; // 95 → 90 (차이 확대)
-    else if (primaryMatches === 1) matchScore = 75;       // 85 → 75 (차이 확대)
-    else if (secondaryMatches === 2) matchScore = 65;     // 80 → 65 (차이 확대)
-    else if (secondaryMatches === 1) matchScore = 50;     // 70 → 50 (차이 확대)
-    else matchScore = 30;                                  // 50 → 30 (페널티 강화)
+    if (primaryMatches === 2) matchScore = 100;           // 완벽: 주 용신 2개
+    else if (primaryMatches === 1 && secondaryMatches === 1) matchScore = 100; // 완벽: 주 1개 + 보조 1개
+    else if (primaryMatches === 1) matchScore = 60;       // 부분: 주 용신 1개만
+    else if (secondaryMatches === 2) matchScore = 60;     // 부분: 보조 용신 2개
+    else if (secondaryMatches === 1) matchScore = 60;     // 부분: 보조 용신 1개
+    else matchScore = 20;                                  // 없음: 용신 매칭 없음
 
     const explanation = `용신 ${primaryElement} ${primaryMatches}개, 희신 ${secondaryElement || 'N/A'} ${secondaryMatches}개`;
 
