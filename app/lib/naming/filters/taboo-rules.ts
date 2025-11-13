@@ -119,6 +119,14 @@ export const EXPLICIT_TABOO_CHARACTERS: TabooCharacter[] = [
   { character: '滯', category: 'negative', reason: '막힘, 체류, 정체', severity: 'high', source: 'manual' },
   { character: '重', category: 'misfortune', reason: '무거움, 부담스러움', severity: 'medium', source: 'manual' },
   { character: '尤', category: 'misfortune', reason: '허물, 원망, 꾸짖음', severity: 'medium', source: 'manual' },
+
+  // === 2025-11-13 추가: DB 품질 문제로 인한 부적절 한자 ===
+  { character: '蹲', category: 'negative', reason: '쭈그리다, 웅크리다', severity: 'high', source: 'manual' },
+  { character: '薯', category: 'negative', reason: '고구마, 감자', severity: 'high', source: 'manual' },
+  { character: '猶', category: 'negative', reason: '같을, 비교(부정적)', severity: 'medium', source: 'manual' },
+  { character: '雖', category: 'negative', reason: '비록(접속사, 이름부적합)', severity: 'medium', source: 'manual' },
+  { character: '猢', category: 'negative', reason: '원숭이', severity: 'high', source: 'manual' },
+  { character: '鵞', category: 'negative', reason: '거위', severity: 'medium', source: 'manual' },
 ];
 
 /**
@@ -185,7 +193,9 @@ export const NEGATIVE_KEYWORD_CATEGORIES: Record<TabooCategory, string[]> = {
     '악독', '간악', '악랄', '심술', '못된', '비열', '더러',
     '추잡', '부정', '음흉', '사악', '흉악', '잔인', '잔혹',
     '어리석', '우둔', '둔하', '미련', '멍청', '바보', '멍한',
-    '막히', '체류', '지체', '정체', '막히다', '멈추', '흐를', '철철', '늦추', '더디'
+    '막히', '체류', '지체', '정체', '막히다', '멈추', '흐를', '철철', '늦추', '더디',
+    '쭈그리', '쭈그릴', '웅크리', '고구마', '감자', '비록', '같을', '의심',
+    '원숭이', '거위', '까마귀', '쥐', '벌레'
   ],
 
   misfortune: [
