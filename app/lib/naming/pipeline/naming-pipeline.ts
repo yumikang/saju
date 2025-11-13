@@ -557,16 +557,17 @@ export class NamingPipeline {
     const fullName = context.lastName + combo.firstName;
     const hanja = combo.firstChar.character + combo.secondChar.character;
 
-    // 🛡️ 0. Early taboo check - critical/high severity는 즉시 제거
+    // 🛡️ 0. Early taboo check - EXPLICIT taboo 한자는 모두 즉시 제거
     // checkCharacterSafety를 사용하여 각 한자 개별 검사
     for (const char of [combo.firstChar, combo.secondChar]) {
       const safetyCheck = checkCharacterSafety(char.character, char.meaning);
       if (!safetyCheck.isSafe) {
-        // critical 또는 high severity issue가 있으면 즉시 reject
-        const hasCriticalOrHigh = safetyCheck.issues.some(
-          issue => issue.severity === 'critical' || issue.severity === 'high'
+        // EXPLICIT_TABOO_CHARACTERS에 있는 한자는 severity 관계없이 모두 reject
+        // (이들은 명시적으로 부적절하다고 판단된 한자)
+        const hasExplicitTaboo = safetyCheck.issues.some(
+          issue => issue.matchedCharacter !== undefined
         );
-        if (hasCriticalOrHigh) {
+        if (hasExplicitTaboo) {
           throw new Error(
             `Taboo character rejected: ${char.character} - ${safetyCheck.issues.map(i => i.reason).join(', ')}`
           );
