@@ -1,38 +1,44 @@
 # 사주 기반 AI 작명 플랫폼 v2.0
 
+[![Production](https://img.shields.io/badge/Production-Live-green)](https://saju-naming.one-q.xyz/)
+[![Last Deploy](https://img.shields.io/badge/Last%20Deploy-2025--11--13-blue)]()
+[![Node](https://img.shields.io/badge/Node-18+-green)]()
+
 ## 🎯 프로젝트 개요
 
-사주팔자와 AI를 결합한 한국형 작명 서비스 플랫폼입니다. 실시간 작명 프로세스, 대기열 관리, 모바일 최적화 기능을 제공합니다.
+사주팔자 기반 한국형 작명 서비스 플랫폼입니다. 고급 점수 알고리즘, 부적절 한자 필터링, 프리미엄 기능을 제공합니다.
+
+**프로덕션 URL**: https://saju-naming.one-q.xyz/
 
 ## 🚀 주요 기능
 
-### 1. AI 작명 시스템
-- OpenAI GPT 기반 지능형 작명
-- 사주팔자 분석 (오행, 용신/기신)
+### 1. 고급 이름 점수 시스템 (2025-11-13 업데이트)
+- **용신 중심 차별화**: 60% 가중치로 사주 적합도 극대화
+- **엄격한 보너스 시스템**: 3가지 조건 모두 충족 시 +5점
+- **점수 범위**: 80-100점 (넓은 분포로 명확한 품질 차이)
+- **실시간 필터링**: 부적절 한자 12종 완전 차단
+
+### 2. 사주팔자 분석 엔진
+- 사주팔자 계산 (오행, 용신/기신)
 - 한자 의미와 획수 분석
-- 음양오행 균형 평가
+- 음양오행 균형 평가 (≥90점 기준)
+- 부모 가치 연계 분석 (≥80점 기준)
 
-### 2. 실시간 기능 (Socket.IO)
-- 실시간 작명 진행상황 표시
-- 대기열 관리 시스템
-- 양방향 통신으로 즉각적인 피드백
+### 3. 부적절 한자 필터링
+- **명시적 차단**: 愚(어리석음), 滯(막힘), 重(무거움), 尤(허물), 蹲(쭈그리다), 薯(고구마), 猶(같을), 雖(비록), 猢(원숭이), 鵞(거위) 등
+- **의미 기반 필터**: 부정적 키워드 자동 감지
+- **Early Filtering**: 점수 계산 전 사전 차단
 
-### 3. Redis 기반 대기열 관리
-- 공정한 순서 처리 (FIFO)
-- 우선순위 큐 지원
-- 분산 시스템 대응 가능
+### 4. OAuth 에러 핸들링 (2025-11-13 업데이트)
+- 설정 누락 시 친절한 한글 안내 (500 에러 방지)
+- Kakao/Google/Naver 로그인 통합 지원
+- React Hydration 에러 해결
 
-### 4. 모바일 배터리 최적화
-- Battery Status API 활용
-- 적응형 폴링 간격
-- 오프라인 메시지 큐잉
-- 페이지 가시성 감지
-
-### 5. 반응형 UI/UX
-- 모바일 우선 디자인
-- Framer Motion 애니메이션
-- 터치 최적화 인터페이스
-- 프로그레시브 웹 앱 지원
+### 5. 프리미엄 기능
+- 프리미엄: 3개 무료 + 97개 유료 (₩69,000)
+- 개명: 전문가 분석 + 추천 (₩169,000)
+- TossPayments 결제 연동
+- PDF 리포트 다운로드
 
 ## 📦 기술 스택
 
@@ -155,31 +161,70 @@ Naming Handler + Queue Processor
 
 ## 🚢 프로덕션 배포
 
-### 1. 빌드
+### 서버 정보
+- **서버**: 141.164.60.51
+- **프로젝트 경로**: `/var/www/saju`
+- **프로세스 관리**: PM2 (saju-naming)
+- **포트**: 10281
 
+### 배포 프로세스
+
+#### 1. 로컬에서 변경사항 Push
 ```bash
+git add .
+git commit -m "feat: 설명"
+git push origin main
+```
+
+#### 2. 서버 접속 및 배포
+```bash
+# SSH 접속
+ssh root@141.164.60.51
+
+# 프로젝트 디렉토리 이동
+cd /var/www/saju
+
+# 배포 스크립트 실행 (권장)
+./deploy.sh
+
+# 또는 수동 배포
+git pull origin main
+npm install
 npm run build
+pm2 restart saju-naming
+pm2 logs saju-naming --lines 50
 ```
 
-### 2. 환경 변수 설정
-
+#### 3. 배포 확인
 ```bash
-NODE_ENV=production
-REDIS_URL=redis://your-redis-server:6379
-# 기타 프로덕션 설정
+# PM2 상태 확인
+pm2 status
+
+# 로그 확인
+pm2 logs saju-naming --lines 100
+
+# 웹사이트 확인
+curl https://saju-naming.one-q.xyz/
 ```
 
-### 3. 서버 실행
+### 환경 변수 설정 (서버)
 
+프로덕션 서버에서 `.env.production` 파일 필요:
 ```bash
-npm start           # Remix 서버
-node socket-server.mjs  # Socket.IO 서버
-```
+# 데이터베이스
+DATABASE_URL=postgresql://...
 
-### 4. 프로세스 관리 (PM2)
+# Redis (옵션)
+REDIS_URL=redis://...
 
-```bash
-pm2 start ecosystem.config.js
+# OAuth (현재 미설정 - 에러 핸들링됨)
+KAKAO_CLIENT_ID=your_kakao_client_id
+GOOGLE_CLIENT_ID=your_google_client_id
+NAVER_CLIENT_ID=your_naver_client_id
+
+# TossPayments
+TOSS_CLIENT_KEY=live_ck_...
+TOSS_SECRET_KEY=live_sk_...
 ```
 
 ## 📝 API 문서
