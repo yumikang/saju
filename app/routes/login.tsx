@@ -10,13 +10,34 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (user) {
     return redirect("/account");
   }
-  
+
   // Check for any error messages from OAuth callback
   const url = new URL(request.url);
-  const error = url.searchParams.get("error");
-  
-  return json({ 
-    error: error ? decodeURIComponent(error) : null 
+  const errorCode = url.searchParams.get("error");
+
+  // Map error codes to user-friendly messages
+  let errorMessage = null;
+  if (errorCode) {
+    switch (errorCode) {
+      case "kakao_not_configured":
+        errorMessage = "카카오 로그인이 현재 설정되지 않았습니다. 다른 로그인 방법을 사용해주세요.";
+        break;
+      case "google_not_configured":
+        errorMessage = "구글 로그인이 현재 설정되지 않았습니다. 다른 로그인 방법을 사용해주세요.";
+        break;
+      case "naver_not_configured":
+        errorMessage = "네이버 로그인이 현재 설정되지 않았습니다. 다른 로그인 방법을 사용해주세요.";
+        break;
+      case "oauth_failed":
+        errorMessage = "소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+        break;
+      default:
+        errorMessage = decodeURIComponent(errorCode);
+    }
+  }
+
+  return json({
+    error: errorMessage
   });
 }
 
